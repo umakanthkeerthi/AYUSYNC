@@ -1,6 +1,6 @@
 import asyncio
 from app.core.event_bus import event_bus
-from app.models.events import TelemetryEvent, EventSource, VitalsPayload
+from app.models.events import TelemetryEvent, EventSource, VitalsPayload, AgentCommandEvent, CommandPayload
 
 async def run_test():
     print("\n--- 🚀 STARTING TRACER BULLET POC (THE THINKING AGENTS) ---\n")
@@ -96,6 +96,30 @@ async def run_test():
     event_bus.publish(cmd_voice_call)
     
     print("\n--- ACTIONABLE AGENTS POC COMPLETE ---")
+
+    # ---------------------------------------------------------
+    # TRACK B VERIFICATION: Testing the Operations & Logistics
+    # ---------------------------------------------------------
+    print("\n\n--- 🚀 STARTING TRACK B VERIFICATION (EXECUTION AGENTS) ---\n")
+    print("💊 Triggering the Pharmacy Agent with a mock command...")
+    
+    pharmacy_command = AgentCommandEvent(
+        patient_id="patient_123_mock",
+        source=EventSource.STATE_AGENT, # Coordinator usually sends this, mocking for now
+        command=CommandPayload(
+            target_agent="pharmacy_agent",
+            action="process_prescription",
+            parameters={"medication": "Aspirin", "dosage": "81mg"},
+            urgency="high"
+        )
+    )
+    
+    # We must format it correctly as the agents expect a dictionary with 'data'
+    # Normally the AWSEventBus handles this translation, but in local mode we pass it
+    # We will just publish it to the bus
+    event_bus.publish(pharmacy_command)
+    
+    print("\n--- TRACK B VERIFICATION COMPLETE ---")
 
 if __name__ == "__main__":
     asyncio.run(run_test())

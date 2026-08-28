@@ -53,6 +53,11 @@ class AWSEventBus:
                 from ..agents.nurse_agent import handle_event as nurse_handle_event
                 from ..agents.caregiver_agent import handle_event as caregiver_handle_event
                 
+                # Track B Execution Agents
+                from ..agents.pharmacy_agent import handle_event as pharmacy_handle_event
+                from ..agents.laboratory_agent import handle_event as lab_handle_event
+                from ..agents.insurance_agent import handle_event as insurance_handle_event
+                
                 # Broadcast the event to all Thinking Agents (simulating an EventBridge Pub/Sub)
                 ps_handle_event(event.topic, detail_json)
                 monitor_handle_event(event.topic, detail_json)
@@ -66,6 +71,11 @@ class AWSEventBus:
                 doctor_handle_event(event.topic, detail_json)
                 nurse_handle_event(event.topic, detail_json)
                 caregiver_handle_event(event.topic, detail_json)
+                
+                # Broadcast the event to Track B Execution Agents
+                pharmacy_handle_event(event.topic, detail_json)
+                lab_handle_event(event.topic, detail_json)
+                insurance_handle_event(event.topic, detail_json)
                 
                 return response
             except Exception as e:
@@ -90,6 +100,11 @@ class AWSEventBus:
             from ..agents.nurse_agent import handle_event as nurse_handle_event
             from ..agents.caregiver_agent import handle_event as caregiver_handle_event
             
+            # Track B Execution Agents
+            from ..agents.pharmacy_agent import handle_event as pharmacy_handle_event
+            from ..agents.laboratory_agent import handle_event as lab_handle_event
+            from ..agents.insurance_agent import handle_event as insurance_handle_event
+            
             # Broadcast the event to all Thinking Agents
             ps_handle_event(event.topic, detail_json)
             monitor_handle_event(event.topic, detail_json)
@@ -103,6 +118,11 @@ class AWSEventBus:
             doctor_handle_event(event.topic, detail_json)
             nurse_handle_event(event.topic, detail_json)
             caregiver_handle_event(event.topic, detail_json)
+            
+            # Broadcast the event to Track B Execution Agents
+            pharmacy_handle_event(event.topic, detail_json)
+            lab_handle_event(event.topic, detail_json)
+            insurance_handle_event(event.topic, detail_json)
             
             return {"FailedEntryCount": 0, "Entries": [{"EventId": "mock-event-id"}]}
 
