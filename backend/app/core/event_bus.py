@@ -48,6 +48,10 @@ class AWSEventBus:
                 from ..agents.care_planning_agent import handle_event as plan_handle_event
                 from ..agents.care_coordinator_agent import handle_event as coord_handle_event
                 from ..agents.medication_adherence_agent import handle_event as adherence_handle_event
+                from ..agents.patient_agent import handle_event as patient_handle_event
+                from ..agents.doctor_agent import handle_event as doctor_handle_event
+                from ..agents.nurse_agent import handle_event as nurse_handle_event
+                from ..agents.caregiver_agent import handle_event as caregiver_handle_event
                 
                 # Broadcast the event to all Thinking Agents (simulating an EventBridge Pub/Sub)
                 ps_handle_event(event.topic, detail_json)
@@ -56,6 +60,12 @@ class AWSEventBus:
                 adherence_handle_event(event.topic, detail_json)
                 plan_handle_event(event.topic, detail_json)
                 coord_handle_event(event.topic, detail_json)
+                
+                # Broadcast to Actionable Agents (Track A)
+                patient_handle_event(event.topic, detail_json)
+                doctor_handle_event(event.topic, detail_json)
+                nurse_handle_event(event.topic, detail_json)
+                caregiver_handle_event(event.topic, detail_json)
                 
                 return response
             except Exception as e:
@@ -75,6 +85,10 @@ class AWSEventBus:
             from ..agents.care_planning_agent import handle_event as plan_handle_event
             from ..agents.care_coordinator_agent import handle_event as coord_handle_event
             from ..agents.medication_adherence_agent import handle_event as adherence_handle_event
+            from ..agents.patient_agent import handle_event as patient_handle_event
+            from ..agents.doctor_agent import handle_event as doctor_handle_event
+            from ..agents.nurse_agent import handle_event as nurse_handle_event
+            from ..agents.caregiver_agent import handle_event as caregiver_handle_event
             
             # Broadcast the event to all Thinking Agents
             ps_handle_event(event.topic, detail_json)
@@ -83,6 +97,12 @@ class AWSEventBus:
             adherence_handle_event(event.topic, detail_json)
             plan_handle_event(event.topic, detail_json)
             coord_handle_event(event.topic, detail_json)
+            
+            # Broadcast to Actionable Agents (Track A)
+            patient_handle_event(event.topic, detail_json)
+            doctor_handle_event(event.topic, detail_json)
+            nurse_handle_event(event.topic, detail_json)
+            caregiver_handle_event(event.topic, detail_json)
             
             return {"FailedEntryCount": 0, "Entries": [{"EventId": "mock-event-id"}]}
 
