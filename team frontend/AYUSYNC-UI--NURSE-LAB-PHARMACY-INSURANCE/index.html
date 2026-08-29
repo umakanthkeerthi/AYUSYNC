@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AyuSync - Nurse Command Center</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        
+        <!-- Mobile Header (Visible only on small screens) -->
+        <div class="mobile-header">
+            <button class="icon-btn" id="mobile-menu-toggle">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="brand-logo mobile-logo">
+                <i class="fa-solid fa-heart-pulse"></i>
+                <span>AyuSync Nurse</span>
+            </div>
+        </div>
+
+        <!-- Sidebar / Drawer -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo desktop-logo">
+                <div class="brand-logo">
+                    <i class="fa-solid fa-heart-pulse text-accent"></i>
+                    <span>AyuSync Nurse</span>
+                </div>
+                <button class="icon-btn close-sidebar" id="close-sidebar">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active desktop-only" data-page="dashboard">
+                    <i class="fa-solid fa-house"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item desktop-only" data-page="patients">
+                    <i class="fa-regular fa-user"></i>
+                    <span>Patients</span>
+                </a>
+                <a href="#" class="nav-item desktop-only" data-page="tasks">
+                    <i class="fa-solid fa-list-check"></i>
+                    <span>Tasks</span>
+                </a>
+                <a href="#" class="nav-item desktop-only" data-page="lab">
+                    <i class="fa-solid fa-flask"></i>
+                    <span>Lab Coordination</span>
+                </a>
+                <a href="#" class="nav-item desktop-only" data-page="appointments">
+                    <i class="fa-regular fa-calendar"></i>
+                    <span>Appointments</span>
+                </a>
+                <a href="#" class="nav-item" data-page="alerts">
+                    <i class="fa-regular fa-bell"></i>
+                    <span>Alerts</span>
+                </a>
+                <a href="#" class="nav-item" data-page="messages">
+                    <i class="fa-regular fa-comment"></i>
+                    <span>Messages</span>
+                </a>
+                <a href="#" class="nav-item" data-page="reports">
+                    <i class="fa-regular fa-file-lines"></i>
+                    <span>Reports</span>
+                </a>
+                <div class="nav-spacer"></div>
+                <a href="#" class="nav-item" data-page="settings">
+                    <i class="fa-solid fa-gear"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Overlay for mobile drawer -->
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="top-header">
+                <h1 id="page-title">Dashboard</h1>
+                
+                <div class="header-right">
+                    <!-- Notifications -->
+                    <div class="dropdown-container">
+                        <button class="icon-btn" id="notif-btn" aria-label="Notifications">
+                            <i class="fa-regular fa-bell"></i>
+                            <span class="badge badge-danger" id="notif-count">0</span>
+                        </button>
+                        <div class="dropdown-menu notif-dropdown" id="notif-dropdown">
+                            <div class="dropdown-header">
+                                <h4>Notifications</h4>
+                                <button class="btn btn-sm btn-text" id="mark-all-read">Mark all read</button>
+                            </div>
+                            <div class="notif-list" id="notif-list">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Profile -->
+                    <div class="dropdown-container">
+                        <div class="user-profile" id="profile-btn">
+                            <div class="emoji-avatar">👩‍⚕️</div>
+                            <span class="user-name desktop-only">Nurse Priya</span>
+                            <i class="fa-solid fa-chevron-down text-secondary desktop-only" style="font-size: 0.75rem;"></i>
+                        </div>
+                        <div class="dropdown-menu profile-dropdown" id="profile-dropdown">
+                            <a href="#" class="dropdown-item"><i class="fa-regular fa-user"></i> My Profile</a>
+                            <a href="#" class="dropdown-item"><i class="fa-solid fa-list-check"></i> My Tasks</a>
+                            <a href="#" class="dropdown-item"><i class="fa-regular fa-bell"></i> Notifications</a>
+                            <a href="#" class="dropdown-item"><i class="fa-solid fa-gear"></i> Settings</a>
+                            <hr class="dropdown-divider">
+                            <a href="#" class="dropdown-item text-danger"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-wrapper" id="page-content">
+                <!-- Dashboard Page View -->
+                <div id="dashboard-view">
+                    <!-- Stat Cards -->
+                    <div class="stats-grid">
+                        <div class="stat-card filter-card" data-filter="urgent" style="--card-color: var(--color-urgent);">
+                            <div class="stat-number" id="stat-urgent">0</div>
+                            <div class="stat-title">Urgent</div>
+                            <div class="stat-desc">Needs attention</div>
+                        </div>
+                        <div class="stat-card filter-card" data-filter="follow-up" style="--card-color: var(--color-followup);">
+                            <div class="stat-number" id="stat-followup">0</div>
+                            <div class="stat-title">Follow-up</div>
+                            <div class="stat-desc">Pending tasks</div>
+                        </div>
+                        <div class="stat-card filter-card" data-filter="on-track" style="--card-color: var(--color-ontrack);">
+                            <div class="stat-number" id="stat-ontrack">0</div>
+                            <div class="stat-title">On Track</div>
+                            <div class="stat-desc">Doing well</div>
+                        </div>
+                        <div class="stat-card filter-card active" data-filter="All" style="--card-color: var(--color-total);">
+                            <div class="stat-number" id="stat-total">0</div>
+                            <div class="stat-title">Total Patients</div>
+                            <div class="stat-desc">Under care</div>
+                        </div>
+                    </div>
+
+                    <!-- Patient Queue -->
+                    <div class="patient-queue-section">
+                        <div class="section-header">
+                            <h2>Patient Queue</h2>
+                            <div class="table-actions">
+                                <div class="search-box">
+                                    <i class="fa-solid fa-search"></i>
+                                    <input type="text" id="search-input" placeholder="Search patients, tasks...">
+                                </div>
+                                <button class="btn btn-outline" id="toggle-filter-panel">
+                                    <i class="fa-solid fa-filter"></i> Filter
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Filter Panel (Collapsible) -->
+                        <div class="filter-panel" id="filter-panel">
+                            <div class="filter-grid">
+                                <div class="form-group">
+                                    <label>Urgency</label>
+                                    <select id="filter-urgency">
+                                        <option value="All">All</option>
+                                        <option value="urgent">Urgent</option>
+                                        <option value="follow-up">Follow-up</option>
+                                        <option value="on-track">On Track</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Task Type</label>
+                                    <select id="filter-tasktype">
+                                        <option value="All">All</option>
+                                        <option value="Medication">Medication</option>
+                                        <option value="Lab Test">Lab Test</option>
+                                        <option value="Appointment">Appointment</option>
+                                        <option value="General">General</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Patient Status</label>
+                                    <select id="filter-status">
+                                        <option value="All">All</option>
+                                        <option value="Active">Active</option>
+                                        <option value="Post Discharge">Post Discharge</option>
+                                        <option value="Completed">Completed</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Sort By</label>
+                                    <select id="filter-sort">
+                                        <option value="Highest urgency">Highest urgency</option>
+                                        <option value="Most recent">Most recent</option>
+                                        <option value="Oldest">Oldest</option>
+                                        <option value="Patient name A-Z">Patient name A-Z</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="filter-actions">
+                                <span class="results-text" id="results-count">Showing 0 patients</span>
+                                <button class="btn btn-text" id="clear-filters">Clear Filters</button>
+                            </div>
+                        </div>
+                        
+                        <div class="patient-list" id="patient-list">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Patients View -->
+                <div id="patients-view" class="hidden">
+                    <div class="patient-queue-section" style="padding: 1.5rem;">
+                        <h2>All Patients Directory</h2>
+                        <div class="table-responsive mt-4">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Patient</th>
+                                        <th>ID</th>
+                                        <th>Condition</th>
+                                        <th>Status</th>
+                                        <th>Urgency</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="all-patients-tbody">
+                                    <!-- Populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tasks View -->
+                <div id="tasks-view" class="hidden">
+                    <div class="tasks-board">
+                        <div class="task-column">
+                            <div class="task-col-header">
+                                <h3>Pending</h3>
+                                <span class="badge badge-warning" id="count-pending">0</span>
+                            </div>
+                            <div class="task-list-col" id="tasks-pending"></div>
+                        </div>
+                        <div class="task-column">
+                            <div class="task-col-header">
+                                <h3>In Progress</h3>
+                                <span class="badge badge-primary" id="count-inprogress">0</span>
+                            </div>
+                            <div class="task-list-col" id="tasks-inprogress"></div>
+                        </div>
+                        <div class="task-column">
+                            <div class="task-col-header">
+                                <h3>Completed</h3>
+                                <span class="badge badge-success" id="count-completed">0</span>
+                            </div>
+                            <div class="task-list-col" id="tasks-completed"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lab View -->
+                <div id="lab-view" class="hidden">
+                    <div class="patient-queue-section" style="padding: 1.5rem;">
+                        <h2>Lab Coordination</h2>
+                        <div class="table-responsive mt-4">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Patient</th>
+                                        <th>Test Type</th>
+                                        <th>Date Ordered</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="lab-tbody">
+                                    <!-- Populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Appointments View -->
+                <div id="appointments-view" class="hidden">
+                    <div class="patient-queue-section" style="padding: 1.5rem;">
+                        <h2>Upcoming Appointments</h2>
+                        <div class="tasks-board mt-4" id="appointments-list">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Alerts View -->
+                <div id="alerts-view" class="hidden">
+                    <div class="patient-queue-section" style="padding: 1.5rem;">
+                        <h2>System & Patient Alerts</h2>
+                        <div class="task-list-col mt-4" id="alerts-page-list" style="max-width: 800px;">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Messages View -->
+                <div id="messages-view" class="hidden">
+                    <div class="messages-container">
+                        <div class="messages-sidebar" id="messages-sidebar">
+                            <!-- Populated by JS -->
+                        </div>
+                        <div class="messages-chat">
+                            <div class="chat-header"><h4>Select a conversation</h4></div>
+                            <div class="chat-body" style="text-align:center; padding: 4rem; color: var(--text-secondary);">
+                                <i class="fa-regular fa-comments" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                                <p>Select a message thread from the left to view the conversation</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reports View -->
+                <div id="reports-view" class="hidden">
+                    <div class="patient-queue-section" style="padding: 1.5rem;">
+                        <h2>Medical Reports & Analytics</h2>
+                        <div class="tasks-board mt-4" id="reports-list">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Placeholder for Settings -->
+                <div id="placeholder-page" class="hidden">
+                    <div class="empty-state">
+                        <i class="fa-solid fa-hammer"></i>
+                        <h2>Page Under Construction</h2>
+                        <p>This module is part of the AyuSync roadmap.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Patient Details Modal -->
+    <div class="modal-overlay" id="patient-modal">
+        <div class="modal modal-lg">
+            <div class="modal-header">
+                <div class="modal-title-group">
+                    <h3 id="modal-title">Patient Details</h3>
+                    <span id="modal-patient-id" class="text-secondary" style="font-size: 0.875rem;"></span>
+                </div>
+                <button class="icon-btn close-modal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <!-- Patient Overview Grid -->
+                <div class="details-grid">
+                    <div class="detail-section">
+                        <h4>Patient Overview</h4>
+                        <ul class="detail-list" id="modal-overview">
+                            <!-- Populated -->
+                        </ul>
+                    </div>
+                    <div class="detail-section">
+                        <h4>Current Status</h4>
+                        <ul class="detail-list" id="modal-status">
+                            <!-- Populated -->
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="detail-section mt-4">
+                    <h4>Active Tasks</h4>
+                    <div class="task-list" id="modal-tasks">
+                        <!-- Populated -->
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="modal-actions mt-4">
+                    <h4>Nurse Actions</h4>
+                    <div class="action-buttons">
+                        <button class="btn action-btn bg-urgent" data-action="urgent">Mark Urgent</button>
+                        <button class="btn action-btn bg-followup" data-action="follow-up">Mark Follow-up</button>
+                        <button class="btn action-btn bg-ontrack" data-action="on-track">Mark On Track</button>
+                        <button class="btn btn-outline"><i class="fa-solid fa-plus"></i> Add Task</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="#" class="nav-item active" data-page="dashboard">
+            <i class="fa-solid fa-house"></i>
+            <span>Home</span>
+        </a>
+        <a href="#" class="nav-item" data-page="patients">
+            <i class="fa-regular fa-user"></i>
+            <span>Patients</span>
+        </a>
+        <a href="#" class="nav-item" data-page="tasks">
+            <i class="fa-solid fa-list-check"></i>
+            <span>Tasks</span>
+        </a>
+        <a href="#" class="nav-item" data-page="lab">
+            <i class="fa-solid fa-flask"></i>
+            <span>Lab</span>
+        </a>
+        <a href="#" class="nav-item" data-page="appointments">
+            <i class="fa-regular fa-calendar"></i>
+            <span>Schedule</span>
+        </a>
+    </nav>
+
+    <!-- We use type="module" to import ES modules natively in the browser -->
+    <script type="module" src="src/main.js"></script>
+</body>
+</html>

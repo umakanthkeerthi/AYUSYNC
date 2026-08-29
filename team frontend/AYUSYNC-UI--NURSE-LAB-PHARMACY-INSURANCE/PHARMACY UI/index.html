@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AyuSync - Pharmacy Command Center</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- Sidebar Overlay -->
+    <div class="modal-overlay" id="sidebar-overlay" style="z-index: 90;"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo desktop-logo">
+            <div style="display:flex; align-items:center; gap:0.5rem;">
+                <span style="color: #f59e0b; font-size:1.5rem;"><i class="fa-solid fa-pills"></i></span>
+                <span style="font-size: 1.5rem; font-weight: 700; color: white;">AyuSync Pharmacy</span>
+            </div>
+            <button class="icon-btn" id="close-sidebar" style="color: white; display: none;"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+
+        <nav class="nav-menu">
+            <a href="/prescriptions" class="nav-item active" data-page="prescriptions"><i class="fa-solid fa-file-prescription"></i> <span>Prescriptions</span></a>
+            <a href="/refills" class="nav-item" data-page="refills"><i class="fa-solid fa-clock-rotate-left"></i> <span>Refills</span></a>
+            <a href="/deliveries" class="nav-item" data-page="deliveries"><i class="fa-solid fa-truck"></i> <span>Deliveries</span></a>
+            <a href="/inventory" class="nav-item" data-page="inventory"><i class="fa-solid fa-boxes-stacked"></i> <span>Inventory</span></a>
+            <a href="/reports" class="nav-item" data-page="reports"><i class="fa-regular fa-file-lines"></i> <span>Reports</span></a>
+            <a href="/settings" class="nav-item" data-page="settings" style="margin-top: auto;"><i class="fa-solid fa-gear"></i> <span>Settings</span></a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="top-header">
+            <div class="header-left" style="display:flex; align-items:center; gap:1rem;">
+                <button class="icon-btn mobile-menu-toggle" id="mobile-menu-toggle"><i class="fa-solid fa-bars"></i></button>
+                <div class="mobile-logo" style="color: #f59e0b; display:none;"><i class="fa-solid fa-pills"></i> AyuSync Pharmacy</div>
+                <div class="page-title desktop-only" id="page-title">Prescription Queue</div>
+            </div>
+            
+            <div class="header-right" style="display:flex; align-items:center; gap:1.5rem;">
+                <!-- Global Search -->
+                <div class="search-box desktop-only" style="background: white; border: 1px solid var(--border-color);">
+                    <i class="fa-solid fa-search text-secondary"></i>
+                    <input type="text" id="global-search" placeholder="Search Patient, Meds, ID...">
+                </div>
+                
+                <!-- Date Selector -->
+                <div class="date-selector desktop-only">
+                    Today <i class="fa-solid fa-chevron-down" style="font-size:0.75rem;"></i>
+                </div>
+                
+                <!-- Notifications -->
+                <div style="position:relative; cursor:pointer;" id="notif-btn">
+                    <button class="icon-btn"><i class="fa-regular fa-bell"></i></button>
+                    <span class="badge badge-danger" id="notif-count" style="position:absolute; top:-5px; right:-5px; padding:0.1rem 0.3rem; font-size:0.6rem;">0</span>
+                    
+                    <div id="notif-dropdown" class="hidden" style="position:absolute; top:120%; right:0; background:white; border:1px solid var(--border-color); border-radius:var(--radius-md); box-shadow:var(--shadow-md); width:300px; z-index:200;">
+                        <div style="padding:1rem; border-bottom:1px solid var(--border-color); font-weight:600;">Notifications</div>
+                        <div id="notif-list" style="max-height:300px; overflow-y:auto;"></div>
+                        <div style="padding:0.75rem; text-align:center; border-top:1px solid var(--border-color);"><a href="#" id="mark-all-read" style="color:var(--brand-active); text-decoration:none; font-size:0.85rem;">Mark all as read</a></div>
+                    </div>
+                </div>
+                
+                <!-- Profile -->
+                <div style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; position:relative;" id="profile-btn">
+                    <div style="font-size:1.5rem;">🧑‍⚕️</div>
+                    <div class="desktop-only" style="font-size:0.9rem; font-weight:600; color:var(--text-dark);">
+                        Pharmacist <i class="fa-solid fa-chevron-down" style="font-size:0.75rem; margin-left:0.25rem;"></i>
+                    </div>
+                    
+                    <div id="profile-dropdown" class="hidden" style="position:absolute; top:120%; right:0; background:white; border:1px solid var(--border-color); border-radius:var(--radius-md); box-shadow:var(--shadow-md); width:200px; z-index:200;">
+                        <a href="#" class="dropdown-item"><i class="fa-regular fa-user" style="width:20px;"></i> My Profile</a>
+                        <a href="#" class="dropdown-item"><i class="fa-solid fa-clipboard-check" style="width:20px;"></i> Work Queue</a>
+                        <a href="#" class="dropdown-item"><i class="fa-solid fa-gear" style="width:20px;"></i> Settings</a>
+                        <a href="#" class="dropdown-item text-danger"><i class="fa-solid fa-arrow-right-from-bracket" style="width:20px;"></i> Logout</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Prescriptions View (Dashboard) -->
+        <div id="prescriptions-view">
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card" id="card-new">
+                    <div class="stat-value" id="stat-new">0</div>
+                    <div class="stat-label">New Prescriptions</div>
+                </div>
+                <div class="stat-card" id="card-refills">
+                    <div class="stat-value" id="stat-refills">0</div>
+                    <div class="stat-label">Refills</div>
+                </div>
+                <div class="stat-card" id="card-delivery">
+                    <div class="stat-value" id="stat-delivery">0</div>
+                    <div class="stat-label">Delivery Pending</div>
+                </div>
+                <div class="stat-card urgent-card" id="card-urgent">
+                    <div class="stat-value text-danger" id="stat-urgent">0</div>
+                    <div class="stat-label">Urgent</div>
+                </div>
+            </div>
+
+            <!-- Prescription Queue -->
+            <div class="queue-container">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:1rem;">
+                    <div style="display:flex; align-items:center; gap:1rem;">
+                        <h2 class="section-title" style="margin:0;">Prescription Queue</h2>
+                        <span id="filter-count" class="badge badge-gray">0 records</span>
+                    </div>
+                    <div style="display:flex; gap:0.5rem; align-items:center;">
+                        <button class="btn btn-outline" id="btn-filter-toggle"><i class="fa-solid fa-filter"></i> Filter</button>
+                        <button class="btn btn-primary" id="btn-new-rx"><i class="fa-solid fa-plus"></i> New Rx</button>
+                    </div>
+                </div>
+                
+                <!-- Filter Panel -->
+                <div id="filter-panel" class="card hidden" style="padding: 1.5rem; margin-bottom: 1.5rem; background:white;">
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+                        <div>
+                            <label class="form-label">Status</label>
+                            <select class="form-control" id="filter-status">
+                                <option value="All">All</option>
+                                <option value="New">New</option>
+                                <option value="Verified">Verified</option>
+                                <option value="Preparing">Preparing</option>
+                                <option value="Ready">Ready</option>
+                                <option value="Dispensed">Dispensed</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="form-label">Urgency</label>
+                            <select class="form-control" id="filter-urgency">
+                                <option value="All">All</option>
+                                <option value="Urgent">Urgent</option>
+                                <option value="Priority">Priority</option>
+                                <option value="Routine">Routine</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="form-label">Risk Range: <span id="risk-val-display">0 - 100</span></label>
+                            <div style="display:flex; gap:0.5rem; align-items:center;">
+                                <input type="number" id="filter-min-risk" class="form-control" value="0" min="0" max="100" style="padding:0.4rem;">
+                                <span>-</span>
+                                <input type="number" id="filter-max-risk" class="form-control" value="100" min="0" max="100" style="padding:0.4rem;">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="form-label">Sort By</label>
+                            <select class="form-control" id="filter-sort">
+                                <option value="Newest">Newest First</option>
+                                <option value="Highest Risk">Highest Risk</option>
+                                <option value="Highest Urgency">Highest Urgency</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:1.5rem;">
+                        <button class="btn btn-outline" id="btn-clear-filters">Clear All</button>
+                        <button class="btn btn-primary" id="btn-apply-filters">Apply Filters</button>
+                    </div>
+                </div>
+
+                <!-- Desktop Table -->
+                <div class="table-card desktop-only-table">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Patient / ID</th>
+                                <th>Medications</th>
+                                <th>Urgency / Risk</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="queue-tbody"></tbody>
+                    </table>
+                </div>
+                
+                <!-- Mobile Cards -->
+                <div id="mobile-queue-container" class="mobile-only-cards"></div>
+            </div>
+        </div>
+
+        <!-- Refills View -->
+        <div id="refills-view" class="hidden">
+            <h2 class="section-title">Refill Requests</h2>
+            <div class="table-card desktop-only-table">
+                <table class="data-table">
+                    <thead><tr><th>Patient</th><th>Medication</th><th>Count</th><th>Date</th><th>Status</th><th>Action</th></tr></thead>
+                    <tbody id="refills-tbody"></tbody>
+                </table>
+            </div>
+            <div id="mobile-refills-container" class="mobile-only-cards"></div>
+        </div>
+
+        <!-- Deliveries View -->
+        <div id="deliveries-view" class="hidden">
+            <h2 class="section-title">Active Deliveries</h2>
+            <div class="table-card desktop-only-table">
+                <table class="data-table">
+                    <thead><tr><th>Delivery ID</th><th>Patient</th><th>Address</th><th>Date</th><th>Status</th><th>Action</th></tr></thead>
+                    <tbody id="deliveries-tbody"></tbody>
+                </table>
+            </div>
+            <div id="mobile-deliveries-container" class="mobile-only-cards"></div>
+        </div>
+
+        <!-- Inventory View -->
+        <div id="inventory-view" class="hidden">
+            <h2 class="section-title">Pharmacy Inventory</h2>
+            <div class="table-card desktop-only-table">
+                <table class="data-table">
+                    <thead><tr><th>Medicine</th><th>Category</th><th>Available</th><th>Expiry</th><th>Status</th></tr></thead>
+                    <tbody id="inventory-tbody"></tbody>
+                </table>
+            </div>
+            <div id="mobile-inventory-container" class="mobile-only-cards"></div>
+        </div>
+
+        <!-- Reports View -->
+        <div id="reports-view" class="hidden">
+            <h2 class="section-title">Pharmacy Analytics</h2>
+            
+            <h3 style="font-size:1.05rem; font-weight:600; margin: 1.5rem 0 1rem;">Prescriptions</h3>
+            <div class="stats-grid">
+                <div class="stat-card"><div class="stat-value" id="rep-rx-total">0</div><div class="stat-label">Total</div></div>
+                <div class="stat-card"><div class="stat-value text-danger" id="rep-rx-new">0</div><div class="stat-label">New</div></div>
+                <div class="stat-card"><div class="stat-value" id="rep-rx-dispensed" style="color:var(--stat-green);">0</div><div class="stat-label">Dispensed</div></div>
+                <div class="stat-card"><div class="stat-value" id="rep-rx-urgent" style="color:var(--stat-orange);">0</div><div class="stat-label">Urgent</div></div>
+            </div>
+
+            <h3 style="font-size:1.05rem; font-weight:600; margin: 1.5rem 0 1rem;">Refills & Deliveries</h3>
+            <div class="stats-grid">
+                <div class="stat-card"><div class="stat-value" id="rep-rf-req">0</div><div class="stat-label">Refills Requested</div></div>
+                <div class="stat-card"><div class="stat-value" id="rep-rf-app" style="color:var(--stat-green);">0</div><div class="stat-label">Refills Approved</div></div>
+                <div class="stat-card"><div class="stat-value" id="rep-dl-pend" style="color:var(--stat-orange);">0</div><div class="stat-label">Deliveries Pending</div></div>
+                <div class="stat-card"><div class="stat-value" id="rep-dl-del" style="color:var(--stat-green);">0</div><div class="stat-label">Deliveries Completed</div></div>
+            </div>
+
+            <h3 style="font-size:1.05rem; font-weight:600; margin: 1.5rem 0 1rem;">Inventory Health</h3>
+            <div class="stats-grid">
+                <div class="stat-card"><div class="stat-value" id="rep-inv-total">0</div><div class="stat-label">Total Medicines</div></div>
+                <div class="stat-card"><div class="stat-value" id="rep-inv-low" style="color:var(--stat-orange);">0</div><div class="stat-label">Low Stock</div></div>
+                <div class="stat-card"><div class="stat-value text-danger" id="rep-inv-out">0</div><div class="stat-label">Out of Stock</div></div>
+                <div class="stat-card"><div class="stat-value" id="rep-inv-exp" style="color:var(--stat-purple);">0</div><div class="stat-label">Expiring Soon</div></div>
+            </div>
+        </div>
+        
+        <!-- Settings View -->
+        <div id="settings-view" class="hidden">
+            <h2 class="section-title">Settings & Preferences</h2>
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:1.5rem;">
+                <div class="card p-4">
+                    <h3 style="font-size:1.05rem; font-weight:600; margin-bottom:1rem; border-bottom:1px solid var(--border-color); padding-bottom:0.5rem;">Profile</h3>
+                    <div class="form-group"><label class="form-label">Name</label><input type="text" class="form-control" value="Pharmacist" disabled></div>
+                    <div class="form-group"><label class="form-label">Role</label><input type="text" class="form-control" value="Lead Pharmacist" disabled></div>
+                </div>
+                <div class="card p-4">
+                    <h3 style="font-size:1.05rem; font-weight:600; margin-bottom:1rem; border-bottom:1px solid var(--border-color); padding-bottom:0.5rem;">Notifications</h3>
+                    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem;">
+                        <span style="font-size:0.9rem; font-weight:500;">Urgent Prescription Alerts</span>
+                        <input type="checkbox" id="set-notif-urgent" checked style="width:18px; height:18px; cursor:pointer;">
+                    </div>
+                    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem;">
+                        <span style="font-size:0.9rem; font-weight:500;">Low Stock Alerts</span>
+                        <input type="checkbox" id="set-notif-stock" checked style="width:18px; height:18px; cursor:pointer;">
+                    </div>
+                    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem;">
+                        <span style="font-size:0.9rem; font-weight:500;">Email Daily Summary</span>
+                        <input type="checkbox" id="set-notif-email" style="width:18px; height:18px; cursor:pointer;">
+                    </div>
+                    <button class="btn btn-primary" id="save-settings-btn" style="width:100%; margin-top:1rem;">Save Preferences</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal: New Prescription -->
+    <div class="modal-overlay" id="new-rx-modal">
+        <div class="modal" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2>Create Prescription</h2>
+                <button class="icon-btn close-modal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="new-rx-form">
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem;">
+                        <div class="form-group">
+                            <label class="form-label">Patient Name *</label>
+                            <input type="text" class="form-control" id="rx-patient" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Prescribing Doctor *</label>
+                            <input type="text" class="form-control" id="rx-doctor" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Medications (Comma separated) *</label>
+                        <textarea class="form-control" id="rx-meds" rows="2" placeholder="e.g. Metformin 500mg, Atorvastatin 20mg" required></textarea>
+                    </div>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem;">
+                        <div class="form-group">
+                            <label class="form-label">Urgency</label>
+                            <select class="form-control" id="rx-urgency">
+                                <option value="Routine">Routine</option>
+                                <option value="Priority">Priority</option>
+                                <option value="Urgent">Urgent</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Patient Risk Score</label>
+                            <input type="number" class="form-control" id="rx-risk" min="0" max="100" value="0">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline close-modal">Cancel</button>
+                <button class="btn btn-primary" id="save-rx-btn">Create Prescription</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Dispense / Workflow -->
+    <div class="modal-overlay" id="workflow-modal">
+        <div class="modal" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2 id="wf-title">Process Prescription</h2>
+                <button class="icon-btn close-modal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div style="background:var(--brand-bg); padding:1rem; border-radius:var(--radius-sm); margin-bottom:1.5rem;">
+                    <p><strong>Patient:</strong> <span id="wf-patient"></span></p>
+                    <p><strong>Medications:</strong> <span id="wf-meds" style="color:var(--brand-active); font-weight:600;"></span></p>
+                    <p style="margin-top:0.5rem;"><span id="wf-urgency"></span> <span id="wf-status"></span></p>
+                </div>
+                <p id="wf-prompt" style="font-weight:500;"></p>
+                <input type="hidden" id="wf-id">
+                <input type="hidden" id="wf-next-status">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline close-modal">Cancel</button>
+                <button class="btn btn-primary" id="confirm-wf-btn">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Update Stock -->
+    <div class="modal-overlay" id="stock-modal">
+        <div class="modal" style="max-width: 400px;">
+            <div class="modal-header">
+                <h2>Update Inventory</h2>
+                <button class="icon-btn close-modal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom:1rem;"><strong>Medicine:</strong> <span id="stock-med-name"></span></p>
+                <div class="form-group">
+                    <label class="form-label">Current Available: <span id="stock-current"></span></label>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Adjustment Quantity (+/-)</label>
+                    <input type="number" id="stock-change" class="form-control" value="0" placeholder="E.g. 50 or -10">
+                    <small class="text-secondary">Use negative numbers to remove stock.</small>
+                </div>
+                <input type="hidden" id="stock-id">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline close-modal">Cancel</button>
+                <button class="btn btn-primary" id="save-stock-btn">Update Stock</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: View Details / Timeline -->
+    <div class="modal-overlay" id="timeline-modal">
+        <div class="modal" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2>Tracking Details</h2>
+                <button class="icon-btn close-modal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body" id="timeline-content"></div>
+            <div class="modal-footer">
+                <button class="btn btn-outline close-modal">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container"></div>
+    <script type="module" src="src/main.js"></script>
+</body>
+</html>

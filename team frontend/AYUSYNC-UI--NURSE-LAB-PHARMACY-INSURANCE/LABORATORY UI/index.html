@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AyuSync - Lab Command Center</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- Sidebar Overlay -->
+    <div class="modal-overlay" id="sidebar-overlay" style="z-index: 90;"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo desktop-logo">
+            <div style="display:flex; align-items:center; gap:0.5rem;">
+                <span style="color: #10b981; font-size:1.5rem;"><i class="fa-solid fa-flask"></i></span>
+                <span style="font-size: 1.5rem; font-weight: 700; color: white;">AyuSync Lab</span>
+            </div>
+            <button class="icon-btn" id="close-sidebar" style="color: white; display: none;"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+
+        <nav class="nav-menu">
+            <a href="#" class="nav-item active" data-page="dashboard"><i class="fa-solid fa-clipboard-check"></i> <span>Work Queue</span></a>
+            <a href="#" class="nav-item" data-page="samples"><i class="fa-solid fa-user-injured"></i> <span>Samples</span></a>
+            <a href="#" class="nav-item" data-page="results"><i class="fa-solid fa-file-waveform"></i> <span>Results</span></a>
+            <a href="#" class="nav-item" data-page="reports"><i class="fa-regular fa-file-lines"></i> <span>Reports</span></a>
+            <a href="#" class="nav-item" data-page="analytics"><i class="fa-solid fa-chart-line"></i> <span>Analytics</span></a>
+            <a href="#" class="nav-item" data-page="settings" style="margin-top: auto;"><i class="fa-solid fa-gear"></i> <span>Settings</span></a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="top-header">
+            <div class="header-left" style="display:flex; align-items:center; gap:1rem;">
+                <button class="icon-btn mobile-menu-toggle" id="mobile-menu-toggle"><i class="fa-solid fa-bars"></i></button>
+                <div class="mobile-logo" style="color: #10b981; display:none;"><i class="fa-solid fa-flask"></i> AyuSync Lab</div>
+                <div class="page-title desktop-only" id="page-title">Lab Work Queue</div>
+            </div>
+            
+            <div class="header-right" style="display:flex; align-items:center; gap:1.5rem;">
+                <!-- Global Search -->
+                <div class="search-box desktop-only" style="background: white; border: 1px solid var(--border-color);">
+                    <i class="fa-solid fa-search text-secondary"></i>
+                    <input type="text" id="global-search" placeholder="Search Patient, ID, Test...">
+                </div>
+                
+                <!-- Date Selector (from mockup) -->
+                <div class="date-selector desktop-only">
+                    May 23, 2024 <i class="fa-solid fa-chevron-down" style="font-size:0.75rem;"></i>
+                </div>
+                
+                <!-- Notifications -->
+                <div style="position:relative; cursor:pointer;" id="notif-btn">
+                    <button class="icon-btn"><i class="fa-regular fa-bell"></i></button>
+                    <span class="badge badge-danger" style="position:absolute; top:-5px; right:-5px; padding:0.1rem 0.3rem; font-size:0.6rem;">3</span>
+                </div>
+                
+                <!-- Profile -->
+                <div style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; position:relative;" id="profile-btn">
+                    <div style="font-size:1.5rem;">🧑‍🔬</div>
+                    <div class="desktop-only" style="font-size:0.9rem; font-weight:600; color:var(--text-dark);">
+                        Lab Technician <i class="fa-solid fa-chevron-down" style="font-size:0.75rem; margin-left:0.25rem;"></i>
+                    </div>
+                    
+                    <!-- Profile Dropdown -->
+                    <div id="profile-dropdown" class="hidden" style="position:absolute; top:120%; right:0; background:white; border:1px solid var(--border-color); border-radius:var(--radius-md); box-shadow:var(--shadow-md); width:200px; z-index:200;">
+                        <a href="#" class="dropdown-item" style="display:block; padding:0.75rem 1rem; color:var(--text-dark); text-decoration:none; border-bottom:1px solid var(--border-color);"><i class="fa-regular fa-user" style="width:20px;"></i> My Profile</a>
+                        <a href="#" class="dropdown-item" style="display:block; padding:0.75rem 1rem; color:var(--text-dark); text-decoration:none; border-bottom:1px solid var(--border-color);"><i class="fa-solid fa-clipboard-check" style="width:20px;"></i> My Work Queue</a>
+                        <a href="#" class="dropdown-item" style="display:block; padding:0.75rem 1rem; color:var(--text-dark); text-decoration:none; border-bottom:1px solid var(--border-color);"><i class="fa-regular fa-bell" style="width:20px;"></i> Notifications</a>
+                        <a href="#" class="dropdown-item" style="display:block; padding:0.75rem 1rem; color:var(--text-dark); text-decoration:none; border-bottom:1px solid var(--border-color);"><i class="fa-solid fa-gear" style="width:20px;"></i> Settings</a>
+                        <a href="#" class="dropdown-item" style="display:block; padding:0.75rem 1rem; color:var(--color-danger); text-decoration:none;"><i class="fa-solid fa-arrow-right-from-bracket" style="width:20px;"></i> Logout</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- View Containers -->
+        <div id="dashboard-view">
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card orange" id="card-pending" style="cursor:pointer;">
+                    <div class="stat-value" id="stat-pending">0</div>
+                    <div class="stat-label">Pending</div>
+                </div>
+                <div class="stat-card blue" id="card-collected" style="cursor:pointer;">
+                    <div class="stat-value" id="stat-collected">0</div>
+                    <div class="stat-label">Collected</div>
+                </div>
+                <div class="stat-card purple" id="card-processing" style="cursor:pointer;">
+                    <div class="stat-value" id="stat-processing">0</div>
+                    <div class="stat-label">Processing</div>
+                </div>
+                <div class="stat-card red" id="card-critical" style="cursor:pointer;">
+                    <div class="stat-value" id="stat-critical">0</div>
+                    <div class="stat-label">Critical <span>Need Review</span></div>
+                </div>
+            </div>
+
+            <!-- Schedule Table / Work Queue -->
+            <div class="schedule-container">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:1rem;">
+                    <h2 class="section-title" style="margin:0;">Today's Schedule</h2>
+                    <div style="display:flex; gap:0.5rem; align-items:center;">
+                        <button class="btn btn-outline btn-sm" id="btn-filter-toggle"><i class="fa-solid fa-filter"></i> Filter</button>
+                        <span id="filter-count" class="text-secondary" style="font-size:0.85rem;">Showing all records</span>
+                    </div>
+                </div>
+                
+                <!-- Filter Panel -->
+                <div id="filter-panel" class="card hidden" style="padding: 1.5rem; margin-bottom: 1.5rem; background:white;">
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+                        <div>
+                            <label class="form-label">Status</label>
+                            <select class="form-control" id="filter-status">
+                                <option value="All">All</option>
+                                <option value="Scheduled">Scheduled</option>
+                                <option value="Pending">Pending</option>
+                                <option value="Collected">Collected</option>
+                                <option value="Processing">Processing</option>
+                                <option value="Completed">Completed</option>
+                                <option value="Critical">Critical</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="form-label">Urgency</label>
+                            <select class="form-control" id="filter-urgency">
+                                <option value="All">All</option>
+                                <option value="Urgent">Urgent</option>
+                                <option value="Priority">Priority</option>
+                                <option value="Routine">Routine</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="form-label">Risk Range: <span id="risk-val-display">0 - 100</span></label>
+                            <div style="display:flex; gap:0.5rem; align-items:center;">
+                                <input type="number" id="filter-min-risk" class="form-control" value="0" min="0" max="100" style="padding:0.4rem;">
+                                <span>-</span>
+                                <input type="number" id="filter-max-risk" class="form-control" value="100" min="0" max="100" style="padding:0.4rem;">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="form-label">Sort By</label>
+                            <select class="form-control" id="filter-sort">
+                                <option value="Latest Collection">Latest Collection</option>
+                                <option value="Earliest Collection">Earliest Collection</option>
+                                <option value="Highest Risk">Highest Risk</option>
+                                <option value="Patient Name A-Z">Patient Name A-Z</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:1.5rem;">
+                        <button class="btn btn-outline" id="btn-clear-filters">Clear All</button>
+                        <button class="btn btn-primary" id="btn-apply-filters">Apply Filters</button>
+                    </div>
+                </div>
+
+                <!-- Desktop Table View -->
+                <div class="table-card desktop-only-table">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Patient</th>
+                                <th>Test</th>
+                                <th>Collection Time</th>
+                                <th>Urgency</th>
+                                <th>Risk Score</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="work-queue-tbody">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Mobile Card View -->
+                <div id="mobile-queue-container" class="mobile-only-cards" style="display:flex; flex-direction:column; gap:1rem; display:none;">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+            
+            <!-- Alert Banner -->
+            <div class="alert-banner" id="critical-banner">
+                <div class="alert-content">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <span id="critical-banner-text">0 results require immediate review</span>
+                </div>
+                <button class="alert-btn" onclick="document.getElementById('card-critical').click()">View Now</button>
+            </div>
+        </div>
+        
+        <!-- Other Views (Stubs to be populated dynamically) -->
+        <div id="samples-view" class="hidden">
+            <h2 class="section-title">All Samples</h2>
+            <div class="table-card table-responsive">
+                <table class="data-table">
+                    <thead><tr><th>Sample ID</th><th>Patient</th><th>Test</th><th>Type</th><th>Status</th><th>Action</th></tr></thead>
+                    <tbody id="samples-tbody"></tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div id="results-view" class="hidden">
+            <h2 class="section-title">Completed Results</h2>
+            <div class="table-card table-responsive">
+                <table class="data-table">
+                    <thead><tr><th>Sample ID</th><th>Patient</th><th>Test</th><th>Result</th><th>Status</th><th>Action</th></tr></thead>
+                    <tbody id="results-tbody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="reports-view" class="hidden">
+            <h2 class="section-title">Laboratory Analytics & Reports</h2>
+            <div class="stats-grid" id="analytics-grid">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+        <div id="analytics-view" class="hidden"><p style="padding:2rem;">Redirecting to Reports...</p></div>
+        <div id="settings-view" class="hidden"><h2 class="section-title">Settings</h2><p>Settings coming soon.</p></div>
+    </main>
+
+    <!-- Modal: Collect Sample -->
+    <div class="modal-overlay" id="collect-modal">
+        <div class="modal" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2 style="font-size: 1.25rem;">Collect Sample</h2>
+                <button class="icon-btn" id="close-collect-modal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-secondary mb-4">Please confirm sample collection details below.</p>
+                <div style="background:var(--brand-bg); padding:1rem; border-radius:var(--radius-sm); margin-bottom:1.5rem;">
+                    <p><strong>Patient:</strong> <span id="col-patient"></span></p>
+                    <p><strong>Test:</strong> <span id="col-test" style="color:var(--stat-blue); font-weight:600;"></span></p>
+                    <p><strong>Type:</strong> <span id="col-type"></span></p>
+                    <p><strong>Collection Time:</strong> <span id="col-time"></span></p>
+                </div>
+                <input type="hidden" id="col-record-id">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="cancel-collect-btn">Cancel</button>
+                <button class="btn btn-primary" id="save-collect-btn">Confirm Collection</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Enter Results -->
+    <div class="modal-overlay" id="results-modal">
+        <div class="modal" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2 style="font-size: 1.25rem;">Enter Lab Result</h2>
+                <button class="icon-btn" id="close-results-modal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div style="background: var(--brand-bg); padding: 1rem; border-radius: var(--radius-sm); margin-bottom: 2rem; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+                    <div>
+                        <div class="text-secondary" style="font-size:0.8rem;">Patient</div>
+                        <div style="font-weight:600;" id="res-patient-name">Name</div>
+                    </div>
+                    <div>
+                        <div class="text-secondary" style="font-size:0.8rem;">Sample ID</div>
+                        <div style="font-weight:600;" id="res-order-id">ORD-XXX</div>
+                    </div>
+                    <div>
+                        <div class="text-secondary" style="font-size:0.8rem;">Test Panel</div>
+                        <div style="font-weight:600; color: var(--brand-active);" id="res-panel">Panel Name</div>
+                    </div>
+                </div>
+                
+                <input type="hidden" id="res-order-id-hidden">
+
+                <div class="form-group">
+                    <label class="form-label">Result Value <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="res-value" placeholder="e.g. 14.5">
+                </div>
+                
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1.5rem;">
+                    <div class="form-group">
+                        <label class="form-label">Unit</label>
+                        <input type="text" class="form-control" id="res-unit" placeholder="e.g. g/dL">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Reference Range</label>
+                        <input type="text" class="form-control" id="res-range" placeholder="e.g. 12.0 - 15.5">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Result Status</label>
+                    <select class="form-control" id="res-status">
+                        <option value="Normal">Normal</option>
+                        <option value="Abnormal">Abnormal</option>
+                        <option value="Critical" style="color:var(--color-danger); font-weight:600;">Critical</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Technician Notes</label>
+                    <textarea class="form-control" id="res-notes" rows="3" placeholder="Enter any specific observations or issues with the specimen..."></textarea>
+                </div>
+                <span id="res-error" class="text-danger hidden" style="font-size:0.85rem;">Please enter a result value.</span>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="cancel-results-btn">Cancel</button>
+                <button class="btn btn-primary" id="save-results-btn">Submit Result</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: View Details / Timeline -->
+    <div class="modal-overlay" id="timeline-modal">
+        <div class="modal" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2 style="font-size: 1.25rem;">Sample Details</h2>
+                <button class="icon-btn" id="close-timeline-modal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body" id="timeline-content">
+                <!-- Rendered by JS -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="done-timeline-btn">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <script type="module" src="src/main.js"></script>
+</body>
+</html>
