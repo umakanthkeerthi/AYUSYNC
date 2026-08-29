@@ -1,0 +1,23 @@
+{
+  "name": "ayusync-caregiver-ui",
+  "version": "1.0.0",
+  "description": "Mobile-First Caregiver Interface Web App in TypeScript for AyuSync Health System",
+  "main": "index.html",
+  "scripts": {
+    "build": "npx tsc",
+    "dev": "npx tsc && npx serve -p 3001",
+    "start": "npx serve -p 3001"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  },
+  "keywords": [
+    "caregiver-ui",
+    "mobile-first",
+    "typescript",
+    "ayusync",
+    "healthcare-monitoring"
+  ],
+  "author": "Antigravity AI",
+  "license": "MIT"
+}

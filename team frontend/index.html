@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AyuSync - Portals</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      background-color: #f4f7f6;
+      color: #333;
+    }
+    h1 {
+      color: #2c3e50;
+      margin-bottom: 2rem;
+    }
+    .portal-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      width: 100%;
+      max-width: 800px;
+      padding: 0 2rem;
+    }
+    .portal-card {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      text-align: center;
+      text-decoration: none;
+      color: #2c3e50;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      transition: transform 0.2s, box-shadow 0.2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+    .portal-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+    }
+    .portal-card h2 {
+      margin: 0;
+      font-size: 1.25rem;
+    }
+    .icon {
+      font-size: 3rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>AyuSync Health System</h1>
+  <div class="portal-grid">
+    <a href="/patient/" class="portal-card">
+      <div class="icon">🏥</div>
+      <h2>Patient Portal</h2>
+    </a>
+    <a href="/caregiver/" class="portal-card">
+      <div class="icon">❤️</div>
+      <h2>Caregiver Portal</h2>
+    </a>
+    <a href="/driver/" class="portal-card">
+      <div class="icon">🚑</div>
+      <h2>Driver Portal</h2>
+    </a>
+    <a href="/nurse/" class="portal-card">
+      <div class="icon">👩‍⚕️</div>
+      <h2>Nurse Portal</h2>
+    </a>
+  </div>
+</body>
+</html>

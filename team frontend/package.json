@@ -1,0 +1,15 @@
+{
+  "name": "ayusync-monorepo",
+  "version": "1.0.0",
+  "description": "Vercel root configuration for AyuSync UIs",
+  "scripts": {
+    "compile": "npm run build:patient && npm run build:caregiver && npm run build:driver",
+    "build:patient": "cd \"patient ui\" && npm install && npm run build",
+    "build:caregiver": "cd \"caregiver ui\" && npm install && npm run build",
+    "build:driver": "cd \"Driver ui\" && npm install && npm run build"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "private": true
+}

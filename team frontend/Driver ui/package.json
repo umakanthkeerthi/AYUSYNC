@@ -1,0 +1,16 @@
+{
+  "name": "ayusync-driver-ui",
+  "version": "1.0.0",
+  "description": "CareOS Ambulance Driver Dashboard Web Application",
+  "main": "index.html",
+  "scripts": {
+    "build": "npx tsc",
+    "dev": "npx tsc && npx serve -l 3002",
+    "start": "npx serve -l 3002"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  },
+  "author": "Antigravity AI",
+  "license": "MIT"
+}

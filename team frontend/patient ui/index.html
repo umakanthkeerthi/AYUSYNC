@@ -1,0 +1,1779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>AyuSync - Patient Recovery Portal</title>
+  <meta name="description" content="AyuSync Mobile-First Patient Interface for managing recovery plans, medications, doctor appointments, lab tests, and AI medical advice.">
+  <link rel="stylesheet" href="styles.css?v=2">
+</head>
+<body>
+
+  <!-- Responsive Layout Wrapper (Web Desktop + Mobile App) -->
+  <div class="app-layout">
+
+    <!-- Desktop Navigation Sidebar Rail (Visible on > 768px Desktop Web Screens) -->
+    <aside class="desktop-sidebar">
+      <div class="sidebar-logo">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+        <span>AyuSync</span>
+      </div>
+
+      <div class="sidebar-user-badge">
+        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" alt="Rahul Avatar" class="sidebar-user-img">
+        <div>
+          <div class="sidebar-user-name">Rahul Kumar</div>
+          <div class="sidebar-user-role">Patient ID #AYU-98421</div>
+        </div>
+      </div>
+
+      <nav class="sidebar-menu">
+        <button class="sidebar-link nav-tab active" data-tab="home">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          <span data-i18n="tab_home">Home</span>
+        </button>
+
+        <button class="sidebar-link nav-tab" data-tab="plan">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/></svg>
+          <span data-i18n="tab_plan">Today's Plan</span>
+        </button>
+
+        <button class="sidebar-link nav-tab" data-tab="medications">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/><path d="m8.5 8.5 7 7"/></svg>
+          <span data-i18n="quick_meds">Medications</span>
+        </button>
+
+        <button class="sidebar-link nav-tab" data-tab="appointments">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+          <span data-i18n="quick_appts">Appointments</span>
+        </button>
+
+        <button class="sidebar-link nav-tab" data-tab="tests">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55A2 2 0 0 0 6.51 23.5h10.98a2 2 0 0 0 1.79-2.95l-5.069-10.127A2 2 0 0 1 14 9.527V2"/><line x1="8.5" y1="2" x2="15.5" y2="2"/></svg>
+          <span data-i18n="quick_tests">Lab Tests</span>
+        </button>
+
+        <button class="sidebar-link nav-tab" data-tab="insurance">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
+          <span data-i18n="tab_insurance">Health Insurance</span>
+        </button>
+
+        <button class="sidebar-link nav-tab" data-tab="chat">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <span data-i18n="tab_chat">AI Chat</span>
+        </button>
+
+        <button class="sidebar-link nav-tab" data-tab="reports">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          <span data-i18n="tab_reports">Reports</span>
+        </button>
+
+        <button class="sidebar-link nav-tab" data-tab="profile">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <span data-i18n="tab_profile">Profile & Vitals</span>
+        </button>
+      </nav>
+    </aside>
+
+    <!-- Mobile / Desktop Main Viewport Container Shell -->
+    <div class="app-container" id="appContainer">
+
+    <!-- App Top Navigation Header -->
+    <header class="app-header">
+      <button class="icon-btn" id="openDrawerBtn" aria-label="Open Menu">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+
+      <div class="brand-logo-badge">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+        <span>AyuSync</span>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <button class="icon-btn" id="openLocationPermissionBtn" aria-label="Location Permission" title="Live Location Status" style="position: relative;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span class="location-badge-dot hidden" id="locationBadgeDot"></span>
+        </button>
+
+        <button class="icon-btn" id="openNotifBtn" aria-label="Notifications" title="View Notifications">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+          <span class="notification-badge" id="notifBadgeDot"></span>
+        </button>
+      </div>
+    </header>
+
+    <!-- MAIN SCROLLABLE CONTENT AREA -->
+    <main class="main-content">
+
+      <!-- ===================================================================
+           TAB 1: HOME PAGE (EXACT MATCH TO PROVIDED SCREENSHOT)
+           =================================================================== -->
+      <section class="page-view active" id="view-home">
+        
+        <!-- Patient Greeting Banner (SHOWS ONLY ON HOME PAGE) -->
+        <div class="user-greeting">
+          <div class="greeting-text">
+            <div class="subtitle" data-i18n="greeting_sub">Good morning,</div>
+            <div class="user-name"><span data-i18n="user_name">Rahul Kumar</span> <span style="font-size: 1.4rem;">👋</span></div>
+          </div>
+          <div class="user-avatar-wrap" id="userAvatarBtn" title="View Profile">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" alt="Rahul Kumar Profile">
+          </div>
+        </div>
+
+        <!-- Recovery Status Card -->
+        <div class="recovery-card" id="recoveryCard">
+          <div class="recovery-info">
+            <h3 data-i18n="recovery_status_title">Recovery Status</h3>
+            <div class="status-heading" data-i18n="recovery_on_track">You're on track</div>
+            <p data-i18n="recovery_sub">Keep following your plan</p>
+          </div>
+          <div class="progress-ring-container">
+            <svg width="80" height="80" viewBox="0 0 80 80">
+              <circle class="progress-ring-circle-bg" cx="40" cy="40" r="35" stroke-width="6.5" fill="transparent"/>
+              <circle class="progress-ring-circle" id="homeProgressRing" cx="40" cy="40" r="35" stroke-width="6.5" fill="transparent"/>
+            </svg>
+            <div class="progress-text" id="homeProgressPercent">85<span>%</span></div>
+          </div>
+        </div>
+
+        <!-- Today's Plan Timeline -->
+        <div>
+          <div class="section-header" style="margin-top: 14px;">
+            <div class="section-title" data-i18n="todays_plan">Today's Plan</div>
+            <a class="see-all-link" id="seeAllPlanBtn" data-i18n="see_all">See all</a>
+          </div>
+
+          <div class="timeline-card-list">
+            
+            <!-- 8:00 AM Medicine Task (Checked) -->
+            <div class="timeline-item" id="task-meds-1">
+              <div class="timeline-time-badge">
+                <div class="item-icon-box icon-blue">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/><path d="m8.5 8.5 7 7"/></svg>
+                </div>
+                <span>8:00 AM</span>
+              </div>
+              <div class="timeline-details">
+                <div class="title" data-i18n="medicine">Medicine</div>
+                <div class="subtitle" data-i18n="two_tablets">2 tablets</div>
+              </div>
+              <div class="status-action-icon" style="display: flex; align-items: center; gap: 8px;">
+                <button class="check-circle-btn" id="checkBtn1" aria-label="Mark Complete">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                </button>
+                <button class="accessible-arrow-btn" id="medicineCardArrowBtn" aria-label="Toggle Next Medication Details" aria-expanded="false" title="Toggle Next Medication Details" role="button">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Downward Popable Drawer (Compact Box & Green Tick Mark Toggle) -->
+            <div class="popable-meds-container home-inline" id="homeMedsAccordion">
+              <!-- Time Validation Alert Toast -->
+              <div class="time-alert-banner" id="homeMedsTimeAlert" style="display: none;">
+                <div class="alert-icon" id="homeAlertIcon">⚠️</div>
+                <div class="alert-text">
+                  <strong id="homeAlertTitle">Cannot Log Medication Early!</strong>
+                  <p id="homeMedsTimeAlertMsg">Metoprolol 25mg is scheduled for 9:00 PM. Recorded time cannot be earlier than scheduled time.</p>
+                </div>
+                <button class="close-alert-btn" id="closeHomeAlertBtn">✕</button>
+              </div>
+
+              <!-- All Today's Required Medications List -->
+              <div class="popable-content" id="homeMedsContent">
+                
+                <!-- Med 1: Ecosprin 75mg (Scheduled 8:00 AM - Morning Sunrise) -->
+                <div class="compact-med-popdown" id="homeEcosprinRow" data-scheduled-hour="8" data-scheduled-name="Ecosprin 75mg" data-scheduled-time="8:00 AM">
+                  <div class="compact-med-line">
+                    <span class="med-text-single">Ecosprin 75mg (1 Tablet after breakfast) • <strong>8:00 AM 🌅</strong></span>
+                    <button class="green-tick-toggle-btn on" id="tickBtnEcosprin" aria-label="Toggle Ecosprin Taken" title="Toggle Dose Taken" role="switch" aria-checked="true">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    </button>
+                  </div>
+                  <div class="compact-time-row">
+                    <span class="time-label">⏰ Record Time:</span>
+                    <input type="time" class="compact-time-input" id="timeInputEcosprin" value="08:05" aria-label="Select Ecosprin time taken">
+                    <span id="statusEcosprin" class="compact-status-tag badge-green">✓ Taken at 8:05 AM</span>
+                  </div>
+                </div>
+
+                <div class="compact-divider"></div>
+
+                <!-- Med 2: Atorvastatin 10mg (Scheduled 8:00 AM - Morning Sunrise) -->
+                <div class="compact-med-popdown" id="homeAtorvastatinRow" data-scheduled-hour="8" data-scheduled-name="Atorvastatin 10mg" data-scheduled-time="8:00 AM">
+                  <div class="compact-med-line">
+                    <span class="med-text-single">Atorvastatin 10mg (1 Tablet morning) • <strong>8:00 AM 🌅</strong></span>
+                    <button class="green-tick-toggle-btn on" id="tickBtnAtorvastatin" aria-label="Toggle Atorvastatin Taken" title="Toggle Dose Taken" role="switch" aria-checked="true">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    </button>
+                  </div>
+                  <div class="compact-time-row">
+                    <span class="time-label">⏰ Record Time:</span>
+                    <input type="time" class="compact-time-input" id="timeInputAtorvastatin" value="08:05" aria-label="Select Atorvastatin time taken">
+                    <span id="statusAtorvastatin" class="compact-status-tag badge-green">✓ Taken at 8:05 AM</span>
+                  </div>
+                </div>
+
+                <div class="compact-divider"></div>
+
+                <!-- Med 3: Paracetamol 500mg (Scheduled 12:00 PM - Afternoon Full Sun) -->
+                <div class="compact-med-popdown" id="homeParacetamolRow" data-scheduled-hour="12" data-scheduled-name="Paracetamol 500mg" data-scheduled-time="12:00 PM">
+                  <div class="compact-med-line">
+                    <span class="med-text-single">Paracetamol 500mg (1 Tablet after lunch) • <strong>12:00 PM ☀️</strong></span>
+                    <button class="green-tick-toggle-btn" id="tickBtnParacetamol" aria-label="Toggle Paracetamol Taken" title="Toggle Dose Taken (12:00 PM)" role="switch" aria-checked="false">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    </button>
+                  </div>
+                  <div class="compact-time-row">
+                    <span class="time-label">⏰ Record Time:</span>
+                    <input type="time" class="compact-time-input" id="timeInputParacetamol" value="12:00" aria-label="Select Paracetamol time taken">
+                    <span id="statusParacetamol" class="compact-status-tag">Due 12:00 PM</span>
+                  </div>
+                </div>
+
+                <div class="compact-divider"></div>
+
+                <!-- Med 4: Metoprolol 25mg (Scheduled 9:00 PM - Night Moon) -->
+                <div class="compact-med-popdown" id="homeMetoprololCard" data-scheduled-hour="21" data-scheduled-name="Metoprolol 25mg" data-scheduled-time="9:00 PM">
+                  <div class="compact-med-line">
+                    <span class="med-text-single">Metoprolol 25mg (1 Tablet after dinner) • <strong>9:00 PM 🌙</strong></span>
+                    <button class="green-tick-toggle-btn" id="logHomeMetoprololBtn" aria-label="Toggle Metoprolol Taken" title="Toggle Dose Taken (9:00 PM)" role="switch" aria-checked="false">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    </button>
+                  </div>
+                  <div class="compact-time-row">
+                    <span class="time-label">⏰ Record Time:</span>
+                    <input type="time" class="compact-time-input" id="recordTimeInput" value="21:15" aria-label="Select Metoprolol time taken">
+                    <span id="homeMetoprololStatusText" class="compact-status-tag">Due 9:00 PM</span>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- 10:00 AM Blood Test CBC (Pending Modal Link) -->
+            <div class="timeline-item" id="task-test-1" data-target-tab="tests">
+              <div class="timeline-time-badge">
+                <div class="item-icon-box icon-purple">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55A2 2 0 0 0 6.51 23.5h10.98a2 2 0 0 0 1.79-2.95l-5.069-10.127A2 2 0 0 1 14 9.527V2"/><line x1="8.5" y1="2" x2="15.5" y2="2"/></svg>
+                </div>
+                <span>10:00 AM</span>
+              </div>
+              <div class="timeline-details">
+                <div class="title" data-i18n="blood_test">Blood Test (CBC)</div>
+                <div class="subtitle" data-i18n="city_lab">City Lab, Near You</div>
+              </div>
+              <div class="status-action-icon chevron-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+              </div>
+            </div>
+
+            <!-- 4:00 PM Cardiology Appointment -->
+            <div class="timeline-item" id="task-appt-1" data-target-tab="appointments">
+              <div class="timeline-time-badge">
+                <div class="item-icon-box icon-orange">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                </div>
+                <span>4:00 PM</span>
+              </div>
+              <div class="timeline-details">
+                <div class="title" data-i18n="cardiology_appt">Cardiology Appointment</div>
+                <div class="subtitle" data-i18n="dr_mehta">Dr. Mehta</div>
+              </div>
+              <div class="status-action-icon chevron-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- 4 Category Quick Cards Grid -->
+        <div class="quick-grid">
+          
+          <div class="quick-card meds" data-target-tab="medications" id="medsQuickCard">
+            <div class="quick-card-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/><path d="m8.5 8.5 7 7"/></svg>
+            </div>
+            <div class="quick-card-label" data-i18n="medications">Medications</div>
+            <div class="quick-card-sub" data-i18n="meds_sub">3 today</div>
+          </div>
+
+          <div class="quick-card appts" data-target-tab="appointments">
+            <div class="quick-card-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></svg>
+            </div>
+            <div class="quick-card-label" data-i18n="appointments">Appointments</div>
+            <div class="quick-card-sub" data-i18n="appts_sub">2 upcoming</div>
+          </div>
+
+          <div class="quick-card tests" data-target-tab="tests">
+            <div class="quick-card-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55A2 2 0 0 0 6.51 23.5h10.98a2 2 0 0 0 1.79-2.95l-5.069-10.127A2 2 0 0 1 14 9.527V2"/><line x1="8.5" y1="2" x2="15.5" y2="2"/></svg>
+            </div>
+            <div class="quick-card-label" data-i18n="tests">Tests</div>
+            <div class="quick-card-sub" data-i18n="tests_sub">1 pending</div>
+          </div>
+
+          <div class="quick-card reports" data-target-tab="reports">
+            <div class="quick-card-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            </div>
+            <div class="quick-card-label" data-i18n="reports">Reports</div>
+            <div class="quick-card-sub" data-i18n="reports_sub">View all</div>
+          </div>
+
+        </div>
+
+        <!-- Emergency SOS Button -->
+        <button id="emergencySosHomeBtn" class="emergency-action-btn">
+          🚑 EMERGENCY: CALL AMBULANCE
+        </button>
+
+        <!-- Talk to AyuSync Voice Widget Bar -->
+        <div class="ayusync-widget">
+          <div class="ayusync-content" id="openAiBotChatBtn" style="cursor: pointer;" title="Open AI Chat Bot">
+            <div class="ayusync-badge-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <div class="ayusync-text">
+              <div class="widget-title" data-i18n="talk_ayusync">Talk to AyuSync</div>
+              <div class="widget-sub" data-i18n="ask_anything">Ask anything about your recovery.</div>
+            </div>
+          </div>
+          <button class="mic-button" id="voiceMicBtnMain" aria-label="Emergency SOS Mic" title="Tap 3x for Emergency SOS">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+          </button>
+        </div>
+
+      </section>
+
+      <!-- ===================================================================
+           TAB 2: CARE PLAN PAGE
+           =================================================================== -->
+      <section class="page-view" id="view-plan">
+        <div class="page-header-bar">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <button class="back-home-btn nav-tab" data-tab="home" aria-label="Return to Home" title="Return to Home">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            </button>
+            <h2>Recovery Plan</h2>
+          </div>
+          <button class="pill-btn" style="font-size: 0.75rem; padding: 6px 12px;" id="symptomCheckinBtn">+ Symptom Check-in</button>
+        </div>
+
+        <!-- Weekly Date Strip -->
+        <div style="display: flex; gap: 8px; justify-content: space-between; margin-bottom: 16px;">
+          <div style="text-align: center; padding: 10px 8px; border-radius: 12px; background: var(--surface); border: 1px solid var(--border-color); flex: 1; cursor: pointer;">
+            <div style="font-size: 0.7rem; color: var(--text-muted);">MON</div>
+            <div style="font-weight: 700; margin-top: 2px;">18</div>
+          </div>
+          <div style="text-align: center; padding: 10px 8px; border-radius: 12px; background: var(--surface); border: 1px solid var(--border-color); flex: 1; cursor: pointer;">
+            <div style="font-size: 0.7rem; color: var(--text-muted);">TUE</div>
+            <div style="font-weight: 700; margin-top: 2px;">19</div>
+          </div>
+          <div style="text-align: center; padding: 10px 8px; border-radius: 12px; background: var(--primary); color: #FFF; flex: 1; cursor: pointer;">
+            <div style="font-size: 0.7rem; opacity: 0.8;">TODAY</div>
+            <div style="font-weight: 700; margin-top: 2px;">20</div>
+          </div>
+          <div style="text-align: center; padding: 10px 8px; border-radius: 12px; background: var(--surface); border: 1px solid var(--border-color); flex: 1; cursor: pointer;">
+            <div style="font-size: 0.7rem; color: var(--text-muted);">THU</div>
+            <div style="font-weight: 700; margin-top: 2px;">21</div>
+          </div>
+          <div style="text-align: center; padding: 10px 8px; border-radius: 12px; background: var(--surface); border: 1px solid var(--border-color); flex: 1; cursor: pointer;">
+            <div style="font-size: 0.7rem; color: var(--text-muted);">FRI</div>
+            <div style="font-weight: 700; margin-top: 2px;">22</div>
+          </div>
+        </div>
+
+        <div class="card-box">
+          <div class="card-title-row">
+            <div style="font-weight: 700; font-size: 1rem;">Post-Op Cardiac Rehab Routine</div>
+            <span class="badge badge-green">85% Completed</span>
+          </div>
+          <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 12px;">Doctor prescribed 14-day recovery protocol. 3 days remaining.</p>
+          
+          <div style="background: var(--bg-app); border-radius: 8px; height: 8px; width: 100%; overflow: hidden;">
+            <div style="background: var(--green); width: 85%; height: 100%;"></div>
+          </div>
+        </div>
+
+        <div class="section-title" style="margin-bottom: 10px;">Day Schedule Checklist</div>
+
+        <div class="card-box" style="display: flex; align-items: center; justify-content: space-between;">
+          <div>
+            <div style="font-weight: 700; font-size: 0.9rem;">Morning Medication (8:00 AM)</div>
+            <div style="font-size: 0.78rem; color: var(--text-muted);">Ecosprin 75mg + Atorvastatin</div>
+          </div>
+          <span class="badge badge-green">Taken ✓</span>
+        </div>
+
+        <div class="card-box" style="display: flex; align-items: center; justify-content: space-between;">
+          <div>
+            <div style="font-weight: 700; font-size: 0.9rem;">15-Min Light Walking (11:00 AM)</div>
+            <div style="font-size: 0.78rem; color: var(--text-muted);">Keep heart rate under 100 bpm</div>
+          </div>
+          <button class="pill-btn" style="padding: 4px 12px; font-size: 0.75rem;">Mark Done</button>
+        </div>
+
+        <div class="card-box" style="display: flex; align-items: center; justify-content: space-between;">
+          <div>
+            <div style="font-weight: 700; font-size: 0.9rem;">Night Medication (9:00 PM)</div>
+            <div style="font-size: 0.78rem; color: var(--text-muted);">Metoprolol 25mg after dinner</div>
+          </div>
+          <span class="badge badge-amber">Upcoming</span>
+        </div>
+      </section>
+
+      <!-- ===================================================================
+           TAB 3: MEDICATIONS PAGE
+           =================================================================== -->
+      <!-- ===================================================================
+           TAB 3: MEDICATIONS PAGE WITH DOWNWARD POPABLE PANEL
+           =================================================================== -->
+      <section class="page-view" id="view-medications">
+        <div class="page-header-bar">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <button class="back-home-btn nav-tab" data-tab="home" aria-label="Return to Home" title="Return to Home">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            </button>
+            <h2>Medications</h2>
+          </div>
+          <button class="pill-btn" id="addMedBtn" style="font-size: 0.8rem; padding: 8px 14px;">+ Add Pill</button>
+        </div>
+
+        <!-- Time Validation Alert Notification Toast (Hidden by Default) -->
+        <div class="time-alert-banner" id="medsTimeAlert" style="display: none;">
+          <div class="alert-icon" id="alertIcon">⚠️</div>
+          <div class="alert-text">
+            <strong id="alertTitle">Cannot Take Medication Early!</strong>
+            <p id="medsTimeAlertMsg">This medicine is scheduled for 9:00 PM. It cannot be logged before the scheduled time for your safety.</p>
+          </div>
+          <button class="close-alert-btn" id="closeMedsAlertBtn">✕</button>
+        </div>
+
+        <!-- Downward Popable Accordion Panel for Today's Required Medicines -->
+        <div class="popable-meds-container" id="todayMedsAccordion">
+          <div class="popable-header" id="todayMedsToggleBtn" role="button" tabindex="0" aria-label="Toggle Today's Required Medications" aria-expanded="false">
+            <div class="popable-header-left">
+              <div class="popable-badge-icon">💊</div>
+              <div>
+                <div class="popable-title">Today's Required Medications</div>
+                <div class="next-due-pill-banner" id="panelNextMedText">⚡ Next Due: <strong>Metoprolol 25mg (9:00 PM)</strong></div>
+              </div>
+            </div>
+            <button class="accessible-arrow-btn large" id="todayMedsArrowBtn" aria-label="Expand or Collapse Next Medication Details" aria-expanded="true" title="Expand or Collapse Details" role="button">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+          </div>
+
+          <!-- Downward Expanding Content -->
+          <div class="popable-content" id="todayMedsContent">
+            
+            <!-- Time Mode Selector Bar -->
+            <div class="time-test-bar">
+              <span>🕒 Current App Time: <strong id="simulatedTimeText">8:30 AM (Morning 🌅)</strong></span>
+              <button class="time-toggle-btn" id="toggleSimulatedTimeBtn">Switch to 12:30 PM (Afternoon ☀️)</button>
+            </div>
+
+            <!-- Medicine 1: Morning Ecosprin (8:00 AM Sunrise) -->
+            <div class="med-item-card completed" data-scheduled-time="08:00">
+              <div class="med-card-top">
+                <div class="med-info">
+                  <div class="med-name">Ecosprin 75mg</div>
+                  <div class="med-dosage">💊 <strong>Dosage:</strong> 1 Tablet (75mg) • After Breakfast</div>
+                  <div class="med-purpose">Blood thinner protocol</div>
+                </div>
+                <div class="med-time-badge time-past">
+                  <span class="time-symbol-text">8:00 AM 🌅</span>
+                </div>
+              </div>
+              <div class="med-card-bottom">
+                <span class="badge badge-green">✓ Taken at 8:05 AM</span>
+                <span class="dosage-note">Prescribed by Dr. Mehta</span>
+              </div>
+            </div>
+
+            <!-- Medicine 2: Morning Atorvastatin (8:00 AM Sunrise) -->
+            <div class="med-item-card completed" data-scheduled-time="08:00">
+              <div class="med-card-top">
+                <div class="med-info">
+                  <div class="med-name">Atorvastatin 10mg</div>
+                  <div class="med-dosage">💊 <strong>Dosage:</strong> 1 Tablet (10mg) • Daily Morning</div>
+                  <div class="med-purpose">Cholesterol management</div>
+                </div>
+                <div class="med-time-badge time-past">
+                  <span class="time-symbol-text">8:00 AM 🌅</span>
+                </div>
+              </div>
+              <div class="med-card-bottom">
+                <span class="badge badge-green">✓ Taken at 8:05 AM</span>
+                <span class="dosage-note">Prescribed by Dr. Mehta</span>
+              </div>
+            </div>
+
+            <!-- Medicine 3: Afternoon Paracetamol (12:00 PM Full Sun) -->
+            <div class="med-item-card pending" id="paracetamolCard" data-scheduled-hour="12" data-scheduled-time="12:00 PM">
+              <div class="med-card-top">
+                <div class="med-info">
+                  <div class="med-name">Paracetamol 500mg</div>
+                  <div class="med-dosage">💊 <strong>Dosage:</strong> 1 Tablet (500mg) • After Lunch</div>
+                  <div class="med-purpose">Post-op mild fever & pain relief</div>
+                </div>
+                <div class="med-time-badge time-future" id="paracetamolTimeBadge">
+                  <span class="time-symbol-text">12:00 PM ☀️</span>
+                </div>
+              </div>
+              <div class="med-card-bottom">
+                <div class="stock-info" id="paracetamolStatusText">8 tablets remaining</div>
+                <button class="pill-btn log-dose-btn" id="logParacetamolBtn">Take Dose</button>
+              </div>
+            </div>
+
+            <!-- Medicine 4: Night Metoprolol (9:00 PM Moon) -->
+            <div class="med-item-card pending" id="metoprololCard" data-scheduled-hour="21" data-scheduled-time="9:00 PM">
+              <div class="med-card-top">
+                <div class="med-info">
+                  <div class="med-name">Metoprolol 25mg</div>
+                  <div class="med-dosage">💊 <strong>Dosage:</strong> 1 Tablet (25mg) • After Dinner</div>
+                  <div class="med-purpose">Heart rate & BP control</div>
+                </div>
+                <div class="med-time-badge time-future" id="metoprololTimeBadge">
+                  <span class="time-symbol-text">9:00 PM 🌙</span>
+                </div>
+              </div>
+              <div class="med-card-bottom">
+                <div class="stock-info" id="metoprololStatusText">12 tablets remaining</div>
+                <button class="pill-btn log-dose-btn" id="logMetoprololBtn">Take Dose</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="filter-pills">
+          <button class="filter-pill active">All Pills (4)</button>
+          <button class="filter-pill">🌅 Morning (2)</button>
+          <button class="filter-pill">☀️ Afternoon (1)</button>
+          <button class="filter-pill">🌙 Night (1)</button>
+        </div>
+      </section>
+
+      <!-- ===================================================================
+           TAB 4: APPOINTMENTS PAGE
+           =================================================================== -->
+      <section class="page-view" id="view-appointments">
+        <div class="page-header-bar">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <button class="back-home-btn nav-tab" data-tab="home" aria-label="Return to Home" title="Return to Home">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            </button>
+            <h2>Appointments</h2>
+          </div>
+          <button class="pill-btn" id="bookApptBtn" style="font-size: 0.8rem; padding: 8px 14px;">+ Book New</button>
+        </div>
+
+        <div class="section-title" style="margin-bottom: 10px;">Today</div>
+
+        <!-- Today Doctor Appt -->
+        <div class="card-box" style="border-left: 4px solid var(--primary);">
+          <div class="card-title-row">
+            <div>
+              <div style="font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1.1rem;">Dr. Mehta</div>
+              <div style="font-size: 0.8rem; color: var(--primary); font-weight: 600;">Senior Cardiologist • City Heart Institute</div>
+            </div>
+            <span class="badge badge-purple">4:00 PM Today</span>
+          </div>
+          <p style="font-size: 0.82rem; color: var(--text-muted); margin: 8px 0 12px;">Follow-up Consultation post CBC blood test report review.</p>
+          <div style="display: flex; gap: 8px;">
+            <button class="pill-btn" style="flex: 1; justify-content: center; font-size: 0.8rem; padding: 8px;" id="joinVideoCallBtn">📹 Join Video Room</button>
+            <button class="pill-btn" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border-color); box-shadow: none; font-size: 0.8rem; padding: 8px;">Reschedule</button>
+          </div>
+        </div>
+
+        <div class="section-title" style="margin: 16px 0 10px;">Upcoming</div>
+
+        <!-- Future Doctor Appt -->
+        <div class="card-box">
+          <div class="card-title-row">
+            <div>
+              <div style="font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1.05rem;">Dr. Ananya Sharma</div>
+              <div style="font-size: 0.8rem; color: var(--text-muted);">General Physician • Wellness Clinic</div>
+            </div>
+            <span class="badge badge-green">Aug 26 • 11:30 AM</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================================================
+           TAB 5: DIAGNOSTIC TESTS PAGE
+           =================================================================== -->
+      <section class="page-view" id="view-tests">
+        <div class="page-header-bar">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <button class="back-home-btn nav-tab" data-tab="home" aria-label="Return to Home" title="Return to Home">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            </button>
+            <h2>Lab Tests</h2>
+          </div>
+          <button class="pill-btn" id="bookTestBtn" style="font-size: 0.8rem; padding: 8px 14px;">+ Book Test</button>
+        </div>
+
+        <div class="card-box" style="border-left: 4px solid var(--amber);">
+          <div class="card-title-row">
+            <div style="font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1.1rem;">Blood Test (CBC)</div>
+            <span class="badge badge-amber">1 Pending Today</span>
+          </div>
+          <div style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 8px;">Location: City Lab, Near You (10:00 AM)</div>
+          
+          <div style="background: var(--amber-bg); border-radius: 8px; padding: 10px; font-size: 0.78rem; color: #B45309; margin-bottom: 12px;">
+            ⚠️ <strong>Preparation Tip:</strong> 12-hour overnight fasting required before sample collection.
+          </div>
+
+          <div style="display: flex; gap: 8px;">
+            <button class="pill-btn" style="flex: 1; justify-content: center; font-size: 0.8rem; padding: 8px;" id="viewTestDetailsBtn">View Prep Guidelines</button>
+            <button class="pill-btn" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border-color); box-shadow: none; font-size: 0.8rem; padding: 8px;">Request Home Sample</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================================================
+           TAB 6: MEDICAL REPORTS PAGE
+           =================================================================== -->
+      <section class="page-view" id="view-reports">
+        <div class="page-header-bar">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <button class="back-home-btn nav-tab" data-tab="home" aria-label="Return to Home" title="Return to Home">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            </button>
+            <h2>Medical Reports</h2>
+          </div>
+          <button class="pill-btn" id="uploadReportBtn" style="font-size: 0.8rem; padding: 8px 14px;">+ Upload PDF</button>
+        </div>
+
+        <!-- Report 1 -->
+        <div class="card-box" style="display: flex; align-items: center; justify-content: space-between; cursor: pointer;" id="reportItem1">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 40px; height: 40px; border-radius: 10px; background: #FEE2E2; color: #DC2626; display: flex; align-items: center; justify-content: center;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </div>
+            <div>
+              <div style="font-weight: 700; font-size: 0.95rem;">Complete Blood Count (CBC)</div>
+              <div style="font-size: 0.78rem; color: var(--text-muted);">Aug 14, 2026 • City Lab</div>
+            </div>
+          </div>
+          <span class="see-all-link">View</span>
+        </div>
+
+        <!-- Report 2 -->
+        <div class="card-box" style="display: flex; align-items: center; justify-content: space-between; cursor: pointer;" id="reportItem2">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 40px; height: 40px; border-radius: 10px; background: #F5F3FF; color: #7C3AED; display: flex; align-items: center; justify-content: center;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            </div>
+            <div>
+              <div style="font-weight: 700; font-size: 0.95rem;">12-Lead ECG Resting Scan</div>
+              <div style="font-size: 0.78rem; color: var(--text-muted);">Aug 10, 2026 • Heart Institute</div>
+            </div>
+          </div>
+          <span class="see-all-link">View</span>
+        </div>
+      </section>
+
+      <!-- ===================================================================
+           TAB 7: CHAT / AYUSYNC AI ASSISTANT PAGE
+           =================================================================== -->
+      <section class="page-view" id="view-chat">
+        <div class="page-header-bar">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <button class="back-home-btn nav-tab" data-tab="home" aria-label="Return to Home" title="Return to Home">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            </button>
+            <div>
+              <h2>AyuSync Recovery AI</h2>
+              <div style="font-size: 0.75rem; color: var(--green); font-weight: 600; display: flex; align-items: center; gap: 4px; margin-top: 2px;">
+                <span style="width: 6px; height: 6px; background: var(--green); border-radius: 50%; display: inline-block;"></span> Online Assistant
+              </div>
+            </div>
+          </div>
+          <button class="icon-btn" id="voiceMicHeaderBtn" style="background: var(--primary-light); color: var(--primary);" aria-label="Voice Input">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+          </button>
+        </div>
+
+        <!-- Chat Container -->
+        <div class="chat-window" id="chatWindow">
+          <div class="msg-bubble msg-ai">
+            Hello Rahul! 👋 I am your AyuSync Recovery Assistant. I am monitoring your recovery plan (85% completed). How can I assist you today?
+          </div>
+        </div>
+
+        <!-- Suggested Prompt Chips -->
+        <div class="filter-pills" style="margin-bottom: 10px;">
+          <button class="filter-pill prompt-chip">Is my heart rate normal?</button>
+          <button class="filter-pill prompt-chip">When is my next pill?</button>
+          <button class="filter-pill prompt-chip">Can I drink coffee?</button>
+        </div>
+
+        <!-- Input Row -->
+        <div class="chat-input-row">
+          <input type="text" class="chat-input" id="chatInput" placeholder="Ask anything about your health & plan...">
+          <button class="pill-btn" id="sendMessageBtn" style="padding: 10px 16px;">Send</button>
+        </div>
+      </section>
+
+      <!-- ===================================================================
+           TAB 8: PROFILE & VITALS PAGE
+           =================================================================== -->
+      <section class="page-view" id="view-profile">
+        <div class="page-header-bar">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <button class="back-home-btn nav-tab" data-tab="home" aria-label="Return to Home" title="Return to Home">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            </button>
+            <h2>Patient Profile</h2>
+          </div>
+        </div>
+
+        <!-- Patient Info Card -->
+        <div class="card-box" style="text-align: center; padding: 20px 16px;">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" alt="Rahul" style="width: 72px; height: 72px; border-radius: 50%; border: 3px solid var(--primary); margin-bottom: 8px; object-fit: cover;">
+          <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.25rem;">Rahul Kumar</h3>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">Age 32 • Male • Blood Group O+</p>
+          <div style="display: inline-block; background: var(--primary-light); color: var(--primary); padding: 4px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; margin-top: 6px;">
+            Patient ID: #AYU-98421
+          </div>
+        </div>
+
+        <!-- Multi-Language Preference Card in Profile -->
+        <div class="card-box" style="display: flex; align-items: center; justify-content: space-between;">
+          <div>
+            <div style="font-weight: 700; font-size: 0.9rem; color: var(--text-main);">🌐 Language Preference</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">Switch application language</div>
+          </div>
+          <select class="lang-select langSelectProfile" id="langSelectProfile" aria-label="Select Language in Profile" style="padding: 6px 10px; font-size: 0.8rem;">
+            <option value="en">🌐 English</option>
+            <option value="hi">🇮🇳 हिंदी</option>
+            <option value="te">🇮🇳 తెలుగు</option>
+            <option value="ta">🇮🇳 தமிழ்</option>
+            <option value="kn">🇮🇳 ಕನ್ನಡ</option>
+            <option value="ml">🇮🇳 മലയാളം</option>
+            <option value="es">🇪🇸 ES</option>
+            <option value="fr">🇫🇷 FR</option>
+            <option value="de">🇩🇪 DE</option>
+            <option value="ar">🇸🇦 العربية</option>
+          </select>
+        </div>
+
+        <div class="section-title" style="margin: 16px 0 10px;">Live Health Vitals</div>
+
+        <!-- Vitals Grid -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div class="card-box" style="margin-bottom: 0;">
+            <div style="font-size: 0.75rem; color: var(--text-muted);">Heart Rate</div>
+            <div style="font-family: 'Outfit', sans-serif; font-size: 1.4rem; font-weight: 700; color: var(--red); margin: 4px 0;">72 <span style="font-size: 0.8rem; font-weight: 500;">bpm</span></div>
+            <div style="font-size: 0.7rem; color: var(--green); font-weight: 600;">✓ Normal Rhythm</div>
+          </div>
+          
+          <div class="card-box" style="margin-bottom: 0;">
+            <div style="font-size: 0.75rem; color: var(--text-muted);">Blood Pressure</div>
+            <div style="font-family: 'Outfit', sans-serif; font-size: 1.4rem; font-weight: 700; color: var(--primary); margin: 4px 0;">120/80</div>
+            <div style="font-size: 0.7rem; color: var(--green); font-weight: 600;">✓ Optimal Range</div>
+          </div>
+
+          <div class="card-box" style="margin-bottom: 0;">
+            <div style="font-size: 0.75rem; color: var(--text-muted);">Blood Oxygen (SpO2)</div>
+            <div style="font-family: 'Outfit', sans-serif; font-size: 1.4rem; font-weight: 700; color: var(--green); margin: 4px 0;">98%</div>
+            <div style="font-size: 0.7rem; color: var(--green); font-weight: 600;">✓ Excellent</div>
+          </div>
+
+          <div class="card-box" style="margin-bottom: 0;">
+            <div style="font-size: 0.75rem; color: var(--text-muted);">Body Temp</div>
+            <div style="font-family: 'Outfit', sans-serif; font-size: 1.4rem; font-weight: 700; color: var(--amber); margin: 4px 0;">98.6 °F</div>
+            <div style="font-size: 0.7rem; color: var(--text-muted);">Afebrile</div>
+          </div>
+        </div>
+
+        <div style="margin-top: 20px;">
+          <button class="pill-btn" style="width: 100%; justify-content: center; background: #DC2626; padding: 12px; box-shadow: 0 4px 14px rgba(220, 38, 38, 0.3);" id="emergencySosBtn">
+            🆘 Emergency SOS Assistance
+          </button>
+        </div>
+      </section>
+
+      <!-- ===================================================================
+           TAB: HEALTH INSURANCE PAGE (#view-insurance)
+           =================================================================== -->
+      <section class="page-view" id="view-insurance">
+        
+        <!-- PAGE HEADER -->
+        <div class="page-header-bar" style="margin-bottom: 20px;">
+          <div>
+            <h1 class="page-title" style="display: flex; align-items: center; gap: 8px; font-size: 1.4rem; font-weight: 800;">
+              <span>🛡️ Health Insurance</span>
+              <span class="badge badge-green" style="font-size: 0.72rem; vertical-align: middle;">Active Coverage</span>
+            </h1>
+            <p class="page-subtitle" style="font-size: 0.84rem; color: var(--text-muted); margin-top: 2px;">Manage your coverage and discover plans that fit your healthcare needs.</p>
+          </div>
+        </div>
+
+        <!-- SECTION 2 — COVERAGE SUMMARY (Dashboard Progress Card) -->
+        <div class="recovery-card" style="margin-bottom: 20px; flex-direction: column; align-items: stretch; gap: 14px;">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div>
+              <div style="font-size: 0.8rem; font-weight: 700; color: #059669; text-transform: uppercase; letter-spacing: 0.5px;">Coverage Summary</div>
+              <div style="font-family: 'Outfit', sans-serif; font-size: 1.3rem; font-weight: 800; color: var(--text-main); margin-top: 2px;">
+                Family Health Optima • ₹10,00,000
+              </div>
+            </div>
+            <span class="badge badge-green" style="font-weight: 700;">✓ 78% Available</span>
+          </div>
+
+          <!-- Visual Progress Bar -->
+          <div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.78rem; font-weight: 700; margin-bottom: 6px;">
+              <span style="color: #059669;">Available: ₹7,80,000</span>
+              <span style="color: var(--text-muted);">Used: ₹2,20,000</span>
+            </div>
+            <div style="height: 10px; background: #E2E8F0; border-radius: 6px; overflow: hidden; display: flex;">
+              <div style="width: 78%; background: linear-gradient(90deg, #10B981, #059669); border-radius: 6px;"></div>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; padding-top: 10px; border-top: 1px dashed var(--border-color);">
+            <div>
+              <div style="font-size: 0.72rem; color: var(--text-muted);">Total Sum Insured</div>
+              <div style="font-weight: 800; font-size: 0.95rem; color: var(--text-main);">₹10,00,000</div>
+            </div>
+            <div>
+              <div style="font-size: 0.72rem; color: var(--text-muted);">Annual Premium</div>
+              <div style="font-weight: 800; font-size: 0.95rem; color: var(--text-main);">₹18,450 / yr</div>
+            </div>
+            <div>
+              <div style="font-size: 0.72rem; color: var(--text-muted);">Network Hospitals</div>
+              <div style="font-weight: 800; font-size: 0.95rem; color: #059669;">8,400+ Cashless</div>
+            </div>
+            <div>
+              <div style="font-size: 0.72rem; color: var(--text-muted);">Renewal Date</div>
+              <div style="font-weight: 800; font-size: 0.95rem; color: var(--text-main);">12 March 2027</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 1 — MY INSURANCE (Active Policy Card) -->
+        <div class="card card-section" style="margin-bottom: 20px;">
+          <div class="card-section-title" style="margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
+            <span style="font-weight: 800; font-size: 1rem;">My Active Policy</span>
+            <span class="badge badge-green">Star Health Insurance</span>
+          </div>
+
+          <div style="background: var(--surface-hover); border: 1.5px solid var(--border-color); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 14px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 44px; height: 44px; border-radius: 12px; background: #ECFDF5; border: 2px solid #059669; display: flex; align-items: center; justify-content: center; font-size: 1.3rem;">
+                  ⭐
+                </div>
+                <div>
+                  <div style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.1rem;">Star Health Insurance</div>
+                  <div style="font-size: 0.8rem; color: var(--text-muted);">Family Health Optima Plan</div>
+                </div>
+              </div>
+              <div style="text-align: right;">
+                <span class="badge badge-green" style="font-weight: 700;">● Active</span>
+                <div style="font-size: 0.76rem; color: var(--text-muted); margin-top: 4px;">Policy #: **** **** 8421</div>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; background: #FFFFFF; padding: 14px; border-radius: 12px; border: 1px solid var(--border-color);">
+              <div>
+                <span style="font-size: 0.72rem; color: var(--text-muted);">Insured Persons</span>
+                <div style="font-weight: 700; font-size: 0.85rem;">Rahul & Family (3)</div>
+              </div>
+              <div>
+                <span style="font-size: 0.72rem; color: var(--text-muted);">Policy Period</span>
+                <div style="font-weight: 700; font-size: 0.85rem;">12 Mar 2024 - 12 Mar 2027</div>
+              </div>
+              <div>
+                <span style="font-size: 0.72rem; color: var(--text-muted);">Claim Settlement</span>
+                <div style="font-weight: 700; font-size: 0.85rem; color: #059669;">98.2% Ratio</div>
+              </div>
+              <div>
+                <span style="font-size: 0.72rem; color: var(--text-muted);">No Claim Bonus</span>
+                <div style="font-weight: 700; font-size: 0.85rem; color: #059669;">+25% Super Bonus</div>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+              <button class="notif-action-btn primary" id="viewPolicyDocBtn" style="font-size: 0.78rem;">📄 View Policy Document</button>
+              <button class="notif-action-btn secondary" id="viewCoverageDetailsBtn" style="font-size: 0.78rem;">🔍 View Coverage Details</button>
+              <button class="notif-action-btn secondary" id="renewPolicyBtn" style="font-size: 0.78rem; color: #059669; border-color: #6EE7B7;">🔄 Renew Policy</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 3 — WHAT'S COVERED -->
+        <div class="card card-section" style="margin-bottom: 20px;">
+          <div class="card-section-title" style="margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
+            <span style="font-weight: 800; font-size: 1rem;">Your Coverage & Benefits</span>
+            <span class="badge badge-blue">Inclusions & Exclusions</span>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px;">
+            <div style="background: #ECFDF5; border: 1px solid #A7F3D0; border-radius: 14px; padding: 14px;">
+              <div style="font-weight: 800; font-size: 0.88rem; color: #065F46; margin-bottom: 8px;">✅ Covered Benefits</div>
+              <ul style="font-size: 0.78rem; color: #047857; padding-left: 16px; display: flex; flex-direction: column; gap: 6px; margin: 0;">
+                <li><strong>Hospitalization:</strong> Room rent up to 1% of sum insured / day</li>
+                <li><strong>Emergency Care:</strong> ICU & Critical care covered 100%</li>
+                <li><strong>Day-care Procedures:</strong> 405+ procedures covered</li>
+                <li><strong>Pre & Post Hospitalization:</strong> 60 days pre / 90 days post</li>
+                <li><strong>Road Ambulance:</strong> Up to ₹3,000 per hospitalization</li>
+                <li><strong>Diagnostic Tests:</strong> Annual health checkup included</li>
+              </ul>
+            </div>
+
+            <div style="background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 14px; padding: 14px;">
+              <div style="font-weight: 800; font-size: 0.88rem; color: #92400E; margin-bottom: 8px;">⚠️ Important Exclusions</div>
+              <ul style="font-size: 0.78rem; color: #B45309; padding-left: 16px; display: flex; flex-direction: column; gap: 6px; margin: 0;">
+                <li>Cosmetic or aesthetic plastic surgery procedures</li>
+                <li>Pre-existing conditions during initial 24-month waiting period</li>
+                <li>Non-medical expenses (registration fees, toiletries, gloves)</li>
+                <li>Experimental or unproven medical treatments</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 5 — RECOMMENDED FOR YOU (AI Personalization Highlight) -->
+        <div style="background: linear-gradient(135deg, #EFF6FF 0%, #ECFDF5 100%); border: 2px solid #059669; border-radius: 20px; padding: 18px; margin-bottom: 24px; box-shadow: 0 4px 20px rgba(5, 150, 105, 0.12);">
+          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 10px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 1.3rem;">🤖</span>
+              <div>
+                <div style="font-family: 'Outfit', sans-serif; font-size: 1.1rem; font-weight: 800; color: var(--text-main);">Recommended for You</div>
+                <div style="font-size: 0.76rem; color: #0284C7; font-weight: 700;">AI-Assisted Plan Comparison • Personalized for Rahul Kumar</div>
+              </div>
+            </div>
+            <span class="badge badge-green" style="font-weight: 800; font-size: 0.75rem;">Top Match: 96% Fit</span>
+          </div>
+
+          <div style="background: #FFFFFF; border-radius: 14px; padding: 14px; border: 1px solid #BAE6FD; margin-bottom: 12px;">
+            <div style="font-weight: 800; font-size: 0.92rem; color: #0369A1; margin-bottom: 4px;">HDFC ERGO Optima Secure Plan</div>
+            <p style="font-size: 0.8rem; color: var(--text-main); margin: 0; line-height: 1.4;">
+              <strong>Why this recommendation?</strong> Recommended because this plan provides 2.5x higher hospitalization coverage (₹25,00,000) and 2,100+ additional network hospitals at only ₹337/month extra premium.
+            </p>
+          </div>
+
+          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+            <button class="notif-action-btn secondary" id="whyRecFactorsBtn" style="font-size: 0.78rem;">
+              💡 View AI Recommendation Factors
+            </button>
+            <button class="pill-btn log-dose-btn" id="upgradePlanBtn" style="font-size: 0.82rem; padding: 8px 16px;">
+              Upgrade to Recommended Plan →
+            </button>
+          </div>
+        </div>
+
+        <!-- SECTION 4 — BETTER INSURANCE OPTIONS (Comparison Cards) -->
+        <div class="card card-section" style="margin-bottom: 20px;">
+          <div class="card-section-title" style="margin-bottom: 12px;">
+            <div>
+              <div style="font-size: 1rem; font-weight: 800;">Better Insurance Options</div>
+              <div style="font-size: 0.76rem; color: var(--text-muted); font-weight: 400;">Compare plans that may offer better coverage for your needs.</div>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px;">
+            
+            <!-- Plan Card 1: Care Health Advantage -->
+            <div style="background: var(--surface); border: 2px solid #E2E8F0; border-radius: 18px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between;">
+              <div>
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                  <span class="badge badge-amber" style="font-weight: 800;">Best Value</span>
+                  <span style="font-weight: 800; font-size: 1.1rem; color: #059669;">₹15,00,000</span>
+                </div>
+                <div style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1rem; margin-bottom: 2px;">Care Health Advantage</div>
+                <div style="font-size: 0.76rem; color: var(--text-muted); margin-bottom: 12px;">Care Health Insurance Ltd.</div>
+
+                <div style="font-size: 0.78rem; display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px;">
+                  <div>💰 <strong>Annual Premium:</strong> ₹19,200 / yr</div>
+                  <div>🏥 <strong>Network Hospitals:</strong> 9,200+ Cashless</div>
+                  <div>🏨 <strong>Room Rent Limit:</strong> Single Private Room</div>
+                  <div>⏳ <strong>Waiting Period:</strong> 2 Years</div>
+                  <div>⭐ <strong>Claim Settlement:</strong> 95.4%</div>
+                </div>
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <button class="notif-action-btn secondary compare-plan-btn" data-plan="Care Health" style="flex: 1; font-size: 0.78rem;">Compare</button>
+                <button class="notif-action-btn primary view-plan-btn" data-plan="Care Health" style="flex: 1; font-size: 0.78rem;">View Plan</button>
+              </div>
+            </div>
+
+            <!-- Plan Card 2: HDFC ERGO Optima Secure -->
+            <div style="background: #ECFDF5; border: 2.5px solid #059669; border-radius: 18px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 4px 16px rgba(5, 150, 105, 0.12);">
+              <div>
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                  <span class="badge badge-green" style="font-weight: 800;">Best Coverage</span>
+                  <span style="font-weight: 800; font-size: 1.1rem; color: #059669;">₹25,00,000</span>
+                </div>
+                <div style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1rem; margin-bottom: 2px;">HDFC ERGO Optima Secure</div>
+                <div style="font-size: 0.76rem; color: var(--text-muted); margin-bottom: 12px;">HDFC ERGO General Insurance</div>
+
+                <div style="font-size: 0.78rem; display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px;">
+                  <div>💰 <strong>Annual Premium:</strong> ₹22,500 / yr</div>
+                  <div>🏥 <strong>Network Hospitals:</strong> 10,500+ Cashless</div>
+                  <div>🏨 <strong>Room Rent Limit:</strong> Any Room (No Limit)</div>
+                  <div>⏳ <strong>Waiting Period:</strong> 1 Year Only</div>
+                  <div>⭐ <strong>Claim Settlement:</strong> 97.6%</div>
+                </div>
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <button class="notif-action-btn secondary compare-plan-btn" data-plan="HDFC ERGO" style="flex: 1; font-size: 0.78rem;">Compare</button>
+                <button class="notif-action-btn primary view-plan-btn" data-plan="HDFC ERGO" style="flex: 1; font-size: 0.78rem;">View Plan</button>
+              </div>
+            </div>
+
+            <!-- Plan Card 3: Niva Bupa Health Companion -->
+            <div style="background: var(--surface); border: 2px solid #E2E8F0; border-radius: 18px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between;">
+              <div>
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                  <span class="badge badge-blue" style="font-weight: 800;">Lowest Premium</span>
+                  <span style="font-weight: 800; font-size: 1.1rem; color: #059669;">₹10,00,000</span>
+                </div>
+                <div style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1rem; margin-bottom: 2px;">Niva Bupa Health Companion</div>
+                <div style="font-size: 0.76rem; color: var(--text-muted); margin-bottom: 12px;">Niva Bupa Health Insurance</div>
+
+                <div style="font-size: 0.78rem; display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px;">
+                  <div>💰 <strong>Annual Premium:</strong> ₹16,800 / yr</div>
+                  <div>🏥 <strong>Network Hospitals:</strong> 8,600+ Cashless</div>
+                  <div>🏨 <strong>Room Rent Limit:</strong> Single Private Room</div>
+                  <div>⏳ <strong>Waiting Period:</strong> 2 Years</div>
+                  <div>⭐ <strong>Claim Settlement:</strong> 96.1%</div>
+                </div>
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <button class="notif-action-btn secondary compare-plan-btn" data-plan="Niva Bupa" style="flex: 1; font-size: 0.78rem;">Compare</button>
+                <button class="notif-action-btn primary view-plan-btn" data-plan="Niva Bupa" style="flex: 1; font-size: 0.78rem;">View Plan</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- SECTION 6 — COMPARE PLANS (Side-by-Side Table) -->
+        <div class="card card-section" style="margin-bottom: 20px; overflow-x: auto;">
+          <div class="card-section-title" style="margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
+            <span style="font-weight: 800; font-size: 1rem;">Side-by-Side Plan Comparison</span>
+            <span class="badge badge-blue">Comparison Matrix</span>
+          </div>
+
+          <table style="width: 100%; border-collapse: collapse; font-size: 0.78rem; text-align: left; min-width: 580px;">
+            <thead>
+              <tr style="background: #F8FAFC; border-bottom: 2px solid #E2E8F0;">
+                <th style="padding: 10px 12px; font-weight: 700; color: var(--text-main);">Feature</th>
+                <th style="padding: 10px 12px; font-weight: 700; color: #059669;">Current: Star Health</th>
+                <th style="padding: 10px 12px; font-weight: 700; color: #0284C7;">Care Health</th>
+                <th style="padding: 10px 12px; font-weight: 700; color: #7C3AED;">HDFC ERGO (AI Rec)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom: 1px solid #F1F5F9;">
+                <td style="padding: 10px 12px; font-weight: 600;">Coverage Amount</td>
+                <td style="padding: 10px 12px; font-weight: 700;">₹10,00,000</td>
+                <td style="padding: 10px 12px; font-weight: 700; color: #0284C7;">₹15,00,000</td>
+                <td style="padding: 10px 12px; font-weight: 700; color: #059669; background: #ECFDF5;">₹25,00,000 ★</td>
+              </tr>
+              <tr style="border-bottom: 1px solid #F1F5F9;">
+                <td style="padding: 10px 12px; font-weight: 600;">Annual Premium</td>
+                <td style="padding: 10px 12px;">₹18,450 / yr</td>
+                <td style="padding: 10px 12px;">₹19,200 / yr</td>
+                <td style="padding: 10px 12px; font-weight: 700; background: #ECFDF5;">₹22,500 / yr</td>
+              </tr>
+              <tr style="border-bottom: 1px solid #F1F5F9;">
+                <td style="padding: 10px 12px; font-weight: 600;">Hospital Network</td>
+                <td style="padding: 10px 12px;">8,400+ Cashless</td>
+                <td style="padding: 10px 12px;">9,200+ Cashless</td>
+                <td style="padding: 10px 12px; font-weight: 700; color: #059669; background: #ECFDF5;">10,500+ Cashless ★</td>
+              </tr>
+              <tr style="border-bottom: 1px solid #F1F5F9;">
+                <td style="padding: 10px 12px; font-weight: 600;">Room Rent Capping</td>
+                <td style="padding: 10px 12px;">1% of Sum Insured / day</td>
+                <td style="padding: 10px 12px;">Single Private Room</td>
+                <td style="padding: 10px 12px; font-weight: 700; color: #059669; background: #ECFDF5;">No Room Limit ★</td>
+              </tr>
+              <tr style="border-bottom: 1px solid #F1F5F9;">
+                <td style="padding: 10px 12px; font-weight: 600;">Pre-Existing Waiting Period</td>
+                <td style="padding: 10px 12px;">24 Months</td>
+                <td style="padding: 10px 12px;">24 Months</td>
+                <td style="padding: 10px 12px; font-weight: 700; color: #059669; background: #ECFDF5;">12 Months ★</td>
+              </tr>
+              <tr style="border-bottom: 1px solid #F1F5F9;">
+                <td style="padding: 10px 12px; font-weight: 600;">Day-Care Procedures</td>
+                <td style="padding: 10px 12px;">405 Procedures</td>
+                <td style="padding: 10px 12px;">All Day-Care Covered</td>
+                <td style="padding: 10px 12px; font-weight: 700; background: #ECFDF5;">All Day-Care Covered</td>
+              </tr>
+              <tr style="border-bottom: 1px solid #F1F5F9;">
+                <td style="padding: 10px 12px; font-weight: 600;">Claim Settlement Ratio</td>
+                <td style="padding: 10px 12px;">98.2%</td>
+                <td style="padding: 10px 12px;">95.4%</td>
+                <td style="padding: 10px 12px; font-weight: 700; color: #059669; background: #ECFDF5;">97.6% ★</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- SECTION 7 — CLAIMS -->
+        <div class="card card-section" style="margin-bottom: 20px;">
+          <div class="card-section-title" style="margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
+            <span style="font-weight: 800; font-size: 1rem;">Insurance Claims History</span>
+            <span class="badge badge-amber">2 Active Claims</span>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <!-- Claim 1 -->
+            <div style="background: var(--surface-hover); border: 1px solid var(--border-color); border-radius: 14px; padding: 14px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+              <div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="font-weight: 800; font-size: 0.9rem;">Claim #CLM-90812</span>
+                  <span class="badge badge-green">✓ Approved & Settled</span>
+                </div>
+                <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">
+                  Cardiac Diagnostic Evaluation • City Heart Institute • Submitted: 14 Aug 2026
+                </div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="font-weight: 800; font-size: 0.95rem; color: #059669;">₹12,400</div>
+                <button class="notif-action-btn secondary track-claim-btn" data-claim="CLM-90812" style="font-size: 0.76rem; padding: 6px 12px;">Track Claim</button>
+              </div>
+            </div>
+
+            <!-- Claim 2 -->
+            <div style="background: var(--surface-hover); border: 1px solid var(--border-color); border-radius: 14px; padding: 14px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+              <div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="font-weight: 800; font-size: 0.9rem;">Claim #CLM-94102</span>
+                  <span class="badge badge-amber">⏳ Pending Verification</span>
+                </div>
+                <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">
+                  Pre-Op Blood Panel & Screening • City Lab • Submitted: 19 Aug 2026
+                </div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="font-weight: 800; font-size: 0.95rem; color: var(--text-main);">₹8,200</div>
+                <button class="notif-action-btn secondary track-claim-btn" data-claim="CLM-94102" style="font-size: 0.76rem; padding: 6px 12px;">Track Claim</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+    </main>
+
+    <!-- ===================================================================
+         BOTTOM MOBILE TAB NAVIGATION BAR (PERSISTENT)
+         =================================================================== -->
+    <nav class="bottom-nav">
+      <button class="nav-tab active" data-tab="home">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span data-i18n="tab_home">Home</span>
+      </button>
+
+      <button class="nav-tab" data-tab="plan">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/></svg>
+        <span data-i18n="tab_plan">Plan</span>
+      </button>
+
+      <button class="nav-tab" data-tab="chat">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <span data-i18n="tab_chat">Chat</span>
+      </button>
+
+      <button class="nav-tab" data-tab="reports">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        <span data-i18n="tab_reports">Reports</span>
+      </button>
+
+      <button class="nav-tab" data-tab="profile">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span data-i18n="tab_profile">Profile</span>
+      </button>
+    </nav>
+
+  </div>
+
+  <!-- ===================================================================
+       MODALS & DRAWERS
+       =================================================================== -->
+
+  <!-- 1. Voice AI Assistant Listening Modal (Alexa Voice Control) -->
+  <div class="modal-overlay" id="voiceModal">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.15rem; font-weight: 700;">🎙️ AyuSync Alexa Voice Control</h3>
+        <button class="close-btn" data-modal="voiceModal">✕</button>
+      </div>
+
+      <div style="text-align: center; padding: 10px 0;">
+        <div style="font-size: 0.85rem; color: var(--text-muted);" id="voiceStatusText">Listening for voice command... Speak now</div>
+        
+        <div class="voice-wave-container">
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+        </div>
+
+        <div style="background: var(--primary-subtle); border: 1px solid var(--primary-light); border-radius: 12px; padding: 10px; margin-bottom: 12px;">
+          <div style="font-size: 0.72rem; color: var(--text-muted); margin-bottom: 2px;">Recognized Voice Command / Query:</div>
+          <p style="font-size: 0.88rem; color: var(--primary); font-weight: 700;" id="speechRecognizedText">"Open reports"</p>
+        </div>
+
+        <div style="text-align: left; margin-bottom: 12px;">
+          <div style="font-size: 0.78rem; font-weight: 700; color: var(--text-main); margin-bottom: 6px;">💡 Try saying or tapping these Alexa voice commands:</div>
+          <div class="filter-pills" style="margin-bottom: 0; padding-bottom: 0;">
+            <button class="filter-pill voice-cmd-chip" data-cmd="open reports">📄 "Open reports"</button>
+            <button class="filter-pill voice-cmd-chip" data-cmd="open plan">📅 "Open plan"</button>
+            <button class="filter-pill voice-cmd-chip" data-cmd="open medications">💊 "Open medications"</button>
+            <button class="filter-pill voice-cmd-chip" data-cmd="open appointments">🏥 "Open appointments"</button>
+            <button class="filter-pill voice-cmd-chip" data-cmd="open profile">👤 "Open profile"</button>
+            <button class="filter-pill voice-cmd-chip" data-cmd="open lab tests">🧪 "Open lab tests"</button>
+          </div>
+        </div>
+      </div>
+
+      <button class="pill-btn" style="width: 100%; justify-content: center; padding: 12px;" id="sendVoiceQueryBtn">Execute Voice Command</button>
+    </div>
+  </div>
+
+  <!-- 2. Test Details Modal (CBC Blood Test) -->
+  <div class="modal-overlay" id="testDetailsModal">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <h3>Blood Test (CBC) Details</h3>
+        <button class="close-btn" data-modal="testDetailsModal">✕</button>
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <div style="font-weight: 700; font-size: 1rem; margin-bottom: 4px;">City Lab - Central Branch</div>
+        <div style="font-size: 0.82rem; color: var(--text-muted);">12 Health Street, Near You • Appt: 10:00 AM Today</div>
+      </div>
+
+      <div style="background: var(--bg-app); border-radius: 12px; padding: 14px; margin-bottom: 16px;">
+        <div style="font-weight: 700; font-size: 0.85rem; margin-bottom: 6px;">Instructions for Patient:</div>
+        <ul style="font-size: 0.8rem; color: var(--text-muted); padding-left: 18px; display: flex; flex-direction: column; gap: 4px;">
+          <li>Fasting required for at least 8 to 12 hours.</li>
+          <li>Sip plain water if needed, avoid tea/coffee.</li>
+          <li>Bring your Digital Lab Pass (ID: #LAB-8821).</li>
+        </ul>
+      </div>
+
+      <button class="pill-btn" style="width: 100%; justify-content: center;" id="confirmTestCheckinBtn">Show QR Entry Pass</button>
+    </div>
+  </div>
+
+  <!-- 3. Notifications Drawer & Alert Center Modal -->
+  <div class="modal-overlay" id="notifModal">
+    <div class="modal-sheet notif-center-sheet">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <button class="notif-back-btn" id="returnNotifHeaderBtn" aria-label="Return to dashboard">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            <span>Return</span>
+          </button>
+          <h3 style="font-size: 1.1rem; font-weight: 700; margin: 0;">Notifications & Alerts</h3>
+        </div>
+        <button class="close-btn" data-modal="notifModal" aria-label="Close Notifications">✕</button>
+      </div>
+
+      <div class="notif-bar-container" id="notifListContainer" style="display: flex; flex-direction: column; gap: 10px;">
+        
+        <!-- Notification Item 1: Medication Reminder -->
+        <div class="notif-card-item unread" id="notifItem1" tabindex="0" role="button">
+          <div class="notif-card-header">
+            <div class="notif-card-title">💊 Medication Reminder</div>
+            <span class="notif-status-badge unread-dot" id="notifItemTag1">New</span>
+          </div>
+          <div class="notif-card-body">
+            8:00 AM Ecosprin & Atorvastatin dose taken successfully. Good job!
+          </div>
+          <div class="notif-card-time">Today, 8:05 AM</div>
+        </div>
+
+        <!-- Notification Item 2: Upcoming Lab Test -->
+        <div class="notif-card-item unread" id="notifItem2" tabindex="0" role="button">
+          <div class="notif-card-header">
+            <div class="notif-card-title" style="color: #B45309;">🧪 Upcoming Lab Test</div>
+            <span class="notif-status-badge unread-dot" id="notifItemTag2">New</span>
+          </div>
+          <div class="notif-card-body" style="color: #92400E;">
+            CBC Blood Test at City Lab scheduled for 10:00 AM.
+          </div>
+          <div class="notif-card-time">Today, 9:00 AM</div>
+        </div>
+
+        <!-- Notification Item 3: Doctor Follow-up -->
+        <div class="notif-card-item unread" id="notifItem3" tabindex="0" role="button">
+          <div class="notif-card-header">
+            <div class="notif-card-title" style="color: #0369A1;">🩺 Doctor Consultation Ready</div>
+            <span class="notif-status-badge unread-dot" id="notifItemTag3">New</span>
+          </div>
+          <div class="notif-card-body" style="color: #075985;">
+            Dr. Mehta Cardiology Teleconsultation link is ready for 2:00 PM.
+          </div>
+          <div class="notif-card-time">Today, 9:30 AM</div>
+        </div>
+
+      </div>
+
+      <div class="notif-action-bar" style="margin-top: 16px; display: flex; gap: 8px;">
+        <button class="notif-action-btn secondary" id="markAllReadBtn" style="flex: 1;">✓ Mark All as Read</button>
+        <button class="notif-action-btn primary" id="returnNotifFooterBtn" style="flex: 1;">← Return to Dashboard</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3.5. Mobile Side Navigation Drawer Modal (Triggered by ☰ 3-Lines Button) -->
+  <div class="modal-overlay drawer-overlay" id="mobileNavDrawer">
+    <div class="drawer-panel">
+      
+      <!-- Drawer Header -->
+      <div class="drawer-header">
+        <div class="drawer-logo">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+          <span>AyuSync</span>
+        </div>
+        <button class="close-btn" data-modal="mobileNavDrawer" aria-label="Close Menu">✕</button>
+      </div>
+
+      <!-- Drawer Patient Profile Badge -->
+      <div class="drawer-user-badge">
+        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" alt="Rahul Avatar" class="drawer-user-img">
+        <div>
+          <div class="drawer-user-name">Rahul Kumar</div>
+          <div class="drawer-user-role">Patient ID #AYU-98421</div>
+        </div>
+      </div>
+
+      <!-- Drawer Options List -->
+      <nav class="drawer-menu">
+        <button class="drawer-link nav-tab active" data-tab="home">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          <span data-i18n="tab_home">Home</span>
+        </button>
+
+        <button class="drawer-link nav-tab" data-tab="plan">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/></svg>
+          <span data-i18n="tab_plan">Plan</span>
+        </button>
+
+        <button class="drawer-link nav-tab" data-tab="medications">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/><path d="m8.5 8.5 7 7"/></svg>
+          <span data-i18n="quick_meds">Medications</span>
+        </button>
+
+        <button class="drawer-link nav-tab" data-tab="appointments">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+          <span data-i18n="quick_appts">Appointments</span>
+        </button>
+
+        <button class="drawer-link nav-tab" data-tab="tests">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55A2 2 0 0 0 6.51 23.5h10.98a2 2 0 0 0 1.79-2.95l-5.069-10.127A2 2 0 0 1 14 9.527V2"/><line x1="8.5" y1="2" x2="15.5" y2="2"/></svg>
+          <span data-i18n="quick_tests">Lab Tests</span>
+        </button>
+
+        <button class="drawer-link nav-tab" data-tab="insurance">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
+          <span data-i18n="tab_insurance">Health Insurance</span>
+        </button>
+
+        <button class="drawer-link nav-tab" data-tab="chat">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <span data-i18n="tab_chat">Chat</span>
+        </button>
+
+        <button class="drawer-link nav-tab" data-tab="reports">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          <span data-i18n="tab_reports">Reports</span>
+        </button>
+
+        <button class="drawer-link nav-tab" data-tab="profile">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <span data-i18n="tab_profile">Profile</span>
+        </button>
+      </nav>
+
+    </div>
+  </div>
+
+  <!-- 4. Report Viewer Modal -->
+  <div class="modal-overlay" id="reportViewerModal">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <h3 id="reportModalTitle">Complete Blood Count (CBC)</h3>
+        <button class="close-btn" data-modal="reportViewerModal">✕</button>
+      </div>
+
+      <div style="background: var(--bg-app); border: 1px dashed var(--border-hover); border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 16px;">
+        <div style="font-size: 0.9rem; font-weight: 700; color: var(--text-main);">Verified Digital Report PDF</div>
+        <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 4px;">Issued by City Diagnostics Lab • Signed by Dr. Mehta</p>
+        <div style="margin-top: 14px; font-size: 0.82rem; font-weight: 600; color: var(--green);">
+          Hemoglobin: 14.2 g/dL (Normal) • WBC: 6,800 /uL (Normal)
+        </div>
+      </div>
+
+      <button class="pill-btn" style="width: 100%; justify-content: center;" id="downloadPdfBtn">Download Original PDF</button>
+    </div>
+  </div>
+
+  <!-- 5. AI Recommendation Factors Modal -->
+  <div class="modal-overlay" id="aiFactorsModal">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 1.2rem;">🤖</span>
+          <h3 style="margin: 0; font-size: 1.1rem;">AI Recommendation Factors</h3>
+        </div>
+        <button class="close-btn" data-modal="aiFactorsModal">✕</button>
+      </div>
+
+      <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">
+        AI-assisted evaluation based on consented patient profile parameters & current coverage gaps:
+      </div>
+
+      <ul style="font-size: 0.8rem; display: flex; flex-direction: column; gap: 8px; padding-left: 18px; margin-bottom: 16px; line-height: 1.4;">
+        <li><strong>Age & Profile:</strong> Rahul Kumar (Age 34, 2 Family Dependents).</li>
+        <li><strong>Hospital Preference:</strong> Includes City Heart Institute & City Lab in 100% Cashless Network.</li>
+        <li><strong>Coverage Gap:</strong> Current ₹10L policy has a 1% room-rent cap; recommended plan removes room capping completely.</li>
+        <li><strong>Waiting Period:</strong> Reduced from 24 months to 12 months for pre-existing cardiac monitoring.</li>
+        <li><strong>Affordability:</strong> Only ₹337/month additional premium for 2.5x higher sum insured (₹25,00,000).</li>
+      </ul>
+
+      <div style="font-size: 0.72rem; color: var(--text-subtle); background: #F8FAFC; padding: 10px; border-radius: 8px; border: 1px solid #E2E8F0; margin-bottom: 14px;">
+        ⚠️ <em>Disclaimer: AI-assisted comparison is for informational guidance only. Always review official policy documents before purchasing or switching insurance plans.</em>
+      </div>
+
+      <button class="pill-btn" style="width: 100%; justify-content: center;" id="closeAiFactorsBtn">Got it, Thanks!</button>
+    </div>
+  </div>
+
+  <!-- 6. Claim Tracking Modal -->
+  <div class="modal-overlay" id="claimDetailsModal">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 1.2rem;">🔍</span>
+          <h3 style="margin: 0; font-size: 1.1rem;" id="claimModalTitle">Claim #CLM-90812 Status</h3>
+        </div>
+        <button class="close-btn" data-modal="claimDetailsModal">✕</button>
+      </div>
+
+      <div style="background: #ECFDF5; border: 1px solid #A7F3D0; border-radius: 12px; padding: 14px; margin-bottom: 14px;">
+        <div style="font-weight: 800; font-size: 0.9rem; color: #065F46;" id="claimModalStatus">✓ Claim Approved & Settled</div>
+        <div style="font-size: 0.78rem; color: #047857; margin-top: 4px;" id="claimModalSub">Amount: ₹12,400 • Disbursed to City Heart Institute on 14 Aug 2026</div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.78rem; margin-bottom: 16px;">
+        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #E2E8F0; padding-bottom: 6px;">
+          <span style="color: var(--text-muted);">Patient Name</span>
+          <span style="font-weight: 700;">Rahul Kumar (#AYU-98421)</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #E2E8F0; padding-bottom: 6px;">
+          <span style="color: var(--text-muted);">TPA Provider</span>
+          <span style="font-weight: 700;">Star Health In-House TPA</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #E2E8F0; padding-bottom: 6px;">
+          <span style="color: var(--text-muted);">Approval Time</span>
+          <span style="font-weight: 700;">2 Hours 45 Mins (Fast Tracked)</span>
+        </div>
+      </div>
+
+      <button class="pill-btn secondary-btn" style="width: 100%; justify-content: center;" id="closeClaimModalBtn">Close Tracking</button>
+    </div>
+  </div>
+
+  <!-- 7. Time Validation Lock Modal ("Still Time Is There" Center Alert) -->
+  <div class="modal-overlay" id="timeLockModal">
+    <div class="modal-sheet notif-center-sheet">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <button class="notif-back-btn" id="returnTimeLockHeaderBtn" aria-label="Return to dashboard">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            <span>Return</span>
+          </button>
+          <h3 style="font-size: 1.05rem; font-weight: 800; margin: 0; color: #B45309;" id="timeLockModalTitle">⏰ Still Time Is There!</h3>
+        </div>
+        <button class="close-btn" data-modal="timeLockModal" aria-label="Close Alert">✕</button>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 12px; text-align: center; padding: 10px 0 6px;">
+        <div style="width: 56px; height: 56px; border-radius: 50%; background: #FEF3C7; border: 2px solid #F59E0B; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; margin: 0 auto;">
+          ⏰
+        </div>
+
+        <div>
+          <div style="font-family: 'Outfit', sans-serif; font-size: 1.15rem; font-weight: 800; color: #92400E;" id="timeLockMedName">
+            Metoprolol 25mg 🌙
+          </div>
+          <div style="font-size: 0.8rem; color: #B45309; font-weight: 700; margin-top: 2px;" id="timeLockMedSchedule">
+            Scheduled for 9:00 PM 🌙 (Night Dose)
+          </div>
+        </div>
+
+        <div style="background: #FFFBEB; border: 1.5px solid #FDE68A; border-radius: 14px; padding: 12px; font-size: 0.8rem; color: #78350F; line-height: 1.45;" id="timeLockMessageContent">
+          Current time is 8:30 AM 🌅. Still time is there — you cannot log this medicine early! Please wait until 9:00 PM to record your dose.
+        </div>
+
+        <div style="display: flex; justify-content: space-between; font-size: 0.76rem; background: #F8FAFC; padding: 10px 14px; border-radius: 10px; border: 1px solid #E2E8F0;">
+          <span style="color: var(--text-muted);">Current App Time:</span>
+          <span style="font-weight: 700; color: var(--text-main);" id="timeLockCurrentTime">8:30 AM 🌅</span>
+        </div>
+      </div>
+
+      <div style="margin-top: 14px;">
+        <button class="notif-action-btn primary" id="returnTimeLockFooterBtn" style="width: 100%; justify-content: center; padding: 12px;">
+          ← Return to Dashboard
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8. Location Permission Modal (Matching System Prompt Image 2) -->
+  <div class="modal-overlay" id="locationPermissionModal">
+    <div class="modal-sheet location-perm-sheet">
+      <div style="text-align: center; padding: 6px 4px 10px;">
+        <!-- Top Centered Location Pin Icon -->
+        <div style="width: 54px; height: 54px; border-radius: 50%; background: #EFF6FF; border: 1.5px solid #BFDBFE; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="#2563EB" stroke="#2563EB" stroke-width="1.5"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3.5" fill="#FFFFFF"/></svg>
+        </div>
+
+        <h3 style="font-family: 'Outfit', 'Inter', sans-serif; font-size: 1.28rem; font-weight: 700; color: #0F172A; margin: 0 0 16px; line-height: 1.35; padding: 0 10px;">
+          Allow AyuSync to access this device’s location?
+        </h3>
+      </div>
+
+      <div style="display: flex; flex-direction: column; border-top: 1px solid #E2E8F0; margin-top: 6px;">
+        <button class="perm-option-btn" id="permAllowAllBtn">
+          Allow all the time
+        </button>
+
+        <button class="perm-option-btn" id="permAllowInUseBtn">
+          Allow only while the app is in use
+        </button>
+
+        <button class="perm-option-btn deny-perm" id="permDenyBtn">
+          Deny
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 9. Live Patient Location Details Modal (Google Maps Style + Middle of Screen + Return Button) -->
+  <div class="modal-overlay" id="liveLocationStatusModal">
+    <div class="modal-sheet notif-center-sheet">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <button class="notif-back-btn" id="returnLocationHeaderBtn" aria-label="Return to dashboard">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            <span>Return</span>
+          </button>
+          <h3 style="font-size: 1.02rem; font-weight: 800; margin: 0; color: #065F46;">Patient Live GPS Location</h3>
+        </div>
+        <button class="close-btn" data-modal="liveLocationStatusModal" aria-label="Close">✕</button>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 12px; padding: 6px 0;">
+        
+        <!-- Google Maps Type Interactive Map View Canvas -->
+        <div style="height: 195px; width: 100%; border-radius: 16px; overflow: hidden; position: relative; border: 1.5px solid #A7F3D0; box-shadow: inset 0 0 10px rgba(0,0,0,0.08); cursor: pointer;" id="liveLocationMapContainer" title="Click to open exact patient live location in Google Maps">
+          <svg viewBox="0 0 400 190" style="width: 100%; height: 100%; position: absolute; top:0; left:0;">
+            <!-- Map Background Roads & Terrain (Google Maps styling) -->
+            <rect width="400" height="190" fill="#F1F5F9"/>
+            <path d="M 0 40 Q 150 20 250 90 T 400 100" stroke="#FFFFFF" stroke-width="14" fill="none"/>
+            <path d="M 0 40 Q 150 20 250 90 T 400 100" stroke="#CBD5E1" stroke-width="10" fill="none"/>
+            <path d="M 80 0 Q 90 120 180 190" stroke="#FFFFFF" stroke-width="12" fill="none"/>
+            <path d="M 80 0 Q 90 120 180 190" stroke="#E2E8F0" stroke-width="8" fill="none"/>
+            <path d="M 280 0 Q 240 100 360 190" stroke="#FFFFFF" stroke-width="12" fill="none"/>
+            <path d="M 280 0 Q 240 100 360 190" stroke="#E2E8F0" stroke-width="8" fill="none"/>
+            <path d="M 0 140 L 400 140" stroke="#FEF08A" stroke-width="8" fill="none"/>
+            
+            <!-- Green Park / Hospital Zone -->
+            <rect x="210" y="15" width="80" height="55" rx="8" fill="#DCFCE7" opacity="0.85"/>
+            <text x="220" y="48" font-size="10" fill="#166534" font-weight="bold">City Health Park</text>
+
+            <!-- Pulsing Target Accuracy Circle -->
+            <circle cx="200" cy="95" r="32" fill="#3B82F6" opacity="0.18">
+              <animate attributeName="r" values="24;36;24" dur="2s" repeatCount="indefinite"/>
+            </circle>
+            <circle cx="200" cy="95" r="8" fill="#2563EB"/>
+
+            <!-- Red Location Pin Marker -->
+            <g transform="translate(188, 62)">
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="#DC2626"/>
+            </g>
+          </svg>
+
+          <!-- Top Address Overlay Tag & Launch Google Maps Badge -->
+          <div style="position: absolute; top: 10px; left: 10px; right: 10px; background: rgba(255,255,255,0.95); backdrop-filter: blur(6px); border-radius: 10px; padding: 8px 12px; border: 1px solid #CBD5E1; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+            <div style="display: flex; align-items: center; gap: 6px; overflow: hidden; flex: 1;">
+              <span style="color: #DC2626; font-size: 0.95rem;">📍</span>
+              <span style="font-size: 0.8rem; font-weight: 700; color: #0F172A; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" id="patientLiveAddressText">Click to open Google Maps...</span>
+            </div>
+            <span style="font-size: 0.72rem; background: #2563EB; color: #FFFFFF; padding: 4px 9px; border-radius: 6px; font-weight: 700; display: flex; align-items: center; gap: 4px; flex-shrink: 0; box-shadow: 0 2px 5px rgba(37, 99, 235, 0.3);">
+              <span>Open Google Maps</span> ↗
+            </span>
+          </div>
+        </div>
+
+        <!-- Telemetry Data Grid -->
+        <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.8rem; background: #F8FAFC; padding: 12px 14px; border-radius: 12px; border: 1px solid #E2E8F0;">
+          <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #E2E8F0; padding-bottom: 6px;">
+            <span style="color: var(--text-muted);">Exact Coordinates</span>
+            <strong style="color: var(--text-main);" id="patientLiveCoords">24.6180° N, 73.9915° E</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #E2E8F0; padding-bottom: 6px;">
+            <span style="color: var(--text-muted);">GPS Signal Accuracy</span>
+            <strong style="color: #059669;" id="patientLiveAccuracy">High Accuracy (&lt; 5 meters)</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #E2E8F0; padding-bottom: 6px;">
+            <span style="color: var(--text-muted);">Emergency Desk Sync</span>
+            <strong style="color: #059669;">🟢 Caregiver & ER Dispatch Live</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span style="color: var(--text-muted);">Last Fix Timestamp</span>
+            <strong style="color: var(--text-main);" id="patientLiveTimestamp">10:32:49 AM (Live Sync)</strong>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display: flex; gap: 10px; margin-top: 4px;">
+          <button class="location-refresh-btn" id="refreshPatientGpsBtn" style="flex: 1; justify-content: center; padding: 12px; font-size: 0.84rem;">
+            📡 Refresh GPS Fix
+          </button>
+          <button class="pill-btn secondary-btn" id="changeLocationSettingsBtn" style="font-size: 0.82rem; padding: 12px 14px;">
+            ⚙️ Settings
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  
+  <!-- 10. Patient Emergency SOS Dispatch Modal -->
+  <div class="modal-overlay" id="emergencySosModal">
+    <div class="modal-sheet notif-center-sheet" style="max-width: 420px; border: 2.5px solid #DC2626; box-shadow: 0 25px 60px rgba(220, 38, 38, 0.35);">
+      <div class="modal-header" style="border-bottom: 1px solid #FCA5A5; padding-bottom: 10px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 1.4rem;">🚑</span>
+          <h3 style="font-size: 1.1rem; font-weight: 800; margin: 0; color: #991B1B;">AMBULANCE DISPATCHED!</h3>
+        </div>
+        <button class="close-btn" data-modal="emergencySosModal" aria-label="Close">✕</button>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 14px; padding: 12px 0 4px; text-align: center;">
+        <div style="background: #FEF2F2; border: 1.5px solid #FCA5A5; border-radius: 16px; padding: 16px;">
+          <div style="font-size: 2.4rem; margin-bottom: 6px; animation: pulse 1.2s infinite;">🚨</div>
+          <div style="font-weight: 800; font-size: 1.05rem; color: #991B1B;">Emergency SOS Signal Activated</div>
+          <div style="font-size: 0.82rem; color: #B91C1C; margin-top: 4px;" id="sosTriggerReasonText">
+            Patient location & details transmitted live to CareOS Ambulance Driver.
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.82rem; background: #F8FAFC; padding: 14px; border-radius: 14px; border: 1px solid #E2E8F0; text-align: left;">
+          <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #E2E8F0; padding-bottom: 6px;">
+            <span style="color: var(--text-muted);">Patient Name</span>
+            <strong style="color: var(--text-main);">Rahul Kumar (ID #10482)</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #E2E8F0; padding-bottom: 6px;">
+            <span style="color: var(--text-muted);">Live GPS Pickup</span>
+            <strong style="color: #2563EB;" id="sosPatientAddressText">Fetching exact GPS fix...</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #E2E8F0; padding-bottom: 6px;">
+            <span style="color: var(--text-muted);">Driver Response</span>
+            <strong style="color: #059669;">🟢 CareOS Ambulance #AMB-409 En Route</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span style="color: var(--text-muted);">ETA</span>
+            <strong style="color: #DC2626;">8 - 12 Minutes</strong>
+          </div>
+        </div>
+
+        <button class="notif-action-btn primary" id="closeEmergencySosBtn" style="width: 100%; justify-content: center; padding: 12px; background: #DC2626;">
+          ← Return to Dashboard
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 11. 5-Second Emergency SOS Countdown Modal -->
+  <div class="modal-overlay" id="sosCountdownModal">
+    <div class="modal-sheet notif-center-sheet" style="max-width: 410px; border: 2.5px solid #DC2626; box-shadow: 0 25px 60px rgba(220, 38, 38, 0.4);">
+      <div class="modal-header" style="border-bottom: 1px solid #FCA5A5; padding-bottom: 8px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 1.4rem;">🚨</span>
+          <h3 style="font-size: 1.08rem; font-weight: 800; margin: 0; color: #991B1B;">Emergency Ambulance Request</h3>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 14px; padding: 16px 4px 6px; text-align: center;">
+        
+        <!-- Big 5-Second Ring Timer -->
+        <div style="position: relative; width: 100px; height: 100px; margin: 0 auto;">
+          <svg width="100" height="100" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="42" stroke="#FCA5A5" stroke-width="8" fill="none"/>
+            <circle id="sosCountdownCircle" cx="50" cy="50" r="42" stroke="#DC2626" stroke-width="8" fill="none" stroke-dasharray="264" stroke-dashoffset="0" style="transition: stroke-dashoffset 1s linear; transform: rotate(-90deg); transform-origin: 50% 50%;"/>
+          </svg>
+          <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: center; font-size: 2.4rem; font-weight: 900; color: #DC2626;" id="sosCountdownSecondsNumber">
+            5
+          </div>
+        </div>
+
+        <div>
+          <div style="font-weight: 800; font-size: 1.05rem; color: #0F172A;">Dispatching Ambulance in <span id="sosTimerCountdownText" style="color: #DC2626; font-size: 1.15rem;">5</span> Seconds...</div>
+          <div style="font-size: 0.8rem; color: #64748B; margin-top: 4px;" id="sosCountdownSubReason">
+            Tap Cancel if this was an accidental tap (False Alarm).
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 4px;">
+          <!-- Primary Cancel Button (Prevents dispatch if clicked within 8 seconds!) -->
+          <button class="notif-action-btn primary" id="cancelSosCountdownBtn" style="width: 100%; justify-content: center; padding: 14px; background: #DC2626; font-weight: 800; font-size: 0.95rem; box-shadow: 0 4px 14px rgba(220, 38, 38, 0.3);">
+            ❌ CANCEL AMBULANCE REQUEST (False Alarm)
+          </button>
+
+          <!-- Instant Send Button (Forces dispatch immediately) -->
+          <button class="pill-btn secondary-btn" id="forceSendSosNowBtn" style="font-size: 0.8rem; padding: 10px; border-color: #CBD5E1; color: #475569;">
+            ⚡ Send Location Now (Don't Wait)
+          </button>
+        </div>
+
+      </div>
+      </div>
+    </div>
+    
+    <!-- Floating Chatbot Icon (Inside app-container) -->
+    <button id="floatingChatbotBtn" class="chatbot-fab" aria-label="Open Chatbot" style="position: absolute; bottom: 95px; right: 20px; width: 64px; height: 64px; border-radius: 50%; background: #ffffff; color: #10b981; border: 2px solid #10b981; box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 9999; transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s;" onmouseover="this.style.transform='scale(1.08)'; this.style.boxShadow='0 12px 30px rgba(16, 185, 129, 0.6)';" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 8px 25px rgba(16, 185, 129, 0.4)';">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="34" height="34">
+        <!-- Robot face -->
+        <rect x="3" y="11" width="18" height="10" rx="5" />
+        <path d="M12 11V6" />
+        <path d="M9 6h6" />
+        <circle cx="8" cy="16" r="1.5" fill="currentColor" />
+        <circle cx="16" cy="16" r="1.5" fill="currentColor" />
+        <path d="M9 19c1.5 1 4.5 1 6 0" />
+        <path d="M1 15h2" />
+        <path d="M21 15h2" />
+        <!-- Speech Bubble -->
+        <path d="M18 7c0-2.2-1.8-4-4-4s-4 1.8-4 4c0 1.9 1.3 3.5 3 3.9v2.1l2-2c1.7 0 3-1.8 3-4z" />
+        <line x1="13" y1="3.5" x2="16" y2="3.5" />
+        <line x1="13" y1="5.5" x2="15" y2="5.5" />
+        <circle cx="16.5" cy="5.5" r="0.5" fill="currentColor" stroke="none" />
+      </svg>
+    </button>
+  </div><!-- End of app-layout -->
+
+  <!-- JavaScript logic -->
+  <script type="module" src="app.js?v=2"></script>
+</body>
+</html>

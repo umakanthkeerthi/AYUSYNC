@@ -1,0 +1,38 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": true,
+  "rewrites": [
+    {
+      "source": "/patient/(.*)",
+      "destination": "/patient ui/$1"
+    },
+    {
+      "source": "/patient",
+      "destination": "/patient ui/"
+    },
+    {
+      "source": "/caregiver/(.*)",
+      "destination": "/caregiver ui/$1"
+    },
+    {
+      "source": "/caregiver",
+      "destination": "/caregiver ui/"
+    },
+    {
+      "source": "/nurse/(.*)",
+      "destination": "/nurse ui/$1"
+    },
+    {
+      "source": "/nurse",
+      "destination": "/nurse ui/"
+    },
+    {
+      "source": "/driver/(.*)",
+      "destination": "/Driver ui/$1"
+    },
+    {
+      "source": "/driver",
+      "destination": "/Driver ui/"
+    }
+  ]
+}

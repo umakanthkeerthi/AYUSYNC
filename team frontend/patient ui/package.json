@@ -1,0 +1,23 @@
+{
+  "name": "ayusync-patient-ui",
+  "version": "1.0.0",
+  "description": "Mobile-First Patient Interface Web App in TypeScript for AyuSync Health System",
+  "main": "index.html",
+  "scripts": {
+    "build": "npx tsc",
+    "dev": "npx tsc && npx serve -l 3000",
+    "start": "npx serve -l 3000"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  },
+  "keywords": [
+    "patient-ui",
+    "mobile-first",
+    "typescript",
+    "ayusync",
+    "recovery-dashboard"
+  ],
+  "author": "Antigravity AI",
+  "license": "MIT"
+}

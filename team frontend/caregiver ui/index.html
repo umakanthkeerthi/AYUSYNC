@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>AyuSync - Caregiver Portal</title>
+  <meta name="description" content="AyuSync Caregiver Interface for monitoring patient health status, medical appointments, lab tests, transport arrangements, and alerts.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Responsive Layout Wrapper (Web Desktop + Mobile App) -->
+  <div class="app-layout">
+
+    <!-- Desktop Navigation Sidebar Rail (Visible on > 768px Desktop Web Screens) -->
+    <aside class="desktop-sidebar">
+      <div class="sidebar-logo">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+          <path d="M5.5 14h3l1.5-6 2 10 2-7 1.5 3h3.5"></path>
+        </svg>
+        <span>Ayusync Care</span>
+      </div>
+
+      <div class="sidebar-user-badge">
+        <div style="width: 38px; height: 38px; border-radius: 50%; background: #E98B50; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1rem;">
+          🏥
+        </div>
+        <div>
+          <div class="sidebar-user-name">Certified Caregiver</div>
+          <div class="sidebar-user-role">Duty ID #CG-4491</div>
+        </div>
+      </div>
+
+      <nav class="sidebar-menu">
+        <button class="sidebar-link nav-tab active" data-tab="home">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          <span data-i18n="tab_home">Home</span>
+        </button>
+
+        <button class="sidebar-link nav-tab" data-tab="tasks">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/></svg>
+          <span data-i18n="tab_tasks">Duty Schedule</span>
+        </button>
+
+        <button class="sidebar-link nav-tab" data-tab="chat">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <span data-i18n="tab_chat">Chat & Alerts</span>
+        </button>
+
+        <button class="sidebar-link nav-tab" data-tab="profile">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <span data-i18n="tab_profile">Profile</span>
+        </button>
+      </nav>
+    </aside>
+
+    <!-- Mobile / Desktop Main Viewport Container Shell -->
+    <div class="app-container" id="appContainer">
+
+    <!-- App Top Navigation Header -->
+    <header class="app-header">
+      <div class="header-title" data-i18n="my_patient">My Patient</div>
+
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <!-- Patient Selector Dropdown with Avatar -->
+        <div class="patient-selector-wrap">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" alt="Patient Avatar" class="patient-avatar" id="patientAvatarImg">
+          <select class="patient-select" id="patientSelect" aria-label="Select Patient">
+            <option value="rahul">Rahul Kumar</option>
+            <option value="priya">Priya Sharma</option>
+            <option value="amit">Amit Patel</option>
+          </select>
+        </div>
+      </div>
+    </header>
+
+    <!-- Patient Health Status Row -->
+    <div class="status-row">
+      <div class="status-pill">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+        <span data-i18n="stable_status">Stable</span>
+      </div>
+      <div class="status-time" data-i18n="last_updated">Last updated: 10 min ago</div>
+    </div>
+
+    <!-- MAIN SCROLLABLE CONTENT AREA -->
+    <main class="main-content">
+
+      <!-- ===================================================================
+           TAB 1: CAREGIVER DASHBOARD HOME VIEW
+           =================================================================== -->
+      <section class="page-view active" id="view-home">
+
+        <!-- Today at a glance -->
+        <div>
+          <div class="section-title" data-i18n="today_glance">Today at a glance</div>
+
+          <div class="glance-grid">
+            
+            <!-- Medication Card -->
+            <div class="glance-card">
+              <div class="glance-icon-box green">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/><path d="m8.5 8.5 7 7"/></svg>
+              </div>
+              <div class="glance-title" data-i18n="medication">Medication</div>
+              <div class="glance-status green" data-i18n="completed">Completed</div>
+            </div>
+
+            <!-- Blood Test Card -->
+            <div class="glance-card">
+              <div class="glance-icon-box orange">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55A2 2 0 0 0 6.51 23.5h10.98a2 2 0 0 0 1.79-2.95l-5.069-10.127A2 2 0 0 1 14 9.527V2"/><line x1="8.5" y1="2" x2="15.5" y2="2"/></svg>
+              </div>
+              <div class="glance-title" data-i18n="blood_test">Blood Test</div>
+              <div class="glance-status orange" data-i18n="tomorrow">Tomorrow</div>
+            </div>
+
+            <!-- Appointment Card -->
+            <div class="glance-card">
+              <div class="glance-icon-box green">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></svg>
+              </div>
+              <div class="glance-title" data-i18n="appointment">Appointment</div>
+              <div class="glance-status green" data-i18n="appt_time">4:00 PM</div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Needs your attention Card -->
+        <div>
+          <div class="section-title" data-i18n="needs_attention">Needs your attention</div>
+
+          <div class="attention-card">
+            <div class="attention-header">
+              <div class="warning-icon-box">⚠️</div>
+              <div class="attention-text" id="transportAlertText" data-i18n="transport_alert">
+                Patient hasn't confirmed tomorrow's transport for blood test.
+              </div>
+            </div>
+
+            <button class="pill-btn" id="arrangeTransportBtn" data-i18n="arrange_transport">
+              Arrange Transport
+            </button>
+          </div>
+        </div>
+
+        <!-- Recent Activity Timeline -->
+        <div>
+          <div class="section-title" data-i18n="recent_activity">Recent Activity</div>
+
+          <div class="timeline-card-list">
+            
+            <div class="timeline-item">
+              <div class="timeline-left">
+                <div class="activity-icon-box icon-blue">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/><path d="m8.5 8.5 7 7"/></svg>
+                </div>
+                <div class="activity-title" data-i18n="med_taken">Medicine taken</div>
+              </div>
+              <div class="activity-time" data-i18n="med_time">Today, 8:05 AM</div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-left">
+                <div class="activity-icon-box icon-purple">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55A2 2 0 0 0 6.51 23.5h10.98a2 2 0 0 0 1.79-2.95l-5.069-10.127A2 2 0 0 1 14 9.527V2"/><line x1="8.5" y1="2" x2="15.5" y2="2"/></svg>
+                </div>
+                <div class="activity-title" data-i18n="test_scheduled">Blood test scheduled</div>
+              </div>
+              <div class="activity-time" data-i18n="test_time">Tomorrow, 10:00 AM</div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-left">
+                <div class="activity-icon-box icon-orange">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></svg>
+                </div>
+                <div class="activity-title" data-i18n="appt_confirmed">Appointment confirmed</div>
+              </div>
+              <div class="activity-time" data-i18n="appt_date">Tomorrow, 4:00 PM</div>
+            </div>
+
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ===================================================================
+           TAB 2: CAREGIVER SCHEDULE / TASKS VIEW
+           =================================================================== -->
+      <section class="page-view" id="view-tasks">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+          <button class="back-home-btn nav-tab" data-tab="home" aria-label="Return to Home" title="Return to Home">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          </button>
+          <div class="section-title" style="margin-bottom: 0;">Caregiver Duty Schedule</div>
+        </div>
+        
+        <div style="background: var(--surface); border-radius: var(--radius-xl); padding: 16px; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); margin-bottom: 12px;">
+          <div style="font-weight: 700; font-size: 0.95rem;">Verify Morning Dose</div>
+          <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">Rahul Kumar confirmed dose taken at 8:05 AM. Verified ✓</div>
+        </div>
+
+        <div style="background: var(--surface); border-radius: var(--radius-xl); padding: 16px; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm);">
+          <div style="font-weight: 700; font-size: 0.95rem;">Confirm Transport to City Lab</div>
+          <div style="font-size: 0.8rem; color: var(--amber); margin-top: 4px;">Pending action for 10:00 AM Blood Test tomorrow.</div>
+        </div>
+      </section>
+
+      <!-- ===================================================================
+           TAB 3: CHAT & ALERTS VIEW
+           =================================================================== -->
+      <section class="page-view" id="view-chat">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+          <button class="back-home-btn nav-tab" data-tab="home" aria-label="Return to Home" title="Return to Home">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          </button>
+          <div class="section-title" style="margin-bottom: 0;">Patient Communication & Alerts</div>
+        </div>
+
+        <div style="background: var(--surface); border-radius: var(--radius-xl); padding: 16px; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); margin-bottom: 12px;">
+          <div style="font-weight: 700; font-size: 0.95rem;">Direct Message from Rahul</div>
+          <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 4px;">"Hi, I finished my morning walk. Heart rate felt normal."</p>
+        </div>
+      </section>
+
+      <!-- ===================================================================
+           TAB 4: CAREGIVER PROFILE VIEW
+           =================================================================== -->
+      <section class="page-view" id="view-profile">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+          <button class="back-home-btn nav-tab" data-tab="home" aria-label="Return to Home" title="Return to Home">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          </button>
+          <div class="section-title" style="margin-bottom: 0;">Caregiver Profile</div>
+        </div>
+
+        <div style="background: var(--surface); border-radius: var(--radius-xl); padding: 20px; text-align: center; border: 1px solid var(--border-color); margin-bottom: 12px;">
+          <div style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.2rem;">Certified Healthcare Companion</div>
+          <div style="font-size: 0.82rem; color: var(--primary); margin-top: 4px;">Assigned Patients: 3 (Rahul, Priya, Amit)</div>
+        </div>
+
+        <!-- Multi-Language Preference Card in Profile -->
+        <div style="background: var(--surface); border-radius: var(--radius-xl); padding: 14px 16px; border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between;">
+          <div>
+            <div style="font-weight: 700; font-size: 0.9rem; color: var(--text-main);">🌐 Language Preference</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">Switch application language</div>
+          </div>
+          <select class="lang-select" id="langSelectProfile" aria-label="Select Language in Profile" style="padding: 6px 10px; font-size: 0.8rem;">
+            <option value="en">🌐 English</option>
+            <option value="hi">🇮🇳 हिंदी</option>
+            <option value="te">🇮🇳 తెలుగు</option>
+            <option value="ta">🇮🇳 தமிழ்</option>
+            <option value="kn">🇮🇳 ಕನ್ನಡ</option>
+            <option value="ml">🇮🇳 മലയാളം</option>
+            <option value="es">🇪🇸 ES</option>
+            <option value="fr">🇫🇷 FR</option>
+            <option value="de">🇩🇪 DE</option>
+            <option value="ar">🇸🇦 العربية</option>
+          </select>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ===================================================================
+         BOTTOM MOBILE TAB NAVIGATION BAR (PERSISTENT)
+         =================================================================== -->
+    <nav class="bottom-nav">
+      <button class="nav-tab active" data-tab="home">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span data-i18n="tab_home">Home</span>
+      </button>
+
+      <button class="nav-tab" data-tab="tasks">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/></svg>
+        <span data-i18n="tab_tasks">Schedule</span>
+      </button>
+
+      <button class="nav-tab" data-tab="chat">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <span data-i18n="tab_chat">Chat & Alerts</span>
+      </button>
+
+      <button class="nav-tab" data-tab="profile">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span data-i18n="tab_profile">Profile</span>
+      </button>
+    </nav>
+
+  </div>
+
+  <!-- ===================================================================
+       MODALS
+       =================================================================== -->
+  <!-- 1. Transport Booking Modal Sheet -->
+  <div class="modal-overlay" id="transportModal">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.15rem; font-weight: 700;">Arrange Transport for Patient</h3>
+        <button class="close-btn" data-modal="transportModal">✕</button>
+      </div>
+
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;">
+        Book non-emergency medical cab transport for Rahul Kumar's Blood Test at City Lab (Tomorrow, 10:00 AM).
+      </p>
+
+      <div style="background: var(--bg-app); border-radius: 12px; padding: 14px; margin-bottom: 16px;">
+        <div style="font-weight: 700; font-size: 0.88rem; margin-bottom: 4px;">Pickup Location:</div>
+        <div style="font-size: 0.8rem; color: var(--text-muted);">Patient Home • 42 Palm Street</div>
+        <div style="font-weight: 700; font-size: 0.88rem; margin: 8px 0 4px;">Destination:</div>
+        <div style="font-size: 0.8rem; color: var(--text-muted);">City Diagnostics Lab • Central Branch</div>
+      </div>
+
+      <button class="pill-btn" style="width: 100%; justify-content: center; padding: 12px;" id="confirmTransportSubmit">
+        Confirm Transport Booking
+      </button>
+    </div>
+  </div>
+
+  <!-- 2. Caregiver Voice Controller Modal Sheet (Alexa Voice Control) -->
+  <div class="modal-overlay" id="caregiverVoiceModal">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.15rem; font-weight: 700;">🎙️ Caregiver Alexa Voice Control</h3>
+        <button class="close-btn" data-modal="caregiverVoiceModal">✕</button>
+      </div>
+
+      <div style="text-align: center; padding: 10px 0;">
+        <div style="font-size: 0.85rem; color: var(--text-muted);" id="voiceStatusText">Listening for voice command... Speak now</div>
+        
+        <div class="voice-wave-container" style="display: flex; justify-content: center; gap: 4px; margin: 12px 0;">
+          <div class="wave-bar" style="width: 4px; height: 24px; background: var(--primary); border-radius: 2px;"></div>
+          <div class="wave-bar" style="width: 4px; height: 32px; background: var(--primary); border-radius: 2px;"></div>
+          <div class="wave-bar" style="width: 4px; height: 18px; background: var(--primary); border-radius: 2px;"></div>
+        </div>
+
+        <div style="background: var(--bg-app); border: 1px solid var(--border-color); border-radius: 12px; padding: 10px; margin-bottom: 12px;">
+          <div style="font-size: 0.72rem; color: var(--text-muted); margin-bottom: 2px;">Recognized Command:</div>
+          <p style="font-size: 0.88rem; color: var(--primary); font-weight: 700;" id="caregiverRecognizedText">"Open schedule"</p>
+        </div>
+
+        <div style="text-align: left; margin-bottom: 12px;">
+          <div style="font-size: 0.78rem; font-weight: 700; color: var(--text-main); margin-bottom: 6px;">💡 Try saying or tapping these Alexa voice commands:</div>
+          <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+            <button class="filter-pill voice-cmd-chip" data-cmd="open schedule" style="padding: 6px 12px; border-radius: 16px; border: 1px solid var(--border-color); background: var(--surface); font-size: 0.75rem; cursor: pointer;">📅 "Open schedule"</button>
+            <button class="filter-pill voice-cmd-chip" data-cmd="open chat" style="padding: 6px 12px; border-radius: 16px; border: 1px solid var(--border-color); background: var(--surface); font-size: 0.75rem; cursor: pointer;">💬 "Open chat & alerts"</button>
+            <button class="filter-pill voice-cmd-chip" data-cmd="arrange transport" style="padding: 6px 12px; border-radius: 16px; border: 1px solid var(--border-color); background: var(--surface); font-size: 0.75rem; cursor: pointer;">🚗 "Arrange transport"</button>
+            <button class="filter-pill voice-cmd-chip" data-cmd="open profile" style="padding: 6px 12px; border-radius: 16px; border: 1px solid var(--border-color); background: var(--surface); font-size: 0.75rem; cursor: pointer;">👤 "Open profile"</button>
+          </div>
+        </div>
+      </div>
+
+      <button class="pill-btn" style="width: 100%; justify-content: center; padding: 12px; background: var(--primary); color: #fff; border: none; border-radius: 20px; font-weight: 700; cursor: pointer;" id="sendCaregiverVoiceBtn">Execute Voice Command</button>
+    </div>
+  </div><!-- End of app-layout -->
+
+  <!-- JavaScript logic -->
+  <script type="module" src="app.js"></script>
+</body>
+</html>
