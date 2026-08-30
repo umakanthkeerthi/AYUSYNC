@@ -10,10 +10,12 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.8
-  flutter_animate: ^4.5.2
+  flutter_animate: ^4.5.0
   google_fonts: ^8.2.1
   http: ^1.6.0
   lucide_icons: ^0.257.0
+  dio: ^5.4.3
+  flutter_riverpod: ^2.5.12
 
 dev_dependencies:
   flutter_test:

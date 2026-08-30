@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AyuSync - Hospital Discharge Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary-teal: #0D9488;
+            --bg-color: #F8FAFC;
+            --card-bg: #FFFFFF;
+            --text-dark: #1E293B;
+            --text-muted: #64748B;
+            --border-color: #E2E8F0;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-dark); display: flex; flex-direction: column; align-items: center; padding: 40px; }
+        
+        /* Header */
+        .header { width: 100%; max-width: 800px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 40px; }
+        .brand { display: flex; align-items: center; gap: 12px; font-size: 24px; font-weight: 800; color: var(--primary-teal); }
+        
+        /* Main Container */
+        .container { width: 100%; max-width: 800px; background: var(--card-bg); border-radius: 16px; padding: 32px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid var(--border-color); }
+        
+        h2 { margin-bottom: 24px; font-size: 20px; }
+        
+        /* Patient List */
+        .patient-list { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px; }
+        .patient-item { display: flex; justify-content: space-between; align-items: center; padding: 16px; border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer; transition: all 0.2s; }
+        .patient-item:hover { border-color: var(--primary-teal); background: #F0FDF4; }
+        .patient-item.selected { border-color: var(--primary-teal); background: #CCFBF1; }
+        .patient-name { font-weight: 600; }
+        .patient-id { color: var(--text-muted); font-size: 14px; }
+        
+        /* Discharge Form (Hidden by default) */
+        #dischargeForm { display: none; margin-top: 32px; padding-top: 32px; border-top: 1px solid var(--border-color); }
+        .form-group { margin-bottom: 24px; }
+        .form-label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 14px; }
+        .form-select { width: 100%; padding: 14px 16px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 15px; outline: none; background: #F8FAFC; }
+        .form-select:focus { border-color: var(--primary-teal); background: white; }
+        
+        .submit-btn { width: 100%; padding: 16px; border: none; border-radius: 8px; background: var(--primary-teal); color: white; font-size: 16px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+        .submit-btn:hover { background: #0F766E; }
+        .submit-btn:disabled { background: #94A3B8; cursor: not-allowed; }
+
+        /* Modal */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 100; }
+        .modal-content { background: white; padding: 40px; border-radius: 16px; width: 100%; max-width: 500px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        .success-icon { width: 64px; height: 64px; border-radius: 50%; background: #D1FAE5; color: #10B981; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px auto; }
+        
+        .cred-section { text-align: left; background: #F8FAFC; border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; margin: 24px 0; }
+        .cred-title { font-size: 12px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; }
+        .cred-value { font-family: monospace; font-size: 16px; font-weight: 600; color: var(--text-dark); margin-bottom: 16px; }
+        .cred-value:last-child { margin-bottom: 0; }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="brand">
+            <i data-lucide="activity"></i>
+            AyuSync Admin
+        </div>
+        <div style="color: var(--text-muted); font-weight: 600;">EHR Discharge Workflow</div>
+    </header>
+
+    <div class="container">
+        <h2>1. Select Patient from EHR</h2>
+        <p style="color: var(--text-muted); margin-bottom: 16px; font-size: 14px;">Fetching live data from Hospital Demo EHR API...</p>
+        
+        <ul class="patient-list" id="patientList">
+            <li style="text-align: center; padding: 20px; color: var(--text-muted);"><i class="lucide-loader" style="animation: spin 1s linear infinite;"></i> Loading patients...</li>
+        </ul>
+
+        <div id="dischargeForm">
+            <h2>2. Assign Doctor & Discharge</h2>
+            <div class="form-group">
+                <label class="form-label">Assign Treating Doctor</label>
+                <select id="docSelect" class="form-select">
+                    <option value="" disabled selected>Select a Doctor...</option>
+                    <option value="dr_smith">Dr. Smith (Cardiology)</option>
+                    <option value="dr_patel">Dr. Patel (Neurology)</option>
+                    <option value="dr_chen">Dr. Chen (Internal Medicine)</option>
+                    <option value="dr_carter">Dr. Emily Carter (General)</option>
+                    <option value="dr_jones">Dr. Jones (Oncology)</option>
+                </select>
+            </div>
+            <button id="provBtn" class="submit-btn" onclick="dischargePatient()">Discharge Patient into AyuSync</button>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal-overlay" id="successModal">
+        <div class="modal-content">
+            <div class="success-icon"><i data-lucide="check" size="32"></i></div>
+            <h2 style="margin-bottom: 8px;">Patient Successfully Discharged</h2>
+            <p style="color: var(--text-muted); font-size: 14px;">Clinical data pulled and linked to <strong id="modalDocName">Doctor</strong>.</p>
+            
+            <div class="cred-section">
+                <div class="cred-title">Patient App Credentials</div>
+                <div class="cred-value">Username: <span id="modalUser" style="color: var(--primary-teal);"></span></div>
+                <div class="cred-value" style="margin-bottom: 0;">Password: <span id="modalPass" style="color: var(--primary-teal);"></span></div>
+            </div>
+
+            <div class="cred-section" style="background: #F0FDF4; border-color: #86EFAC;">
+                <div class="cred-title" style="color: #166534;">Unique Patient ID (For Caregiver Setup)</div>
+                <div class="cred-value" style="margin-bottom: 0; color: #166534;" id="modalPatientId"></div>
+                <p style="font-size: 12px; color: #15803D; margin-top: 8px; font-weight: normal;">Hand this ID to the family member. They will enter it in the Caregiver App to link their account.</p>
+            </div>
+
+            <button class="submit-btn" onclick="window.location.reload()">Done</button>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+        let selectedEhrId = null;
+
+        // Fetch patients from EHR on load via our Backend Proxy to avoid CORS
+        window.onload = async () => {
+            try {
+                // Using AyuSync Backend Port 8000
+                const res = await fetch('http://127.0.0.1:8000/api/v1/admin/ehr-patients');
+                const patients = await res.json();
+                
+                const listEl = document.getElementById('patientList');
+                listEl.innerHTML = '';
+                
+                patients.forEach(p => {
+                    const li = document.createElement('li');
+                    li.className = 'patient-item';
+                    li.innerHTML = `
+                        <span class="patient-name">${p.name}</span>
+                        <span class="patient-id">EHR ID: ${p.id.substring(0,8)}...</span>
+                    `;
+                    li.onclick = () => selectPatient(li, p.id);
+                    listEl.appendChild(li);
+                });
+            } catch (e) {
+                document.getElementById('patientList').innerHTML = '<li style="color:red; padding:16px;">Error connecting to EHR API (Port 8001). Is it running?</li>';
+            }
+        };
+
+        function selectPatient(element, ehrId) {
+            document.querySelectorAll('.patient-item').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedEhrId = ehrId;
+            document.getElementById('dischargeForm').style.display = 'block';
+        }
+
+        async function dischargePatient() {
+            const docSelect = document.getElementById('docSelect');
+            if(!docSelect.value) {
+                alert("Please select a doctor to assign.");
+                return;
+            }
+
+            const btn = document.getElementById('provBtn');
+            btn.innerHTML = '<i class="lucide-loader" style="animation: spin 1s linear infinite;"></i> Processing Discharge...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('http://127.0.0.1:8000/api/v1/admin/setup-ecosystem', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        ehr_patient_id: selectedEhrId,
+                        doctor_username: docSelect.value
+                    })
+                });
+
+                const data = await response.json();
+                
+                if(response.ok) {
+                    document.getElementById('modalDocName').innerText = data.assigned_doctor;
+                    document.getElementById('modalUser').innerText = data.patient_username;
+                    document.getElementById('modalPass').innerText = data.patient_password;
+                    document.getElementById('modalPatientId').innerText = data.patient_profile_id;
+                    document.getElementById('successModal').style.display = 'flex';
+                } else {
+                    alert('Error: ' + data.detail);
+                }
+            } catch (e) {
+                alert('Network error communicating with AyuSync backend (Port 8000).');
+            } finally {
+                btn.innerHTML = 'Discharge Patient into AyuSync';
+                btn.disabled = false;
+            }
+        }
+    </script>
+    <style>
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+    </style>
+</body>
+</html>

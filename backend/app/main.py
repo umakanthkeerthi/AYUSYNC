@@ -1,9 +1,14 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import HTMLResponse
 from typing import Dict, Any
 from .models.events import TelemetryEvent, VitalsPayload, EventSource
 from .core.event_bus import event_bus
 from .core.database_session import engine
 from .models.database import Base
+from .api.patient_router import router as patient_router
+from .api.admin_router import router as admin_router
 
 # Initialize the Database tables on startup (For local SQLite testing)
 Base.metadata.create_all(bind=engine)
@@ -13,6 +18,31 @@ app = FastAPI(
     description="Core backend for the Ayusync Autonomous Care Coordination System",
     version="0.1.0"
 )
+
+# Enable CORS for Flutter Web
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Register API Routers
+app.include_router(patient_router)
+app.include_router(admin_router)
+
+# Mount Static Files for Admin UI
+import os
+static_dir = os.path.join(os.path.dirname(__file__), "static")
+if not os.path.exists(static_dir):
+    os.makedirs(static_dir)
+app.mount("/static", StaticFiles(directory=static_dir), name="static")
+
+@app.get("/admin", response_class=HTMLResponse)
+async def admin_page():
+    with open(os.path.join(static_dir, "admin.html"), "r") as f:
+        return f.read()
 
 @app.get("/")
 async def root():

@@ -61,8 +61,21 @@ class _MainLayoutState extends State<MainLayout> {
     ];
 
     return Scaffold(
-      body: SafeArea(
-        child: tabs[_currentIndex],
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: RadialGradient(
+            center: Alignment.topCenter,
+            radius: 1.5,
+            colors: [
+              Color(0xFF0C2422), // Very dark teal highlight
+              DriverTheme.background,
+            ],
+          ),
+        ),
+        child: SafeArea(
+          top: _currentIndex != 1, // Let map stretch to top
+          child: tabs[_currentIndex],
+        ),
       ),
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(

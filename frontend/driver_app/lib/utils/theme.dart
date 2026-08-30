@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class DriverTheme {
-  // Uber Dark Theme Palette
-  static const Color primary = Color(0xFF276EF1); // Uber Blue
-  static const Color background = Color(0xFF000000); // Pure Black
-  static const Color surface = Color(0xFF1C1C1E); // Dark Gray Surface
-  static const Color border = Color(0xFF333333); // Subtle border
+  // Premium Dark Glass Theme (Matches Caregiver Teal)
+  static const Color primary = Color(0xFF0D9488); // Deep Teal
+  static const Color primaryLight = Color(0xFF2DD4BF); // Bright Mint
+  static const Color background = Color(0xFF09090B); // Rich Dark Background
+  static const Color surface = Color(0xFF18181B); // Dark Surface
+  static const Color border = Color(0xFF27272A); // Subtle border
   
   static const Color textMain = Color(0xFFFFFFFF); // Pure White
   static const Color textMuted = Color(0xFFA6A6A6); // Light Gray
@@ -20,6 +21,14 @@ class DriverTheme {
       color: Color(0x33000000),
       blurRadius: 10,
       offset: Offset(0, 4),
+    )
+  ];
+
+  static const List<BoxShadow> glowShadow = [
+    BoxShadow(
+      color: Color(0x330D9488),
+      blurRadius: 20,
+      spreadRadius: 2,
     )
   ];
 

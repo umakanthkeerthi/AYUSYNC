@@ -2,16 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AyuTheme {
-  // Vibrant Premium Palette
-  static const Color primary = Color(0xFFF27B42);
-  static const Color primaryDark = Color(0xFFD9632D);
-  static const Color primaryLight = Color(0xFFFFEAE0);
+  // Brand Colors (matching Patient App AppTheme)
+  static const Color primary = Color(0xFF0D9488);
+  static const Color primaryLight = Color(0xFF2DD4BF);
+  static const Color primaryDark = Color(0xFF0F766E);
   
+  static const Color bgApp = Color(0xFFF8F9FA); // backgroundLight
+  static const Color surface = Colors.white; // surfaceWhite
+  
+  static const Color textMain = Color(0xFF1E293B); // textDark
+  static const Color textMuted = Color(0xFF64748B); // textMuted
+
+  // Additional Caregiver specific colors
+  static const Color green = Color(0xFF10B981);
+  static const Color greenBg = Color(0xFFECFDF5);
+  static const Color amber = Color(0xFFF59E0B);
+  static const Color amberBg = Color(0xFFFFFBEB);
+  static const Color border = Color(0xFFE2E8F0);
+
   // Gradients
   static const LinearGradient primaryGradient = LinearGradient(
-    colors: [Color(0xFFF99E5C), Color(0xFFF27B42)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
+    colors: [primaryLight, primary],
   );
 
   static const LinearGradient alertGradient = LinearGradient(
@@ -19,19 +32,6 @@ class AyuTheme {
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
-
-  // Status & Alerts
-  static const Color green = Color(0xFF10B981);
-  static const Color greenBg = Color(0xFFECFDF5);
-  static const Color amber = Color(0xFFF59E0B);
-  static const Color amberBg = Color(0xFFFFFBEB);
-  
-  // Neutral Spectrum
-  static const Color bgApp = Color(0xFFF4F7F9);
-  static const Color surface = Color(0xFFFFFFFF);
-  static const Color textMain = Color(0xFF1E293B);
-  static const Color textMuted = Color(0xFF94A3B8);
-  static const Color border = Color(0xFFE2E8F0);
 
   // Soft Premium Shadows
   static const List<BoxShadow> softShadow = [
@@ -52,7 +52,7 @@ class AyuTheme {
 
   static const List<BoxShadow> primaryFloatingShadow = [
     BoxShadow(
-      color: Color(0x4DF27B42),
+      color: Color(0x4D0D9488),
       blurRadius: 12,
       offset: Offset(0, 6),
     )
@@ -60,7 +60,7 @@ class AyuTheme {
 
   static const List<BoxShadow> glowShadow = [
     BoxShadow(
-      color: Color(0x33F27B42),
+      color: Color(0x330D9488),
       blurRadius: 16,
       offset: Offset(0, 4),
     )
@@ -68,21 +68,33 @@ class AyuTheme {
 
   static ThemeData get lightTheme {
     return ThemeData(
-      primaryColor: primary,
-      scaffoldBackgroundColor: bgApp,
-      colorScheme: const ColorScheme.light(
+      useMaterial3: true,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: primary,
         primary: primary,
-        secondary: amber,
+        background: bgApp,
         surface: surface,
-        onSurface: textMain,
       ),
-      textTheme: GoogleFonts.interTextTheme().copyWith(
+      scaffoldBackgroundColor: bgApp,
+      textTheme: GoogleFonts.interTextTheme().apply(
+        bodyColor: textMain,
+        displayColor: textMain,
+      ).copyWith(
         displayLarge: GoogleFonts.outfit(color: textMain, fontWeight: FontWeight.w900),
         displayMedium: GoogleFonts.outfit(color: textMain, fontWeight: FontWeight.w800),
         titleLarge: GoogleFonts.outfit(color: textMain, fontWeight: FontWeight.bold),
         titleMedium: GoogleFonts.outfit(color: textMain, fontWeight: FontWeight.bold),
-        bodyLarge: GoogleFonts.inter(color: textMain, fontSize: 16),
-        bodyMedium: GoogleFonts.inter(color: textMuted, fontSize: 14),
+      ),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: true,
+        iconTheme: IconThemeData(color: textMain),
+        titleTextStyle: TextStyle(
+          color: textMain,
+          fontSize: 17,
+          fontWeight: FontWeight.w600,
+        ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(

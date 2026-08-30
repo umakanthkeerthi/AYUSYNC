@@ -16,10 +16,10 @@ class AWSEventBus:
                 aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY
             )
             self.bus_name = settings.AWS_EVENTBRIDGE_BUS_NAME
-            print(f"✅ Connected to AWS EventBridge Bus: {self.bus_name}")
+            print(f"Connected to AWS EventBridge Bus: {self.bus_name}")
         else:
             self.client = None
-            print("⚠️ WARNING: AWS Credentials not found in .env. EventBus running in LOCAL MOCK mode.")
+            print("WARNING: AWS Credentials not found in .env. EventBus running in LOCAL MOCK mode.")
 
     def publish(self, event: BaseEvent):
         """Publishes a Pydantic Event Model to EventBridge."""
@@ -38,7 +38,7 @@ class AWSEventBus:
                         }
                     ]
                 )
-                print(f"🚀 Published to AWS EventBridge [{event.topic}]: {response}")
+                print(f"Published to AWS EventBridge [{event.topic}]: {response}")
                 
                 # For this local PoC, we manually trigger the Patient State Agent 
                 # so it can save to the DB, simulating a cloud webhook.
@@ -79,11 +79,11 @@ class AWSEventBus:
                 
                 return response
             except Exception as e:
-                print(f"❌ Failed to publish to AWS: {str(e)}")
+                print(f"Failed to publish to AWS: {str(e)}")
                 return None
         else:
             # Mock mode logic
-            print(f"🚀 [LOCAL BUS MOCK] Published Event!")
+            print(f"[LOCAL BUS MOCK] Published Event!")
             print(f"   Topic: {event.topic}")
             print(f"   Payload: {json.dumps(detail_json, indent=2)}")
             

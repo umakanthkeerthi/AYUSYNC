@@ -4,7 +4,8 @@ import 'utils/theme.dart';
 import 'screens/home_tab.dart';
 import 'screens/schedule_tab.dart';
 import 'screens/chat_tab.dart';
-import 'screens/profile_tab.dart';
+
+import 'package:flutter_animate/flutter_animate.dart';
 
 void main() {
   runApp(const CaregiverApp());
@@ -37,50 +38,85 @@ class _MainLayoutState extends State<MainLayout> {
   final List<Widget> _tabs = [
     const HomeTab(),
     const ScheduleTab(),
-    const ChatTab(),
-    const ProfileTab(),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
+      extendBody: true,
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 300),
         child: _tabs[_currentIndex],
       ),
       bottomNavigationBar: Container(
-        decoration: const BoxDecoration(
-          border: Border(top: BorderSide(color: AyuTheme.border)),
+        margin: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.9),
+          borderRadius: BorderRadius.circular(30),
+          boxShadow: [
+            BoxShadow(
+              color: AyuTheme.primary.withOpacity(0.15),
+              blurRadius: 30,
+              offset: const Offset(0, 10),
+            ),
+          ],
         ),
-        child: BottomNavigationBar(
-          currentIndex: _currentIndex,
-          onTap: (index) {
-            setState(() {
-              _currentIndex = index;
-            });
-          },
-          type: BottomNavigationBarType.fixed,
-          backgroundColor: AyuTheme.surface,
-          selectedItemColor: AyuTheme.primary,
-          unselectedItemColor: AyuTheme.textMuted,
-          selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
-          unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(LucideIcons.home),
-              label: 'Home',
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildNavItem(0, LucideIcons.home, 'Home'),
+                _buildNavItem(1, LucideIcons.calendar, 'Schedule'),
+                _buildNavItem(2, LucideIcons.messageSquare, 'Chat', pushesRoute: true, route: const ChatTab()),
+              ],
             ),
-            BottomNavigationBarItem(
-              icon: Icon(LucideIcons.calendar),
-              label: 'Schedule',
+          ),
+        ),
+      ).animate().slideY(begin: 1, duration: 500.ms, curve: Curves.easeOutBack),
+    );
+  }
+
+  Widget _buildNavItem(int index, IconData icon, String label, {bool pushesRoute = false, Widget? route}) {
+    final isSelected = !pushesRoute && _currentIndex == index;
+    
+    return GestureDetector(
+      onTap: () {
+        if (pushesRoute && route != null) {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => route));
+        } else {
+          setState(() {
+            _currentIndex = index;
+          });
+        }
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        decoration: BoxDecoration(
+          color: isSelected ? AyuTheme.primary.withOpacity(0.1) : Colors.transparent,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              color: isSelected ? AyuTheme.primary : AyuTheme.textMuted,
+              size: 20,
             ),
-            BottomNavigationBarItem(
-              icon: Icon(LucideIcons.messageSquare),
-              label: 'Chat',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(LucideIcons.user),
-              label: 'Profile',
-            ),
+            if (isSelected) ...[
+              const SizedBox(width: 8),
+              Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 11,
+                  color: AyuTheme.primary,
+                  fontWeight: FontWeight.w700,
+                ),
+              ).animate().fadeIn().slideX(),
+            ]
           ],
         ),
       ),

@@ -25,7 +25,7 @@ class TransportModal extends StatelessWidget {
               const Text(
                 'Arrange Transport for Patient',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 15,
                   fontWeight: FontWeight.bold,
                   fontFamily: 'Outfit',
                 ),
@@ -39,7 +39,7 @@ class TransportModal extends StatelessWidget {
           const SizedBox(height: 8),
           const Text(
             "Book non-emergency medical cab transport for Rahul Kumar's Blood Test at City Lab (Tomorrow, 10:00 AM).",
-            style: TextStyle(fontSize: 14, color: AyuTheme.textMuted),
+            style: TextStyle(fontSize: 11, color: AyuTheme.textMuted),
           ),
           const SizedBox(height: 16),
           Container(
@@ -51,13 +51,13 @@ class TransportModal extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Pickup Location:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                const Text('Pickup Location:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11)),
                 const SizedBox(height: 4),
-                const Text('Patient Home • 42 Palm Street', style: TextStyle(fontSize: 13, color: AyuTheme.textMuted)),
+                const Text('Patient Home • 42 Palm Street', style: TextStyle(fontSize: 11, color: AyuTheme.textMuted)),
                 const SizedBox(height: 12),
-                const Text('Destination:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                const Text('Destination:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11)),
                 const SizedBox(height: 4),
-                const Text('City Diagnostics Lab • Central Branch', style: TextStyle(fontSize: 13, color: AyuTheme.textMuted)),
+                const Text('City Diagnostics Lab • Central Branch', style: TextStyle(fontSize: 11, color: AyuTheme.textMuted)),
               ],
             ),
           ),

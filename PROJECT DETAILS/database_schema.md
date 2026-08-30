@@ -11,6 +11,8 @@ erDiagram
     users ||--o{ ambulance_drivers : "has profile"
     users ||--o{ hospital_admins : "has profile"
     patients ||--o{ vitals : "records"
+    patients ||--o{ conditions : "diagnosed with"
+    patients ||--o{ clinical_notes : "documented in"
     patients ||--o{ encounters : "has"
     patients ||--o{ medications : "takes"
     practitioners ||--o{ medications : "prescribes"
@@ -28,6 +30,13 @@ erDiagram
     ambulance_drivers ||--o{ emergency_dispatches : "drives"
     patients ||--o{ doctor_escalations : "triggers"
     practitioners ||--o{ doctor_escalations : "reviewed by (Doctor)"
+    patients ||--o{ appointments : "books"
+    practitioners ||--o{ appointments : "scheduled for"
+    users ||--o{ chat_threads : "participates in"
+    chat_threads ||--o{ chat_messages : "contains"
+    users ||--o{ chat_messages : "sends"
+    patients ||--o{ care_tasks : "assigned for"
+    users ||--o{ care_tasks : "assigned to"
 ```
 
 ---
@@ -50,11 +59,13 @@ External partners in the ecosystem.
 *   **api_endpoint**: String (For webhook routing)
 
 ### `ambulance_drivers`
-Dedicated profile for tracking fleet logistics.
+Dedicated profile for tracking fleet logistics and real-time live location tracking.
 *   **id**: UUID (Primary Key)
 *   **user_id**: UUID (Foreign Key -> `users.id`)
 *   **vehicle_license_plate**: String
 *   **is_on_duty**: Boolean
+*   **current_lat**: Float
+*   **current_lng**: Float
 
 ### `hospital_admins`
 Dedicated profile for system administrators.
@@ -83,6 +94,22 @@ Time-series clinical telemetry data.
 *   **blood_pressure_systolic**: Integer
 *   **blood_pressure_diastolic**: Integer
 *   **oxygen_saturation**: Integer
+
+### `conditions`
+Medical diagnoses and conditions.
+*   **id**: UUID (Primary Key)
+*   **patient_id**: UUID (Foreign Key -> `patients.id`)
+*   **condition_name**: String
+*   **status**: String (e.g., 'active', 'resolved')
+*   **diagnosed_date**: DateTime
+
+### `clinical_notes`
+Unstructured medical text like Discharge Summaries.
+*   **id**: UUID (Primary Key)
+*   **patient_id**: UUID (Foreign Key -> `patients.id`)
+*   **note_type**: String (e.g., 'DISCHARGE SUMMARY')
+*   **content_text**: Text
+*   **timestamp**: DateTime
 
 ---
 
@@ -143,6 +170,23 @@ For high-severity alerts. Contains AI reasoning to prevent hallucinations.
 *   **shap_explanation**: Text (Strict ML feature importance)
 *   **doctor_decision**: String (e.g., 'AUTHORIZE_ER')
 
+### `appointments`
+Manages scheduling between patients and practitioners (Doctors, Nurses).
+*   **id**: UUID (Primary Key)
+*   **patient_id**: UUID (Foreign Key -> `patients.id`)
+*   **practitioner_id**: UUID (Foreign Key -> `practitioners.id`)
+*   **scheduled_time**: DateTime
+*   **status**: String (`SCHEDULED`, `COMPLETED`, `CANCELLED`)
+
+### `care_tasks`
+General, non-medication clinical/caregiving duties (e.g., "Check SpO2").
+*   **id**: UUID (Primary Key)
+*   **patient_id**: UUID (Foreign Key -> `patients.id`)
+*   **assigned_role**: Enum (`NURSE`, `CAREGIVER`)
+*   **task_description**: String
+*   **due_time**: DateTime
+*   **is_completed**: Boolean
+
 ---
 
 ## 4. Logistics Tier (Pharmacy & Labs)
@@ -170,6 +214,8 @@ Tracks the automated 10-day proactive refills.
 *   **patient_id**: UUID (Foreign Key -> `patients.id`)
 *   **driver_id**: UUID (Foreign Key -> `ambulance_drivers.id`)
 *   **pickup_location**: String
+*   **pickup_lat**: Float
+*   **pickup_lng**: Float
 *   **status**: Enum (`PENDING`, `EN_ROUTE`, `ARRIVED`, `DELIVERED`)
 
 ### `prior_authorizations`
@@ -185,3 +231,20 @@ Immutable compliance ledger.
 *   **action**: String
 *   **agent_source**: String
 *   **metadata_json**: JSON
+
+---
+
+## 6. Communication Tier
+
+### `chat_threads`
+*   **id**: UUID (Primary Key)
+*   **participant_1_id**: UUID (Foreign Key -> `users.id`)
+*   **participant_2_id**: UUID (Foreign Key -> `users.id`)
+*   **created_at**: DateTime
+
+### `chat_messages`
+*   **id**: UUID (Primary Key)
+*   **thread_id**: UUID (Foreign Key -> `chat_threads.id`)
+*   **sender_id**: UUID (Foreign Key -> `users.id`)
+*   **message_text**: Text
+*   **timestamp**: DateTime

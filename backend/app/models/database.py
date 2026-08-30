@@ -56,6 +56,8 @@ class User(Base):
     id = Column(String, primary_key=True, default=generate_uuid)
     role = Column(Enum(UserRole), nullable=False)
     full_name = Column(String, nullable=False)
+    username = Column(String, unique=True, nullable=True) # e.g. AYU-1234
+    hashed_password = Column(String, nullable=True)
     email = Column(String, unique=True, nullable=True)
     phone_number = Column(String, unique=True, nullable=False)
     created_at = Column(DateTime, default=current_utc_time)
@@ -70,6 +72,8 @@ class AmbulanceDriver(Base):
     user_id = Column(String, ForeignKey("users.id"), nullable=False)
     vehicle_license_plate = Column(String, nullable=True)
     is_on_duty = Column(Boolean, default=False)
+    current_lat = Column(Float, nullable=True)
+    current_lng = Column(Float, nullable=True)
     
     user = relationship("User")
 
@@ -118,6 +122,22 @@ class VitalSign(Base):
     
     patient = relationship("Patient", back_populates="vitals")
 
+class Condition(Base):
+    __tablename__ = "conditions"
+    id = Column(String, primary_key=True, default=generate_uuid)
+    patient_id = Column(String, ForeignKey("patients.id"), nullable=False)
+    condition_name = Column(String, nullable=False)
+    status = Column(String, nullable=False)
+    diagnosed_date = Column(DateTime, nullable=True)
+
+class ClinicalNote(Base):
+    __tablename__ = "clinical_notes"
+    id = Column(String, primary_key=True, default=generate_uuid)
+    patient_id = Column(String, ForeignKey("patients.id"), nullable=False)
+    note_type = Column(String, nullable=False)
+    content_text = Column(Text, nullable=False)
+    timestamp = Column(DateTime, default=current_utc_time)
+
 # ==========================================
 # 3. CLINICAL TIER (DOCTORS & NURSES)
 # ==========================================
@@ -138,6 +158,23 @@ class Encounter(Base):
     discharge_date = Column(DateTime, nullable=True)
     
     patient = relationship("Patient", back_populates="encounters")
+
+class Appointment(Base):
+    __tablename__ = "appointments"
+    id = Column(String, primary_key=True, default=generate_uuid)
+    patient_id = Column(String, ForeignKey("patients.id"), nullable=False)
+    practitioner_id = Column(String, ForeignKey("practitioners.id"), nullable=False)
+    scheduled_time = Column(DateTime, nullable=False)
+    status = Column(String, default="SCHEDULED") # SCHEDULED, COMPLETED, CANCELLED
+
+class CareTask(Base):
+    __tablename__ = "care_tasks"
+    id = Column(String, primary_key=True, default=generate_uuid)
+    patient_id = Column(String, ForeignKey("patients.id"), nullable=False)
+    assigned_role = Column(Enum(UserRole), nullable=False) # NURSE or CAREGIVER
+    task_description = Column(String, nullable=False)
+    due_time = Column(DateTime, nullable=False)
+    is_completed = Column(Boolean, default=False)
 
 class CarePlan(Base):
     __tablename__ = "care_plans"
@@ -224,6 +261,8 @@ class EmergencyDispatch(Base):
     patient_id = Column(String, ForeignKey("patients.id"), nullable=False)
     driver_id = Column(String, ForeignKey("ambulance_drivers.id"), nullable=True)
     pickup_location = Column(String, nullable=False)
+    pickup_lat = Column(Float, nullable=True)
+    pickup_lng = Column(Float, nullable=True)
     status = Column(Enum(DispatchStatus), default=DispatchStatus.PENDING)
     dispatched_at = Column(DateTime, default=current_utc_time)
 
@@ -241,4 +280,22 @@ class SystemAuditLog(Base):
     action = Column(String, nullable=False)
     agent_source = Column(String, nullable=False) # Which AI agent did this
     metadata_json = Column(JSON, nullable=True)
+    timestamp = Column(DateTime, default=current_utc_time)
+
+# ==========================================
+# 6. COMMUNICATION TIER
+# ==========================================
+class ChatThread(Base):
+    __tablename__ = "chat_threads"
+    id = Column(String, primary_key=True, default=generate_uuid)
+    participant_1_id = Column(String, ForeignKey("users.id"), nullable=False)
+    participant_2_id = Column(String, ForeignKey("users.id"), nullable=False)
+    created_at = Column(DateTime, default=current_utc_time)
+
+class ChatMessage(Base):
+    __tablename__ = "chat_messages"
+    id = Column(String, primary_key=True, default=generate_uuid)
+    thread_id = Column(String, ForeignKey("chat_threads.id"), nullable=False)
+    sender_id = Column(String, ForeignKey("users.id"), nullable=False)
+    message_text = Column(Text, nullable=False)
     timestamp = Column(DateTime, default=current_utc_time)

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../utils/theme.dart';
+import '../widgets/modals.dart';
+import '../widgets/glass_card.dart';
 
 class HomeTab extends StatelessWidget {
   final VoidCallback onAcceptTrip;
@@ -20,15 +22,16 @@ class HomeTab extends StatelessWidget {
           child: ListView(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
             children: [
-              _buildNewTripRequest(),
-              const SizedBox(height: 32),
+              _buildSosTrigger(context),
+              const SizedBox(height: 48),
               Center(
                 child: Column(
                   children: [
-                    Icon(LucideIcons.coffee, size: 48, color: DriverTheme.border),
-                    const SizedBox(height: 16),
-                    const Text('No more alerts.', style: TextStyle(color: DriverTheme.textMuted, fontWeight: FontWeight.bold)),
-                    const Text('Waiting for dispatch...', style: TextStyle(color: DriverTheme.textMuted, fontSize: 12)),
+                    Icon(LucideIcons.radio, size: 64, color: DriverTheme.border),
+                    const SizedBox(height: 24),
+                    const Text('SYSTEM ONLINE', style: TextStyle(color: DriverTheme.primary, fontWeight: FontWeight.w900, letterSpacing: 1.5)),
+                    const SizedBox(height: 8),
+                    const Text('Waiting for dispatch...', style: TextStyle(color: DriverTheme.textMuted, fontSize: 14)),
                   ],
                 ),
               ),
@@ -40,64 +43,38 @@ class HomeTab extends StatelessWidget {
     );
   }
 
-  Widget _buildNewTripRequest() {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: DriverTheme.surface,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: DriverTheme.border, width: 1.5),
-        boxShadow: [
-          BoxShadow(color: DriverTheme.primary.withOpacity(0.1), blurRadius: 20, spreadRadius: 2, offset: const Offset(0, 4)),
-        ],
-      ),
+  Widget _buildSosTrigger(BuildContext context) {
+    return GlassCard(
+      color: DriverTheme.surface.withOpacity(0.4),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(color: DriverTheme.primary.withOpacity(0.15), shape: BoxShape.circle),
-                child: const Icon(LucideIcons.info, color: DriverTheme.primary),
-              ),
-              const SizedBox(width: 12),
-              const Expanded(
-                child: Text('NEW TRIP REQUEST', style: TextStyle(color: DriverTheme.primary, fontWeight: FontWeight.w900, fontSize: 16, letterSpacing: 1.1)),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          _buildInfoRow('Patient Name:', 'Rahul Kumar (#10482)'),
+          const Icon(LucideIcons.siren, color: DriverTheme.textMuted, size: 32),
+          const SizedBox(height: 16),
+          const Text('Simulation Mode', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
-          _buildInfoRow('Location:', 'Fetching GPS coordinates...', color: Colors.white),
-          const SizedBox(height: 8),
-          _buildInfoRow('Priority:', 'HIGH PRIORITY', color: DriverTheme.primary),
-          const SizedBox(height: 24),
+          const Text('Trigger a simulated SOS to test the emergency flow.', textAlign: TextAlign.center, style: TextStyle(color: DriverTheme.textMuted, fontSize: 12)),
+          const SizedBox(height: 16),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: onAcceptTrip,
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  barrierColor: Colors.transparent,
+                  builder: (context) => SosEmergencyModal(onAccept: onAcceptTrip),
+                );
+              },
               style: ElevatedButton.styleFrom(
-                backgroundColor: DriverTheme.primary,
+                backgroundColor: DriverTheme.primary.withOpacity(0.2),
+                foregroundColor: DriverTheme.primaryLight,
+                side: const BorderSide(color: DriverTheme.primary),
                 padding: const EdgeInsets.symmetric(vertical: 16),
               ),
-              child: const Text('ACCEPT & NAVIGATE', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900)),
+              child: const Text('SIMULATE SOS REQUEST', style: TextStyle(fontWeight: FontWeight.w900)),
             ),
           ),
         ],
       ),
     );
   }
-
-  Widget _buildInfoRow(String label, String value, {Color? color}) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(label, style: const TextStyle(color: DriverTheme.textMuted)),
-        Text(value, style: TextStyle(color: color ?? DriverTheme.textMain, fontWeight: FontWeight.bold)),
-      ],
-    );
-  }
-
 }
