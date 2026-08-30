@@ -122,8 +122,8 @@
         // Fetch patients from EHR on load via our Backend Proxy to avoid CORS
         window.onload = async () => {
             try {
-                // Using AyuSync Backend Port 8000
-                const res = await fetch('http://127.0.0.1:8000/api/v1/admin/ehr-patients');
+                // Using Mock EHR API
+                const res = await fetch('http://13.60.9.54/api/patients/');
                 const patients = await res.json();
                 
                 const listEl = document.getElementById('patientList');
@@ -134,9 +134,9 @@
                     li.className = 'patient-item';
                     li.innerHTML = `
                         <span class="patient-name">${p.name}</span>
-                        <span class="patient-id">EHR ID: ${p.id.substring(0,8)}...</span>
+                        <span class="patient-id">EHR ID: ${p.id}</span>
                     `;
-                    li.onclick = () => selectPatient(li, p.id);
+                    li.onclick = () => selectPatient(li, String(p.id));
                     listEl.appendChild(li);
                 });
             } catch (e) {
