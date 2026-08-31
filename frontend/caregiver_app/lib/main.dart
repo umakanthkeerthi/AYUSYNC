@@ -4,6 +4,7 @@ import 'utils/theme.dart';
 import 'screens/home_tab.dart';
 import 'screens/schedule_tab.dart';
 import 'screens/chat_tab.dart';
+import 'screens/onboarding_screen.dart';
 
 import 'package:flutter_animate/flutter_animate.dart';
 
@@ -20,13 +21,14 @@ class CaregiverApp extends StatelessWidget {
       title: 'AyuSync Caregiver',
       theme: AyuTheme.lightTheme,
       debugShowCheckedModeBanner: false,
-      home: const MainLayout(),
+      home: const OnboardingScreen(),
     );
   }
 }
 
 class MainLayout extends StatefulWidget {
-  const MainLayout({super.key});
+  final String caregiverId;
+  const MainLayout({super.key, required this.caregiverId});
 
   @override
   State<MainLayout> createState() => _MainLayoutState();
@@ -35,8 +37,8 @@ class MainLayout extends StatefulWidget {
 class _MainLayoutState extends State<MainLayout> {
   int _currentIndex = 0;
 
-  final List<Widget> _tabs = [
-    const HomeTab(),
+  List<Widget> get _tabs => [
+    HomeTab(caregiverId: widget.caregiverId),
     const ScheduleTab(),
   ];
 
@@ -123,3 +125,4 @@ class _MainLayoutState extends State<MainLayout> {
     );
   }
 }
+

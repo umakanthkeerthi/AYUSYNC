@@ -82,6 +82,7 @@ Dedicated profile for system administrators.
 *   **id**: UUID (Primary Key)
 *   **user_id**: UUID (Foreign Key -> `users.id`)
 *   **caregiver_id**: UUID (Foreign Key -> `users.id`)
+*   **caregiver_relation**: String
 *   **date_of_birth**: DateTime
 *   **blood_type**: String
 

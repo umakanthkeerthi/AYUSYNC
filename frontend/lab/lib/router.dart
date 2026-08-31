@@ -6,6 +6,8 @@ import 'screens/work_queue_screen.dart';
 import 'screens/samples_screen.dart';
 import 'screens/results_screen.dart';
 import 'screens/settings_screen.dart';
+import 'screens/reports_screen.dart';
+import 'screens/analytics_screen.dart';
 import 'screens/placeholder_screen.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -57,7 +59,7 @@ final goRouter = GoRouter(
           routes: [
             GoRoute(
               path: '/reports',
-              builder: (context, state) => const PlaceholderScreen(title: 'Laboratory Reports'),
+              builder: (context, state) => const ReportsScreen(),
             ),
           ],
         ),
@@ -66,7 +68,7 @@ final goRouter = GoRouter(
           routes: [
             GoRoute(
               path: '/analytics',
-              builder: (context, state) => const PlaceholderScreen(title: 'Laboratory Analytics'),
+              builder: (context, state) => const AnalyticsScreen(),
             ),
           ],
         ),

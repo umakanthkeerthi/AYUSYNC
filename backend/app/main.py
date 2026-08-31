@@ -9,6 +9,7 @@ from .core.database_session import engine
 from .models.database import Base
 from .api.patient_router import router as patient_router
 from .api.admin_router import router as admin_router
+from .api.caregiver_router import router as caregiver_router
 
 # Initialize the Database tables on startup (For local SQLite testing)
 Base.metadata.create_all(bind=engine)
@@ -31,6 +32,7 @@ app.add_middleware(
 # Register API Routers
 app.include_router(patient_router)
 app.include_router(admin_router)
+app.include_router(caregiver_router)
 
 # Mount Static Files for Admin UI
 import os

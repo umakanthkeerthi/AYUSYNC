@@ -12,6 +12,8 @@ class AppTheme {
   static const Color statApproved = Color(0xFF10B981); // Green
   static const Color statRejected = Color(0xFFEF4444); // Red
   static const Color statReview = Color(0xFFF59E0B); // Orange
+  static const Color statBlue = Color(0xFF3B82F6); // Blue
+  static const Color statPurple = Color(0xFF8B5CF6); // Purple
   
   // Text & Border Colors
   static const Color textDark = Color(0xFF0F172A);

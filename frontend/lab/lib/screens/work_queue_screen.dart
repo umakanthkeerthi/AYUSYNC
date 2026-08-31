@@ -291,7 +291,7 @@ class WorkQueueScreen extends StatelessWidget {
   }
 }
 
-class _StatCard extends StatelessWidget {
+class _StatCard extends StatefulWidget {
   final String label;
   final String value;
   final Color color;
@@ -302,72 +302,126 @@ class _StatCard extends StatelessWidget {
   const _StatCard({Key? key, required this.label, required this.value, required this.color, required this.icon, required this.imagePath, this.subLabel}) : super(key: key);
 
   @override
+  State<_StatCard> createState() => _StatCardState();
+}
+
+class _StatCardState extends State<_StatCard> {
+  bool _isHovered = false;
+
+  @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 150,
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.05),
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: color.withOpacity(0.1)),
-      ),
-      clipBehavior: Clip.hardEdge,
-      child: Stack(
-        children: [
-          // Background Illustration (Blended to hide white background)
-          Positioned(
-            right: -10,
-            bottom: -10,
-            child: ColorFiltered(
-              colorFilter: ColorFilter.mode(color.withOpacity(0.05), BlendMode.darken),
-              child: Image.asset(
-                imagePath,
-                width: 100,
-                height: 100,
-                fit: BoxFit.contain,
-              ),
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: () {},
+        child: AnimatedContainer(
+          height: 140,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOutQuart,
+          transformAlignment: Alignment.center,
+          transform: Matrix4.identity()
+            ..translate(0.0, _isHovered ? -5.0 : 0.0, 0.0)
+            ..scale(_isHovered ? 1.02 : 1.00),
+          decoration: BoxDecoration(
+            color: widget.color.withOpacity(0.08), // Premium tinted background
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(
+              color: Colors.white.withOpacity(0.9), // Ceramic/glass edge
+              width: 1.5,
             ),
+            boxShadow: [
+              BoxShadow(
+                color: widget.color.withOpacity(0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+              BoxShadow(
+                color: _isHovered ? widget.color.withOpacity(0.2) : widget.color.withOpacity(0.0),
+                blurRadius: _isHovered ? 20 : 0,
+                offset: Offset(0, _isHovered ? 10 : 0),
+                spreadRadius: _isHovered ? 2 : 0,
+              )
+            ],
           ),
-          
-          // Content
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // "Floating" Icon Button (elevated with strong shadow)
-                Container(
-                  padding: const EdgeInsets.all(10),
+          clipBehavior: Clip.hardEdge,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              // Bottom Right 3D Image
+              Positioned(
+                right: -10,
+                bottom: -20,
+                child: Container(
+                  width: 100,
+                  height: 100,
                   decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: color.withOpacity(0.3),
-                        blurRadius: 12,
-                        spreadRadius: 2,
-                        offset: const Offset(0, 6),
-                      ),
-                    ]
+                    shape: BoxShape.circle,
+                    boxShadow: [BoxShadow(color: Colors.white.withOpacity(0.5), blurRadius: 20, spreadRadius: 10)],
                   ),
-                  child: Icon(icon, color: color, size: 24),
+                  child: ClipOval(
+                    child: Image.asset(
+                      widget.imagePath,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
-                
-                const Spacer(),
-                
-                Text(label, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.textDark)),
-                const SizedBox(height: 2),
-                Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  spacing: 4,
+              ),
+              
+              // Content
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(value, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: color)),
-                    Text(subLabel ?? 'records', style: const TextStyle(fontSize: 12, color: AppTheme.textSecondary)),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4))
+                            ]
+                          ),
+                          child: Icon(widget.icon, color: widget.color, size: 24),
+                        ),
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.label, 
+                          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.textDark, height: 1.1),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(widget.value, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: widget.color)),
+                            const SizedBox(width: 4),
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 2),
+                              child: Text(widget.subLabel ?? 'records', style: const TextStyle(fontSize: 13, color: AppTheme.textSecondary)),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

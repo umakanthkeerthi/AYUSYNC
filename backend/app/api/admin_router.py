@@ -12,7 +12,7 @@ from app.models.database import (
 
 router = APIRouter(prefix="/api/v1/admin", tags=["admin"])
 
-EHR_API_BASE_URL = "http://127.0.0.1:8001/api" # Using the local mock EHR
+EHR_API_BASE_URL = "http://13.60.9.54/api" # Using the live AWS mock EHR
 
 class SetupPayload(BaseModel):
     ehr_patient_id: str

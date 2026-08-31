@@ -1,72 +1,110 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import '../utils/theme.dart';
-import '../widgets/modals.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import '../utils/theme.dart';
 import '../widgets/glass_card.dart';
+import '../widgets/modals.dart';
 import 'profile_tab.dart';
+import '../services/api_service.dart';
 
-class HomeTab extends StatelessWidget {
-  const HomeTab({super.key});
+class HomeTab extends StatefulWidget {
+  final String caregiverId;
+  const HomeTab({super.key, required this.caregiverId});
+
+  @override
+  State<HomeTab> createState() => _HomeTabState();
+}
+
+class _HomeTabState extends State<HomeTab> {
+  Map<String, dynamic>? _dashboardData;
+  bool _isLoading = true;
+  String? _errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchData();
+  }
+
+  Future<void> _fetchData() async {
+    try {
+      final data = await ApiService().getDashboardData(widget.caregiverId);
+      setState(() {
+        _dashboardData = data;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _errorMessage = e.toString();
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Color(0xFFF0FDFA), AyuTheme.bgApp],
-            stops: [0.0, 0.3],
-          ),
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator(color: AyuTheme.primary));
+    }
+    
+    if (_errorMessage != null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(LucideIcons.alertTriangle, color: AyuTheme.amber, size: 48),
+            const SizedBox(height: 16),
+            Text('Error loading data', style: const TextStyle(fontWeight: FontWeight.bold, color: AyuTheme.textMain)),
+            Text(_errorMessage!, style: const TextStyle(color: AyuTheme.textMuted, fontSize: 12), textAlign: TextAlign.center),
+            const SizedBox(height: 16),
+            ElevatedButton(onPressed: _fetchData, child: const Text('Retry'))
+          ],
         ),
-        child: SafeArea(
-          bottom: false,
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildCleanHeader(context).animate().fadeIn(duration: 600.ms).slideY(begin: -0.2),
-                const SizedBox(height: 24),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildSectionTitle('Overview').animate().fadeIn(delay: 200.ms),
-                      const SizedBox(height: 16),
-                      _buildGlanceGrid(),
-                      
-                      const SizedBox(height: 32),
-                      
-                      _buildSectionTitle('Action Required').animate().fadeIn(delay: 400.ms),
-                      const SizedBox(height: 16),
-                      _buildMinimalAlertCard(context).animate().fadeIn(delay: 500.ms).slideY(begin: 0.1),
-                      
-                      const SizedBox(height: 32),
-                      
-                      _buildSectionTitle('Recent Activity').animate().fadeIn(delay: 600.ms),
-                      const SizedBox(height: 16),
-                      _buildCleanTimeline().animate().fadeIn(delay: 700.ms).slideX(begin: 0.1),
-                      const SizedBox(height: 120), // Space for floating nav bar
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
+      );
+    }
+
+    final patient = _dashboardData!['patient'];
+    final glance = _dashboardData!['glance'] as List;
+    final alerts = _dashboardData!['alerts'] as List;
+    final timeline = _dashboardData!['timeline'] as List;
+
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 12),
+          _buildHeroHeader(context, patient),
+          const SizedBox(height: 32),
+          _buildSectionTitle('At a Glance'),
+          const SizedBox(height: 16),
+          _buildGlanceGrid(glance),
+          const SizedBox(height: 32),
+          
+          if (alerts.isNotEmpty) ...[
+            _buildSectionTitle('Action Required'),
+            const SizedBox(height: 16),
+            ...alerts.map((a) => _buildMinimalAlertCard(context, a)).toList(),
+            const SizedBox(height: 32),
+          ],
+          
+          _buildSectionTitle('Today\'s Activity'),
+          const SizedBox(height: 16),
+          _buildCleanTimeline(timeline),
+          const SizedBox(height: 100),
+        ],
       ),
     );
   }
 
-  Widget _buildCleanHeader(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(20, 24, 20, 16),
-      color: Colors.transparent,
+  Widget _buildHeroHeader(BuildContext context, Map<String, dynamic> patient) {
+    Color vitalsColor = patient['vitals_color'] == 'green' ? AyuTheme.green : AyuTheme.amber;
+    
+    return GlassCard(
+      padding: const EdgeInsets.all(24),
+      color: AyuTheme.primary.withValues(alpha: 0.15),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -74,21 +112,21 @@ class HomeTab extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Caring For',
+                  const Text(
+                    'Caring for',
                     style: TextStyle(
-                      color: AyuTheme.textMuted,
-                      fontSize: 12,
+                      color: AyuTheme.primary,
+                      fontSize: 14,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 0.5,
                     ),
-                  ),
+                  ).animate().fadeIn().slideX(begin: -0.2),
                   const SizedBox(height: 4),
-                  const Text(
-                    'Rahul Kumar',
-                    style: TextStyle(
+                  Text(
+                    patient['name'],
+                    style: const TextStyle(
                       color: AyuTheme.textMain,
-                      fontSize: 24,
+                      fontSize: 28,
                       fontWeight: FontWeight.w800,
                       fontFamily: 'Outfit',
                     ),
@@ -114,9 +152,9 @@ class HomeTab extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: const CircleAvatar(
+                  child: CircleAvatar(
                     radius: 26,
-                    backgroundImage: NetworkImage('https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80'),
+                    backgroundImage: NetworkImage(patient['photo_url']),
                   ),
                 ),
               ),
@@ -136,24 +174,24 @@ class HomeTab extends StatelessWidget {
                 Container(
                   width: 8,
                   height: 8,
-                  decoration: const BoxDecoration(
-                    color: AyuTheme.green,
+                  decoration: BoxDecoration(
+                    color: vitalsColor,
                     shape: BoxShape.circle,
                   ),
                 ),
                 const SizedBox(width: 8),
-                const Text(
-                  'Vitals Stable',
+                Text(
+                  patient['vitals_status'],
                   style: TextStyle(
-                    color: AyuTheme.green,
+                    color: vitalsColor,
                     fontWeight: FontWeight.bold,
                     fontSize: 12,
                   ),
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  'Updated 10m ago',
-                  style: TextStyle(
+                  'Updated ${patient['last_updated']}',
+                  style: const TextStyle(
                     color: AyuTheme.textMuted,
                     fontSize: 11,
                   ),
@@ -177,15 +215,24 @@ class HomeTab extends StatelessWidget {
     );
   }
 
-  Widget _buildGlanceGrid() {
+  Widget _buildGlanceGrid(List glanceItems) {
     return Row(
-      children: [
-        Expanded(child: _buildMinimalGlanceCard(LucideIcons.pill, 'Medication', 'Done', AyuTheme.green)),
-        const SizedBox(width: 12),
-        Expanded(child: _buildMinimalGlanceCard(LucideIcons.droplet, 'Blood Test', 'Tomorrow', AyuTheme.amber)),
-        const SizedBox(width: 12),
-        Expanded(child: _buildMinimalGlanceCard(LucideIcons.calendar, 'Checkup', '4:00 PM', AyuTheme.primary)),
-      ].animate(interval: 100.ms).fadeIn(duration: 400.ms).scale(begin: const Offset(0.9, 0.9)),
+      children: glanceItems.map((item) {
+        IconData icon = LucideIcons.pill;
+        if (item['icon'] == 'droplet') icon = LucideIcons.droplet;
+        if (item['icon'] == 'calendar') icon = LucideIcons.calendar;
+        
+        Color color = AyuTheme.primary;
+        if (item['color'] == 'green') color = AyuTheme.green;
+        if (item['color'] == 'amber') color = AyuTheme.amber;
+
+        return Expanded(
+          child: Padding(
+            padding: EdgeInsets.only(right: item == glanceItems.last ? 0 : 12),
+            child: _buildMinimalGlanceCard(icon, item['title'], item['status'], color),
+          ),
+        );
+      }).toList().animate(interval: 100.ms).fadeIn(duration: 400.ms).scale(begin: const Offset(0.9, 0.9)),
     );
   }
 
@@ -212,86 +259,99 @@ class HomeTab extends StatelessWidget {
           Text(
             status,
             style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: color),
+            textAlign: TextAlign.center,
           ),
         ],
       ),
     );
   }
 
-  Widget _buildMinimalAlertCard(BuildContext context) {
-    return GlassCard(
-      padding: const EdgeInsets.all(16),
-      color: AyuTheme.primary.withOpacity(0.12),
-      borderColor: AyuTheme.primary.withOpacity(0.3),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: const BoxDecoration(
-                  color: AyuTheme.amberBg,
-                  shape: BoxShape.circle,
+  Widget _buildMinimalAlertCard(BuildContext context, Map<String, dynamic> alert) {
+    Color color = alert['color'] == 'amber' ? AyuTheme.amber : AyuTheme.primary;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: GlassCard(
+        padding: const EdgeInsets.all(16),
+        color: color.withOpacity(0.12),
+        borderColor: color.withOpacity(0.3),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.2),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(LucideIcons.alertTriangle, color: color, size: 20),
                 ),
-                child: const Icon(LucideIcons.alertTriangle, color: AyuTheme.amber, size: 20),
-              ),
-              const SizedBox(width: 12),
-              const Expanded(
-                child: Text(
-                  "Transport unconfirmed for tomorrow's lab visit.",
-                  style: TextStyle(
-                    color: AyuTheme.textMain,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 12,
-                    height: 1.4,
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    alert['text'],
+                    style: const TextStyle(
+                      color: AyuTheme.textMain,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 12,
+                      height: 1.4,
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () {
-                showModalBottomSheet(
-                  context: context,
-                  backgroundColor: Colors.transparent,
-                  builder: (context) => const TransportModal(),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AyuTheme.primary,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                padding: const EdgeInsets.symmetric(vertical: 14),
-              ),
-              child: const Text('Arrange Transport', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 12)),
+              ],
             ),
-          ),
-        ],
+            const SizedBox(height: 20),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: color,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                ),
+                child: Text('Review Details', style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12)),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildCleanTimeline() {
+  Widget _buildCleanTimeline(List timelineItems) {
+    final validItems = timelineItems.where((i) => i != null).toList();
+    if (validItems.isEmpty) {
+      return const Text("No recent activity.", style: TextStyle(color: AyuTheme.textMuted));
+    }
+    
     return GlassCard(
       padding: const EdgeInsets.all(16),
       child: Column(
-        children: [
-          _buildCleanTimelineItem(LucideIcons.checkCircle2, 'Medicine taken', '8:05 AM', AyuTheme.green),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            child: Divider(color: AyuTheme.border.withOpacity(0.5), height: 1),
-          ),
-          _buildCleanTimelineItem(LucideIcons.fileText, 'Blood test scheduled', '10:00 AM', AyuTheme.textMain),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            child: Divider(color: AyuTheme.border.withOpacity(0.5), height: 1),
-          ),
-          _buildCleanTimelineItem(LucideIcons.calendarClock, 'Appointment confirmed', '4:00 PM', AyuTheme.primary),
-        ],
+        children: validItems.asMap().entries.map((entry) {
+          int idx = entry.key;
+          var item = entry.value;
+          
+          IconData icon = LucideIcons.checkCircle2;
+          if (item['icon'] == 'activity') icon = LucideIcons.activity;
+          
+          Color color = AyuTheme.primary;
+          if (item['color'] == 'green') color = AyuTheme.green;
+          if (item['color'] == 'amber') color = AyuTheme.amber;
+
+          return Column(
+            children: [
+              _buildCleanTimelineItem(icon, item['title'], item['time'], color),
+              if (idx < validItems.length - 1)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  child: Divider(color: AyuTheme.border.withOpacity(0.5), height: 1),
+                ),
+            ],
+          );
+        }).toList(),
       ),
     );
   }
@@ -319,3 +379,5 @@ class HomeTab extends StatelessWidget {
     );
   }
 }
+
+

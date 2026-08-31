@@ -26,7 +26,6 @@ class DashboardLayout extends StatelessWidget {
         bool isMobile = sizingInformation.deviceScreenType == DeviceScreenType.mobile;
 
         return Scaffold(
-          extendBodyBehindAppBar: true,
           appBar: isMobile
               ? AppBar(
                   backgroundColor: AppTheme.bgCard.withOpacity(0.9),

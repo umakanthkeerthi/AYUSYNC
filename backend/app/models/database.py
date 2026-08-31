@@ -101,6 +101,7 @@ class Patient(Base):
     id = Column(String, primary_key=True, default=generate_uuid)
     user_id = Column(String, ForeignKey("users.id"), nullable=False)
     caregiver_id = Column(String, ForeignKey("users.id"), nullable=True) # Links to a User with role CAREGIVER
+    caregiver_relation = Column(String, nullable=True)
     date_of_birth = Column(DateTime, nullable=False)
     blood_type = Column(String, nullable=True)
     

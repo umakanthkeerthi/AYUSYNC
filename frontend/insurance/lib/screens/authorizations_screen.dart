@@ -28,14 +28,13 @@ class AuthorizationsScreen extends StatelessWidget {
   }
 
   Widget _buildFilters() {
-    return Row(
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
       children: [
         _buildFilterChip('All Statuses'),
-        const SizedBox(width: 8),
         _buildFilterChip('Pending'),
-        const SizedBox(width: 8),
         _buildFilterChip('Approved'),
-        const SizedBox(width: 8),
         _buildFilterChip('Rejected'),
       ],
     );
@@ -50,6 +49,17 @@ class AuthorizationsScreen extends StatelessWidget {
         border: Border.all(color: AppTheme.borderColor),
       ),
       child: Text(label, style: const TextStyle(fontSize: 13, color: AppTheme.textSecondary)),
+    );
+  }
+
+  Widget _buildCellText(String text, TextStyle style, double width) {
+    return SizedBox(
+      width: width,
+      child: Text(
+        text, 
+        style: style,
+        overflow: TextOverflow.ellipsis,
+      ),
     );
   }
 
@@ -69,13 +79,13 @@ class AuthorizationsScreen extends StatelessWidget {
             constraints: BoxConstraints(minWidth: MediaQuery.of(context).size.width > 800 ? MediaQuery.of(context).size.width - 350 : 800),
             child: DataTable(
               headingRowColor: MaterialStateProperty.all(Colors.grey[50]),
-              columns: const [
-                DataColumn(label: Text('Auth ID', style: TextStyle(fontWeight: FontWeight.bold, color: AppTheme.textSecondary))),
-                DataColumn(label: Text('Patient', style: TextStyle(fontWeight: FontWeight.bold, color: AppTheme.textSecondary))),
-                DataColumn(label: Text('Date Request', style: TextStyle(fontWeight: FontWeight.bold, color: AppTheme.textSecondary))),
-                DataColumn(label: Text('Procedure', style: TextStyle(fontWeight: FontWeight.bold, color: AppTheme.textSecondary))),
-                DataColumn(label: Text('Status', style: TextStyle(fontWeight: FontWeight.bold, color: AppTheme.textSecondary))),
-                DataColumn(label: Text('Action', style: TextStyle(fontWeight: FontWeight.bold, color: AppTheme.textSecondary))),
+              columns: [
+                DataColumn(label: _buildCellText('Auth ID', const TextStyle(fontWeight: FontWeight.bold, color: AppTheme.textSecondary), 100)),
+                DataColumn(label: _buildCellText('Patient', const TextStyle(fontWeight: FontWeight.bold, color: AppTheme.textSecondary), 140)),
+                DataColumn(label: _buildCellText('Date Request', const TextStyle(fontWeight: FontWeight.bold, color: AppTheme.textSecondary), 110)),
+                DataColumn(label: _buildCellText('Procedure', const TextStyle(fontWeight: FontWeight.bold, color: AppTheme.textSecondary), 140)),
+                DataColumn(label: _buildCellText('Status', const TextStyle(fontWeight: FontWeight.bold, color: AppTheme.textSecondary), 100)),
+                DataColumn(label: _buildCellText('Action', const TextStyle(fontWeight: FontWeight.bold, color: AppTheme.textSecondary), 100)),
               ],
               rows: [
                 _buildRow('AUTH-1042', 'Rahul Kumar', 'Oct 12, 2026', 'MRI Scan', 'Pending', AppTheme.statPending),
@@ -95,32 +105,36 @@ class AuthorizationsScreen extends StatelessWidget {
   DataRow _buildRow(String id, String patient, String date, String procedure, String status, Color statusColor) {
     return DataRow(
       cells: [
-        DataCell(Text(id, style: const TextStyle(fontWeight: FontWeight.w500, color: AppTheme.brandActive))),
-        DataCell(Text(patient, style: const TextStyle(fontWeight: FontWeight.w600, color: AppTheme.textDark))),
-        DataCell(Text(date, style: const TextStyle(color: AppTheme.textSecondary))),
-        DataCell(Text(procedure, style: const TextStyle(color: AppTheme.textDark))),
+        DataCell(_buildCellText(id, const TextStyle(fontWeight: FontWeight.w500, color: AppTheme.brandActive), 100)),
+        DataCell(_buildCellText(patient, const TextStyle(fontWeight: FontWeight.w600, color: AppTheme.textDark), 140)),
+        DataCell(_buildCellText(date, const TextStyle(color: AppTheme.textSecondary), 110)),
+        DataCell(_buildCellText(procedure, const TextStyle(color: AppTheme.textDark), 140)),
         DataCell(
           Container(
+            width: 100,
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
               color: statusColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Text(status, style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: statusColor)),
+            child: Text(status, style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: statusColor), overflow: TextOverflow.ellipsis),
           ),
         ),
         DataCell(
-          OutlinedButton(
-            onPressed: () {},
-            style: OutlinedButton.styleFrom(
-              foregroundColor: const Color(0xFF3b82f6),
-              side: const BorderSide(color: Color(0xFFbfdbfe)),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              minimumSize: Size.zero,
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          SizedBox(
+            width: 100,
+            child: OutlinedButton(
+              onPressed: () {},
+              style: OutlinedButton.styleFrom(
+                foregroundColor: const Color(0xFF3b82f6),
+                side: const BorderSide(color: Color(0xFFbfdbfe)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                minimumSize: Size.zero,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              child: const Text('View', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
             ),
-            child: const Text('View', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
           ),
         ),
       ],
