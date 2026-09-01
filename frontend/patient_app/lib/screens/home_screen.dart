@@ -16,6 +16,9 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final patientProfileAsync = ref.watch(patientProfileProvider);
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final planAsync = ref.watch(recoveryPlanProvider(today));
 
     return Scaffold(
       body: Container(
@@ -34,11 +37,27 @@ class HomeScreen extends ConsumerWidget {
             children: [
               _buildHeader(context, patientProfileAsync).animate().fadeIn(duration: 600.ms).slideY(begin: -0.2),
               const SizedBox(height: 32),
-              _buildRecoveryCard().animate().fadeIn(delay: 200.ms).scale(begin: const Offset(0.95, 0.95)),
-              const SizedBox(height: 24),
-              const SosButton().animate().fadeIn(delay: 300.ms).slideY(begin: 0.2),
-              const SizedBox(height: 32),
-              _buildTimelineSection().animate().fadeIn(delay: 400.ms).slideX(begin: 0.1),
+              planAsync.when(
+                data: (planData) {
+                  if (planData == null) return const SizedBox.shrink();
+                  final carePlan = planData['care_plan'];
+                  final progressPercent = carePlan['progress_percent'] ?? 0;
+                  final tasks = planData['today_tasks'] as List<dynamic>;
+                  
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      _buildRecoveryCard(progressPercent).animate().fadeIn(delay: 200.ms).scale(begin: const Offset(0.95, 0.95)),
+                      const SizedBox(height: 24),
+                      const SosButton().animate().fadeIn(delay: 300.ms).slideY(begin: 0.2),
+                      const SizedBox(height: 32),
+                      _buildTimelineSection(tasks).animate().fadeIn(delay: 400.ms).slideX(begin: 0.1),
+                    ]
+                  );
+                },
+                loading: () => const Center(child: Padding(padding: EdgeInsets.all(40), child: CircularProgressIndicator(color: AppTheme.primaryOrange))),
+                error: (e, st) => Center(child: Text('Error: $e')),
+              ),
               const SizedBox(height: 120), // Space for floating nav bar
             ],
           ),
@@ -122,7 +141,7 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildRecoveryCard() {
+  Widget _buildRecoveryCard(int progressPercent) {
     return GlassCard(
       child: Row(
         children: [
@@ -174,7 +193,7 @@ class HomeScreen extends ConsumerWidget {
                 width: 75,
                 height: 75,
                 child: TweenAnimationBuilder<double>(
-                  tween: Tween<double>(begin: 0.0, end: 0.85),
+                  tween: Tween<double>(begin: 0.0, end: progressPercent / 100.0),
                   duration: const Duration(milliseconds: 1500),
                   curve: Curves.easeOutCubic,
                   builder: (context, value, child) {
@@ -188,9 +207,9 @@ class HomeScreen extends ConsumerWidget {
                   },
                 ),
               ),
-              const Text(
-                '85%',
-                style: TextStyle(
+              Text(
+                '$progressPercent%',
+                style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w800,
                   color: AppTheme.textDark,
@@ -203,7 +222,7 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildTimelineSection() {
+  Widget _buildTimelineSection(List<dynamic> tasks) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -233,28 +252,20 @@ class HomeScreen extends ConsumerWidget {
           ],
         ),
         const SizedBox(height: 16),
-        _buildTimelineItem(
-          time: '8:00 AM',
-          title: 'Take Medication',
-          subtitle: 'Paracetamol 500mg',
-          icon: LucideIcons.pill,
-          isCompleted: true,
-        ),
-        _buildTimelineItem(
-          time: '10:30 AM',
-          title: 'AI Check-in',
-          subtitle: 'Daily symptom log',
-          icon: LucideIcons.messageSquare,
-          isCompleted: false,
-          isActive: true,
-        ),
-        _buildTimelineItem(
-          time: '2:00 PM',
-          title: 'Sync Vitals',
-          subtitle: 'Heart Rate & BP',
-          icon: LucideIcons.activity,
-          isCompleted: false,
-        ),
+        ...tasks.map((t) {
+            IconData iconData = LucideIcons.clipboard;
+            if (t['icon'] == 'pill') iconData = LucideIcons.pill;
+            if (t['icon'] == 'messageSquare') iconData = LucideIcons.messageSquare;
+            
+            return _buildTimelineItem(
+                time: t['time'],
+                title: t['title'],
+                subtitle: t['subtitle'],
+                icon: iconData,
+                isCompleted: t['is_completed'],
+                isActive: t['is_active'],
+            );
+        }),
       ],
     );
   }

@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'main_layout.dart';
 import '../theme/app_theme.dart';
 import '../widgets/glass_card.dart';
+import '../providers/patient_providers.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends ConsumerState<LoginScreen> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isLoading = false;
@@ -33,13 +35,15 @@ class _LoginScreenState extends State<LoginScreen> {
       _errorMsg = null;
     });
 
-    // Simulate network delay for the pitch demo
-    await Future.delayed(const Duration(milliseconds: 1500));
+    // Simulate small delay for UI smoothness
+    await Future.delayed(const Duration(milliseconds: 500));
 
     if (!mounted) return;
 
-    // Smart Mock Validation: Accept if username starts with AYU-
-    if (username.toUpperCase().startsWith('AYU-')) {
+    try {
+      await ref.read(authProvider.notifier).login(username, password);
+      
+      if (!mounted) return;
       Navigator.of(context).pushReplacement(
         PageRouteBuilder(
           pageBuilder: (context, animation, secondaryAnimation) => const MainLayout(),
@@ -49,10 +53,11 @@ class _LoginScreenState extends State<LoginScreen> {
           transitionDuration: const Duration(milliseconds: 600),
         ),
       );
-    } else {
+    } catch (e) {
+      if (!mounted) return;
       setState(() {
         _isLoading = false;
-        _errorMsg = "Invalid Patient ID. Must start with AYU-";
+        _errorMsg = "Invalid Username or Password";
       });
     }
   }

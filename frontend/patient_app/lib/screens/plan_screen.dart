@@ -1,14 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../theme/app_theme.dart';
 import '../widgets/glass_card.dart';
+import '../providers/patient_providers.dart';
 
-class PlanScreen extends StatelessWidget {
+class PlanScreen extends ConsumerStatefulWidget {
   const PlanScreen({super.key});
 
   @override
+  ConsumerState<PlanScreen> createState() => _PlanScreenState();
+}
+
+class _PlanScreenState extends ConsumerState<PlanScreen> {
+  DateTime _selectedDate = DateTime.now();
+
+  @override
   Widget build(BuildContext context) {
+    final planAsync = ref.watch(recoveryPlanProvider(_selectedDate));
+
     return Scaffold(
       backgroundColor: AppTheme.backgroundLight,
       appBar: AppBar(
@@ -17,7 +28,11 @@ class PlanScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
             child: TextButton.icon(
-              onPressed: () {},
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('AI Check-in feature coming soon!')),
+                );
+              },
               icon: const Icon(LucideIcons.plus, size: 16, color: AppTheme.primaryOrange),
               label: const Text('Check-in', style: TextStyle(color: AppTheme.primaryOrange)),
               style: TextButton.styleFrom(
@@ -28,72 +43,107 @@ class PlanScreen extends StatelessWidget {
           )
         ],
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(24.0),
-        children: [
-          _buildDateStrip().animate().fadeIn(duration: 400.ms).slideY(begin: -0.1),
-          const SizedBox(height: 24),
-          _buildRehabCard().animate().fadeIn(delay: 200.ms).scale(begin: const Offset(0.95, 0.95)),
-          const SizedBox(height: 24),
-          const Text(
-            'Scheduled Today',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w800,
-              color: AppTheme.textDark,
-              letterSpacing: -0.5,
-            ),
-          ).animate().fadeIn(delay: 400.ms),
-          const SizedBox(height: 16),
-          _buildTaskItem(
-            time: '8:00 AM',
-            title: 'Take Medication',
-            subtitle: 'Ecosprin 75mg',
-            icon: LucideIcons.pill,
-            isCompleted: true,
-          ).animate().fadeIn(delay: 500.ms).slideX(begin: 0.1),
-          _buildTaskItem(
-            time: '10:30 AM',
-            title: 'AI Check-in',
-            subtitle: 'Daily symptom log',
-            icon: LucideIcons.messageSquare,
-            isCompleted: false,
-            isActive: true,
-          ).animate().fadeIn(delay: 600.ms).slideX(begin: 0.1),
-          _buildTaskItem(
-            time: '2:00 PM',
-            title: 'Sync Vitals',
-            subtitle: 'Heart Rate & BP',
-            icon: LucideIcons.activity,
-            isCompleted: false,
-          ).animate().fadeIn(delay: 700.ms).slideX(begin: 0.1),
-          const SizedBox(height: 100), // Space for nav bar
-        ],
+      body: planAsync.when(
+        loading: () => const Center(child: CircularProgressIndicator(color: AppTheme.primaryOrange)),
+        error: (err, stack) => Center(child: Text('Error: $err', style: const TextStyle(color: Colors.red))),
+        data: (planData) {
+          if (planData == null) {
+            return const Center(child: Text('No plan found.'));
+          }
+
+          final carePlan = planData['care_plan'];
+          final tasks = planData['today_tasks'] as List<dynamic>;
+
+          return ListView(
+            padding: const EdgeInsets.all(24.0),
+            children: [
+              _buildDateStrip().animate().fadeIn(duration: 400.ms).slideY(begin: -0.1),
+              const SizedBox(height: 24),
+              _buildRehabCard(
+                title: carePlan['title'] ?? 'Recovery Plan',
+                description: carePlan['description'] ?? '',
+                progressPercent: carePlan['progress_percent'] ?? 0,
+              ).animate().fadeIn(delay: 200.ms).scale(begin: const Offset(0.95, 0.95)),
+              const SizedBox(height: 24),
+              const Text(
+                'Scheduled Today',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  color: AppTheme.textDark,
+                  letterSpacing: -0.5,
+                ),
+              ).animate().fadeIn(delay: 400.ms),
+              const SizedBox(height: 16),
+              
+              ...tasks.asMap().entries.map((entry) {
+                int idx = entry.key;
+                var t = entry.value;
+                IconData iconData = LucideIcons.clipboard;
+                if (t['icon'] == 'pill') iconData = LucideIcons.pill;
+                if (t['icon'] == 'messageSquare') iconData = LucideIcons.messageSquare;
+                
+                return _buildTaskItem(
+                  time: t['time'],
+                  title: t['title'],
+                  subtitle: t['subtitle'],
+                  icon: iconData,
+                  isCompleted: t['is_completed'],
+                  isActive: t['is_active'],
+                ).animate().fadeIn(delay: (500 + (idx * 100)).ms).slideX(begin: 0.1);
+              }),
+              
+              const SizedBox(height: 100), // Space for nav bar
+            ],
+          );
+        },
       ),
     );
   }
 
   Widget _buildDateStrip() {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final days = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
+    List<Widget> dateBoxes = [];
+    
+    for (int i = -2; i <= 2; i++) {
+      final date = now.add(Duration(days: i));
+      final dateNorm = DateTime(date.year, date.month, date.day);
+      
+      final dayName = (dateNorm == today) ? 'TODAY' : days[date.weekday - 1];
+      final dateNum = date.day.toString();
+      
+      final isSelected = _selectedDate.year == date.year && 
+                         _selectedDate.month == date.month && 
+                         _selectedDate.day == date.day;
+                         
+      dateBoxes.add(
+        GestureDetector(
+          onTap: () {
+            setState(() {
+              _selectedDate = dateNorm;
+            });
+          },
+          child: _buildDateBox(dayName, dateNum, isSelected),
+        ),
+      );
+    }
+    
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        _buildDateBox('MON', '18', false),
-        _buildDateBox('TUE', '19', false),
-        _buildDateBox('TODAY', '20', true),
-        _buildDateBox('THU', '21', false),
-        _buildDateBox('FRI', '22', false),
-      ],
+      children: dateBoxes,
     );
   }
 
-  Widget _buildDateBox(String day, String date, bool isToday) {
+  Widget _buildDateBox(String day, String date, bool isSelected) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       decoration: BoxDecoration(
-        color: isToday ? AppTheme.primaryOrange : Colors.white,
+        color: isSelected ? AppTheme.primaryOrange : Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: isToday ? null : Border.all(color: Colors.grey.withOpacity(0.2)),
-        boxShadow: isToday
+        border: isSelected ? null : Border.all(color: Colors.grey.withOpacity(0.2)),
+        boxShadow: isSelected
             ? [BoxShadow(color: AppTheme.primaryOrange.withOpacity(0.3), blurRadius: 10, offset: const Offset(0, 4))]
             : [],
       ),
@@ -104,7 +154,7 @@ class PlanScreen extends StatelessWidget {
             style: TextStyle(
               fontSize: 10,
               fontWeight: FontWeight.w700,
-              color: isToday ? Colors.white.withOpacity(0.9) : AppTheme.textMuted,
+              color: isSelected ? Colors.white.withOpacity(0.9) : AppTheme.textMuted,
             ),
           ),
           const SizedBox(height: 4),
@@ -113,7 +163,7 @@ class PlanScreen extends StatelessWidget {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w800,
-              color: isToday ? Colors.white : AppTheme.textDark,
+              color: isSelected ? Colors.white : AppTheme.textDark,
             ),
           ),
         ],
@@ -121,7 +171,7 @@ class PlanScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildRehabCard() {
+  Widget _buildRehabCard({required String title, required String description, required int progressPercent}) {
     return GlassCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -129,31 +179,35 @@ class PlanScreen extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Post-Op Cardiac Rehab',
-                style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 16,
-                  color: AppTheme.textDark,
+              Expanded(
+                child: Text(
+                  title,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
+                    color: AppTheme.textDark,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
+              const SizedBox(width: 8),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
                   color: Colors.green.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: const Text(
-                  '85% Done',
-                  style: TextStyle(color: Colors.green, fontSize: 12, fontWeight: FontWeight.w700),
+                child: Text(
+                  '$progressPercent% Done',
+                  style: const TextStyle(color: Colors.green, fontSize: 12, fontWeight: FontWeight.w700),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 8),
-          const Text(
-            'Doctor prescribed 14-day recovery protocol. 3 days remaining.',
-            style: TextStyle(fontSize: 13, color: AppTheme.textMuted),
+          Text(
+            description,
+            style: const TextStyle(fontSize: 13, color: AppTheme.textMuted),
           ),
           const SizedBox(height: 16),
           Stack(
@@ -166,7 +220,7 @@ class PlanScreen extends StatelessWidget {
                 ),
               ),
               FractionallySizedBox(
-                widthFactor: 0.85,
+                widthFactor: (progressPercent / 100.0).clamp(0.0, 1.0),
                 child: Container(
                   height: 8,
                   decoration: BoxDecoration(
@@ -190,20 +244,33 @@ class PlanScreen extends StatelessWidget {
     required bool isCompleted,
     bool isActive = false,
   }) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: isActive ? Border.all(color: AppTheme.primaryOrange, width: 1.5) : Border.all(color: Colors.transparent, width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.02),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+    return GestureDetector(
+      onTap: () {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(isCompleted ? 'Task "$title" is already completed.' : 'Marking "$title" as complete...'),
+            duration: const Duration(seconds: 2),
+            action: SnackBarAction(
+              label: 'Undo',
+              onPressed: () {},
+            ),
           ),
-        ],
-      ),
+        );
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 10),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: isActive ? Border.all(color: AppTheme.primaryOrange, width: 1.5) : Border.all(color: Colors.transparent, width: 1.5),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.02),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Row(
@@ -259,6 +326,7 @@ class PlanScreen extends StatelessWidget {
             ),
           ],
         ),
+      ),
       ),
     );
   }

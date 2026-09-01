@@ -107,8 +107,11 @@ class Patient(Base):
     
     user = relationship("User", back_populates="patient_profile", foreign_keys=[user_id])
     caregiver = relationship("User", foreign_keys=[caregiver_id])
+    vitals = relationship("VitalSign", back_populates="patient", cascade="all, delete-orphan")
+    care_plan = relationship("CarePlan", uselist=False, cascade="all, delete-orphan")
+    tasks = relationship("CareTask", cascade="all, delete-orphan")
+    lab_tests = relationship("LabTest", cascade="all, delete-orphan")
     encounters = relationship("Encounter", back_populates="patient")
-    vitals = relationship("VitalSign", back_populates="patient")
     medications = relationship("Medication", back_populates="patient")
 
 class VitalSign(Base):
@@ -176,6 +179,16 @@ class CareTask(Base):
     task_description = Column(String, nullable=False)
     due_time = Column(DateTime, nullable=False)
     is_completed = Column(Boolean, default=False)
+    
+class LabTest(Base):
+    __tablename__ = "lab_tests"
+
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    patient_id = Column(String(36), ForeignKey("patients.id"))
+    test_name = Column(String)
+    scheduled_time = Column(DateTime)
+    status = Column(String, default="Processing")  # 'Processing', 'Results Ready', 'Completed'
+    results_json = Column(String, nullable=True) # JSON string of table rows: [{"name": "Hemoglobin", "result": "13.5", "unit": "g/dL", "range": "12.0 - 15.5"}, ...]
 
 class CarePlan(Base):
     __tablename__ = "care_plans"

@@ -125,5 +125,3 @@ def get_dashboard(caregiver_id: str, db: Session = Depends(get_db)):
             { "icon": "pill", "title": f"Medication {med_status}", "time": "Recently", "color": med_color } if med_log else None
         ]
     }
-
-

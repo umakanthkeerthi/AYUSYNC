@@ -1,61 +1,78 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../theme/app_theme.dart';
-import '../widgets/glass_card.dart';
+import '../providers/patient_providers.dart';
+import 'lab_report_screen.dart'; 
 
-class LabTestsScreen extends StatelessWidget {
+class LabTestsScreen extends ConsumerWidget {
   const LabTestsScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final labsAsync = ref.watch(labTestsProvider);
+
     return Scaffold(
       backgroundColor: AppTheme.backgroundLight,
       appBar: AppBar(
-        title: const Text('Lab Tests & Results'),
-        backgroundColor: Colors.transparent,
+        title: const Text('Lab Tests & Results', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 18, color: AppTheme.textDark)),
+        backgroundColor: AppTheme.backgroundLight,
         elevation: 0,
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(LucideIcons.arrowLeft, color: AppTheme.textDark),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(24.0),
-        children: [
-          _buildTestCard(
-            testName: 'Complete Blood Count (CBC)',
-            date: 'Today, 8:30 AM',
-            status: 'Results Ready',
-            statusColor: Colors.teal,
-            isReady: true,
-          ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.1),
-          const SizedBox(height: 12),
-          _buildTestCard(
-            testName: 'Lipid Profile',
-            date: 'Today, 8:45 AM',
-            status: 'Processing',
-            statusColor: Colors.orange,
-            isReady: false,
-          ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.1),
-          const SizedBox(height: 12),
-          _buildTestCard(
-            testName: 'HbA1c',
-            date: 'Jun 15, 2026',
-            status: 'Completed',
-            statusColor: AppTheme.textMuted,
-            isReady: true,
-          ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.1),
-        ],
+      body: labsAsync.when(
+        data: (labs) {
+          if (labs == null || labs.isEmpty) {
+            return const Center(child: Text('No lab tests found.'));
+          }
+
+          return ListView.builder(
+            padding: const EdgeInsets.all(24.0),
+            itemCount: labs.length,
+            itemBuilder: (context, index) {
+              final lab = labs[index];
+              return _buildLabCard(context, lab);
+            },
+          );
+        },
+        loading: () => const Center(child: CircularProgressIndicator(color: AppTheme.primaryOrange)),
+        error: (err, stack) => Center(child: Text('Error: $err')),
       ),
     );
   }
 
-  Widget _buildTestCard({
-    required String testName,
-    required String date,
-    required String status,
-    required Color statusColor,
-    required bool isReady,
-  }) {
-    return GlassCard(
-      padding: const EdgeInsets.all(16),
+  Widget _buildLabCard(BuildContext context, dynamic lab) {
+    Color statusColor;
+    Color statusBg;
+    if (lab['status'] == 'Completed') {
+      statusColor = AppTheme.textMuted;
+      statusBg = Colors.grey.withOpacity(0.1);
+    } else if (lab['status'] == 'Results Ready') {
+      statusColor = Colors.teal;
+      statusBg = Colors.teal.withOpacity(0.1);
+    } else {
+      statusColor = AppTheme.primaryOrange;
+      statusBg = AppTheme.primaryOrange.withOpacity(0.1);
+    }
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(20),
       child: Column(
         children: [
           Row(
@@ -63,10 +80,10 @@ class LabTestsScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: statusColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(16),
+                  color: (lab['status'] == 'Processing') ? AppTheme.primaryOrange.withOpacity(0.1) : Colors.teal.withOpacity(0.1),
+                  shape: BoxShape.circle,
                 ),
-                child: Icon(LucideIcons.testTube2, color: statusColor),
+                child: Icon(LucideIcons.flaskConical, color: (lab['status'] == 'Processing') ? AppTheme.primaryOrange : Colors.teal),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -74,16 +91,16 @@ class LabTestsScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      testName,
+                      lab['test_name'],
                       style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16, color: AppTheme.textDark),
                     ),
                     const SizedBox(height: 4),
                     Row(
                       children: [
-                        const Icon(LucideIcons.calendar, size: 14, color: AppTheme.textMuted),
+                        const Icon(LucideIcons.calendar, size: 12, color: AppTheme.textMuted),
                         const SizedBox(width: 4),
                         Text(
-                          date,
+                          lab['scheduled_time'],
                           style: const TextStyle(color: AppTheme.textMuted, fontSize: 12),
                         ),
                       ],
@@ -98,26 +115,33 @@ class LabTestsScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: statusColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(20),
+                  color: statusBg,
+                  borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  status,
+                  lab['status'],
                   style: TextStyle(color: statusColor, fontSize: 12, fontWeight: FontWeight.w700),
                 ),
               ),
-              if (isReady)
+              if (lab['status'] == 'Results Ready' || lab['status'] == 'Completed')
                 TextButton.icon(
-                  onPressed: () {},
-                  icon: const Icon(LucideIcons.download, size: 16),
-                  label: const Text('View Report'),
-                  style: TextButton.styleFrom(
-                    foregroundColor: AppTheme.primaryOrange,
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
-                  ),
-                ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => LabReportScreen(
+                          testName: lab['test_name'],
+                          date: lab['scheduled_time'],
+                          results: lab['results'],
+                        ),
+                      ),
+                    );
+                  },
+                  icon: const Icon(LucideIcons.download, size: 16, color: AppTheme.primaryOrange),
+                  label: const Text('View Report', style: TextStyle(color: AppTheme.primaryOrange, fontWeight: FontWeight.w600)),
+                )
             ],
           ),
         ],

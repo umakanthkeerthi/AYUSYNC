@@ -119,11 +119,12 @@
         lucide.createIcons();
         let selectedEhrId = null;
 
-        // Fetch patients from EHR on load via our Backend Proxy to avoid CORS
+        // Fetch patients from Live AWS Demo EHR
         window.onload = async () => {
             try {
                 // Using Mock EHR API
                 const res = await fetch('http://13.60.9.54/api/patients/');
+                if (!res.ok) throw new Error("Failed to fetch from EHR");
                 const patients = await res.json();
                 
                 const listEl = document.getElementById('patientList');
@@ -140,7 +141,7 @@
                     listEl.appendChild(li);
                 });
             } catch (e) {
-                document.getElementById('patientList').innerHTML = '<li style="color:red; padding:16px;">Error connecting to EHR API (Port 8001). Is it running?</li>';
+                document.getElementById('patientList').innerHTML = '<li style="color:red; padding:16px;">Error connecting to AyuSync Backend (Port 8000) or EHR Backend (Port 8001). Make sure both are running!</li>';
             }
         };
 
