@@ -3,11 +3,11 @@ import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
   // AyuSync Nurse Brand Colors
-  static const Color brandPrimary = Color(0xFF00A884); // Healthcare Green/Teal
-  static const Color brandSecondary = Color(0xFF131924); // Deep Navy Sidebar
-  static const Color brandAccent = Color(0xFF6366F1); // Soft Blue/Purple
+  static const Color brandPrimary = Color(0xFF4F46E5); // Rich Royal Indigo
+  static const Color brandSecondary = Color(0xFF0F172A); // Rich Slate Navy
+  static const Color brandAccent = Color(0xFFE11D48); // Vibrant Rose
   
-  static const Color bgMain = Color(0xFFF4F7FE);
+  static const Color bgMain = Color(0xFFF1F5F9); // Crisp Slate 100
   static const Color bgCard = Color(0xFFFFFFFF);
   
   static const Color textDark = Color(0xFF0F172A);
@@ -23,6 +23,7 @@ class AppTheme {
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
+      hintColor: textSecondary,
       colorScheme: ColorScheme.fromSeed(
         seedColor: brandPrimary,
         primary: brandPrimary,
@@ -31,17 +32,16 @@ class AppTheme {
         error: colorUrgent,
       ),
       scaffoldBackgroundColor: bgMain,
-      textTheme: GoogleFonts.interTextTheme().apply(
+      textTheme: GoogleFonts.outfitTextTheme().apply(
         bodyColor: textDark,
         displayColor: textDark,
       ),
-      cardTheme: CardThemeData(
+      cardTheme: CardTheme(
         color: bgCard,
-        elevation: 1,
-        shadowColor: Colors.black.withOpacity(0.05),
+        elevation: 8,
+        shadowColor: const Color(0xFF0F172A).withOpacity(0.06),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16), // --radius-lg is 1rem
-          side: const BorderSide(color: borderColor, width: 1),
+          borderRadius: BorderRadius.circular(16),
         ),
       ),
       dividerTheme: const DividerThemeData(
@@ -53,11 +53,12 @@ class AppTheme {
         style: ElevatedButton.styleFrom(
           backgroundColor: brandPrimary,
           foregroundColor: Colors.white,
-          elevation: 0,
+          elevation: 4,
+          shadowColor: brandPrimary.withOpacity(0.4),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(12),
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(

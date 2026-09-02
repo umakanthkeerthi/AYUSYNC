@@ -9,9 +9,24 @@ import 'screens/messages_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/placeholder_screens.dart';
 
+import 'screens/reports_screen.dart';
+
+import 'screens/case_review_screen.dart';
+import 'screens/login_screen.dart';
+
 final goRouter = GoRouter(
-  initialLocation: '/overview',
+  initialLocation: '/login',
   routes: [
+    GoRoute(
+      path: '/login',
+      builder: (context, state) => const LoginScreen(),
+    ),
+    GoRoute(
+      path: '/case-review/:patientId',
+      builder: (context, state) => CaseReviewScreen(
+        patientId: state.pathParameters['patientId']!,
+      ),
+    ),
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) {
         return DashboardLayout(navigationShell: navigationShell);

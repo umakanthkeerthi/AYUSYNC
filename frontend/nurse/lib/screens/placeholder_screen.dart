@@ -11,12 +11,12 @@ class PlaceholderScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(Icons.construction, size: 64, color: Colors.grey.shade400),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           Text(
             '$title Screen',
-            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             'This screen is under construction.',
             style: TextStyle(color: Colors.grey.shade600),

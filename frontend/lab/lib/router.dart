@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'layout/dashboard_layout.dart';
+import 'screens/login_screen.dart';
 import 'screens/work_queue_screen.dart';
 import 'screens/samples_screen.dart';
 import 'screens/results_screen.dart';
@@ -19,9 +20,13 @@ final GlobalKey<NavigatorState> _shellNavigatorAnalyticsKey = GlobalKey<Navigato
 final GlobalKey<NavigatorState> _shellNavigatorSettingsKey = GlobalKey<NavigatorState>(debugLabel: 'settings');
 
 final goRouter = GoRouter(
-  initialLocation: '/queue',
+  initialLocation: '/login',
   navigatorKey: _rootNavigatorKey,
   routes: [
+    GoRoute(
+      path: '/login',
+      builder: (context, state) => const LoginScreen(),
+    ),
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) {
         return DashboardLayout(navigationShell: navigationShell);

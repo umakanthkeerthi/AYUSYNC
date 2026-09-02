@@ -1,8 +1,68 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import '../theme/app_theme.dart';
+import '../providers/auth_provider.dart';
 
-class PatientsScreen extends StatelessWidget {
+class PatientsScreen extends ConsumerStatefulWidget {
   const PatientsScreen({Key? key}) : super(key: key);
+
+  @override
+  ConsumerState<PatientsScreen> createState() => _PatientsScreenState();
+}
+
+class _PatientsScreenState extends ConsumerState<PatientsScreen> {
+  List<dynamic> _patients = [];
+  bool _isLoading = true;
+  String _error = '';
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() => _fetchPatients());
+  }
+
+  Future<void> _fetchPatients() async {
+    final doctorId = ref.read(authProvider).doctorId;
+    if (doctorId == null) {
+      setState(() {
+        _error = 'Not authenticated';
+        _isLoading = false;
+      });
+      return;
+    }
+
+    try {
+      final response = await http.get(
+        Uri.parse('http://127.0.0.1:8000/api/v1/doctor/roster?doctor_id=$doctorId'),
+      );
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['status'] == 'success') {
+          setState(() {
+            _patients = data['roster'];
+            _isLoading = false;
+          });
+        } else {
+          setState(() {
+            _error = data['message'] ?? 'Failed to fetch patients';
+            _isLoading = false;
+          });
+        }
+      } else {
+        setState(() {
+          _error = 'Server error: ${response.statusCode}';
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _error = 'Error connecting to server: $e';
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,28 +117,32 @@ class PatientsScreen extends StatelessWidget {
           const SizedBox(height: 24),
           Card(
             clipBehavior: Clip.antiAlias,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: DataTable(
-                headingTextStyle: const TextStyle(fontWeight: FontWeight.bold, color: AppTheme.textSecondary),
-                dataRowMinHeight: 60,
-                dataRowMaxHeight: 60,
-                columns: const [
-                  DataColumn(label: Text('Patient')),
-                  DataColumn(label: Text('Age')),
-                  DataColumn(label: Text('Status')),
-                  DataColumn(label: Text('Risk Score')),
-                  DataColumn(label: Text('Action')),
-                ],
-                rows: [
-                  _buildRow('Sarah Jenkins', '68', 'Need Intervention', 85, true),
-                  _buildRow('Robert Chen', '72', 'Monitoring', 45, false),
-                  _buildRow('Maria Garcia', '65', 'Stable', 12, false),
-                  _buildRow('James Wilson', '81', 'Stable', 28, false),
-                  _buildRow('Linda Brown', '59', 'Need Intervention', 75, true),
-                ],
-              ),
-            ),
+            child: _isLoading 
+                ? const Padding(padding: EdgeInsets.all(32), child: Center(child: CircularProgressIndicator()))
+                : _error.isNotEmpty 
+                    ? Padding(padding: const EdgeInsets.all(32), child: Center(child: Text(_error, style: const TextStyle(color: Colors.red))))
+                    : SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: DataTable(
+                          headingTextStyle: const TextStyle(fontWeight: FontWeight.bold, color: AppTheme.textSecondary),
+                          dataRowMinHeight: 60,
+                          dataRowMaxHeight: 60,
+                          columns: const [
+                            DataColumn(label: Text('Patient')),
+                            DataColumn(label: Text('Age')),
+                            DataColumn(label: Text('Status')),
+                            DataColumn(label: Text('Risk Score')),
+                            DataColumn(label: Text('Action')),
+                          ],
+                          rows: _patients.map((p) => _buildRow(
+                            p['name']?.toString() ?? 'Unknown',
+                            p['age']?.toString() ?? 'Unknown',
+                            p['status']?.toString() ?? 'Unknown',
+                            p['risk_score'] as int? ?? 0,
+                            p['isHighRisk'] as bool? ?? false,
+                          )).toList(),
+                        ),
+                      ),
           )
         ],
       ),

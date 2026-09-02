@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 import '../theme/app_theme.dart';
+import '../providers/auth_provider.dart';
 
-class DashboardLayout extends StatelessWidget {
+class DashboardLayout extends ConsumerWidget {
   final StatefulNavigationShell navigationShell;
 
   const DashboardLayout({Key? key, required this.navigationShell}) : super(key: key);
@@ -16,7 +18,7 @@ class DashboardLayout extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return ResponsiveBuilder(
       builder: (context, sizingInformation) {
         bool isMobile = sizingInformation.deviceScreenType == DeviceScreenType.mobile;
@@ -26,16 +28,16 @@ class DashboardLayout extends StatelessWidget {
               ? AppBar(
                   backgroundColor: AppTheme.brandSidebar,
                   iconTheme: const IconThemeData(color: Colors.white),
-                  title: Row(
+                  title: const Row(
                     children: [
-                      const Icon(Icons.medical_services, color: AppTheme.colorDanger),
-                      const SizedBox(width: 8),
-                      const Text('AyuSync Doctor', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18)),
+                      Icon(Icons.medical_services, color: AppTheme.colorDanger),
+                      SizedBox(width: 8),
+                      Text('AyuSync Doctor', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18)),
                     ],
                   ),
-                  actions: [
+                  actions: const [
                     Padding(
-                      padding: const EdgeInsets.only(right: 16.0),
+                      padding: EdgeInsets.only(right: 16.0),
                       child: CircleAvatar(
                         radius: 16,
                         backgroundColor: Colors.white,
@@ -52,7 +54,7 @@ class DashboardLayout extends StatelessWidget {
               Expanded(
                 child: Column(
                   children: [
-                    if (!isMobile) _buildDesktopHeader(context),
+                    if (!isMobile) _buildDesktopHeader(context, ref),
                     Expanded(
                       child: Container(
                         color: AppTheme.brandBg,
@@ -70,9 +72,11 @@ class DashboardLayout extends StatelessWidget {
     );
   }
 
-  Widget _buildDesktopHeader(BuildContext context) {
+  Widget _buildDesktopHeader(BuildContext context, WidgetRef ref) {
     final titles = ['Overview', 'My Patients', 'Alerts', 'Interventions', 'Messages'];
     final title = navigationShell.currentIndex < titles.length ? titles[navigationShell.currentIndex] : '';
+    
+    final doctorName = ref.watch(authProvider).doctorName ?? 'Unknown Doctor';
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 24),
@@ -86,28 +90,73 @@ class DashboardLayout extends StatelessWidget {
           ),
           Row(
             children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(50),
-                  border: Border.all(color: AppTheme.borderColor),
-                  boxShadow: [
-                    BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 4, offset: const Offset(0, 2))
-                  ],
-                ),
-                child: Row(
-                  children: [
-                    const CircleAvatar(
-                      radius: 16,
-                      backgroundColor: AppTheme.brandBg,
-                      child: Text('👨‍⚕️', style: TextStyle(fontSize: 16)),
+              PopupMenuButton<String>(
+                offset: const Offset(0, 50),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                itemBuilder: (context) => [
+                  PopupMenuItem(
+                    enabled: false,
+                    child: Container(
+                      width: 250,
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const CircleAvatar(
+                            radius: 32,
+                            backgroundColor: AppTheme.brandBg,
+                            child: Text('👨‍⚕️', style: TextStyle(fontSize: 32)),
+                          ),
+                          const SizedBox(height: 16),
+                          Text(doctorName, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.textDark)),
+                          const SizedBox(height: 4),
+                          Text('${doctorName.toLowerCase().replaceAll(' ', '.').replaceAll('dr..', 'dr.')}@ayusync.com', style: const TextStyle(color: AppTheme.textSecondary)),
+                          const SizedBox(height: 16),
+                          const Divider(),
+                          const SizedBox(height: 8),
+                          ElevatedButton.icon(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              ref.read(authProvider.notifier).logout();
+                              context.go('/login');
+                            },
+                            icon: const Icon(Icons.logout, size: 18),
+                            label: const Text('Sign out'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppTheme.brandBg,
+                              foregroundColor: AppTheme.textDark,
+                              elevation: 0,
+                              minimumSize: const Size(double.infinity, 40),
+                            ),
+                          )
+                        ],
+                      ),
                     ),
-                    const SizedBox(width: 12),
-                    const Text('Dr. Mehta', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
-                    const SizedBox(width: 8),
-                    const Icon(Icons.keyboard_arrow_down, size: 16, color: AppTheme.textSecondary),
-                  ],
+                  )
+                ],
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(50),
+                    border: Border.all(color: AppTheme.borderColor),
+                    boxShadow: [
+                      BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 4, offset: const Offset(0, 2))
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      const CircleAvatar(
+                        radius: 16,
+                        backgroundColor: AppTheme.brandBg,
+                        child: Text('👨‍⚕️', style: TextStyle(fontSize: 16)),
+                      ),
+                      const SizedBox(width: 12),
+                      Text(doctorName, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                      const SizedBox(width: 8),
+                      const Icon(Icons.keyboard_arrow_down, size: 16, color: AppTheme.textSecondary),
+                    ],
+                  ),
                 ),
               ),
             ],

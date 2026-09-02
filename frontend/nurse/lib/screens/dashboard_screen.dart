@@ -1,52 +1,88 @@
 import 'package:flutter/material.dart';
 import 'package:responsive_builder/responsive_builder.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:intl/intl.dart';
 import '../theme/app_theme.dart';
 
-class DashboardScreen extends StatelessWidget {
+class DashboardScreen extends StatefulWidget {
   const DashboardScreen({Key? key}) : super(key: key);
 
   @override
+  State<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen> {
+  bool _isLoading = true;
+  String _error = '';
+  Map<String, dynamic> _dashboardData = {
+    'urgent_count': 0,
+    'followup_count': 0,
+    'ontrack_count': 0,
+    'total_patients': 0,
+    'queue': []
+  };
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchDashboard();
+  }
+
+  Future<void> _fetchDashboard() async {
+    try {
+      final response = await http.get(Uri.parse('http://127.0.0.1:8001/api/v1/nurse/dashboard'));
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['status'] == 'success') {
+          setState(() {
+            _dashboardData = data;
+            _isLoading = false;
+          });
+        } else {
+          setState(() { _error = 'Failed to load dashboard'; _isLoading = false; });
+        }
+      } else {
+        setState(() { _error = 'Server error'; _isLoading = false; });
+      }
+    } catch (e) {
+      setState(() { _error = 'Error connecting to server'; _isLoading = false; });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (_isLoading) return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    if (_error.isNotEmpty) return Scaffold(body: Center(child: Text(_error, style: TextStyle(color: Colors.red))));
+
+    final urgent = _dashboardData['urgent_count']?.toString() ?? '0';
+    final followup = _dashboardData['followup_count']?.toString() ?? '0';
+    final ontrack = _dashboardData['ontrack_count']?.toString() ?? '0';
+    final total = _dashboardData['total_patients']?.toString() ?? '0';
+    final queue = _dashboardData['queue'] as List<dynamic>? ?? [];
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ResponsiveBuilder(
-            builder: (context, sizingInformation) {
-              bool isMobile = sizingInformation.isMobile || sizingInformation.isTablet;
-              
-              if (isMobile) {
-                return GridView.count(
-                  crossAxisCount: 2,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  mainAxisSpacing: 16,
-                  crossAxisSpacing: 16,
-                  childAspectRatio: sizingInformation.isMobile ? 1.2 : 1.5,
-                  children: const [
-                    _MetricCard(title: 'Urgent', value: '3', subtitle: 'Needs attention', color: AppTheme.colorUrgent, isActive: false),
-                    _MetricCard(title: 'Follow-up', value: '8', subtitle: 'Pending tasks', color: AppTheme.colorFollowup, isActive: false),
-                    _MetricCard(title: 'On Track', value: '24', subtitle: 'Doing well', color: AppTheme.colorOnTrack, isActive: false),
-                    _MetricCard(title: 'Total Patients', value: '35', subtitle: 'Under care', color: AppTheme.colorTotal, isActive: true),
-                  ],
-                );
-              }
-
-              return const Row(
-                children: [
-                  Expanded(child: _MetricCard(title: 'Urgent', value: '3', subtitle: 'Needs attention', color: AppTheme.colorUrgent, isActive: false)),
-                  SizedBox(width: 16),
-                  Expanded(child: _MetricCard(title: 'Follow-up', value: '8', subtitle: 'Pending tasks', color: AppTheme.colorFollowup, isActive: false)),
-                  SizedBox(width: 16),
-                  Expanded(child: _MetricCard(title: 'On Track', value: '24', subtitle: 'Doing well', color: AppTheme.colorOnTrack, isActive: false)),
-                  SizedBox(width: 16),
-                  Expanded(child: _MetricCard(title: 'Total Patients', value: '35', subtitle: 'Under care', color: AppTheme.colorTotal, isActive: true)),
-                ],
-              );
-            },
+          GridView(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: 280,
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 16,
+              mainAxisExtent: 110,
+            ),
+            children: [
+              _MetricCard(title: 'Urgent', value: urgent, subtitle: 'Needs attention', color: AppTheme.colorUrgent, isActive: false),
+              _MetricCard(title: 'Follow-up', value: followup, subtitle: 'Pending tasks', color: AppTheme.colorFollowup, isActive: false),
+              _MetricCard(title: 'On Track', value: ontrack, subtitle: 'Completed tasks', color: AppTheme.colorOnTrack, isActive: false),
+              _MetricCard(title: 'Total Patients', value: total, subtitle: 'Under care', color: AppTheme.colorTotal, isActive: true),
+            ],
           ),
-          const SizedBox(height: 32),
+          SizedBox(height: 32),
           Container(
             decoration: BoxDecoration(
               color: AppTheme.bgCard,
@@ -64,7 +100,7 @@ class DashboardScreen extends StatelessWidget {
                     spacing: 16,
                     runSpacing: 16,
                     children: [
-                      const Text('Patient Queue', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                      Text('Patient Queue', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                       Wrap(
                         spacing: 12,
                         runSpacing: 12,
@@ -75,16 +111,19 @@ class DashboardScreen extends StatelessWidget {
                             child: TextField(
                               decoration: InputDecoration(
                                 hintText: 'Search patients, tasks...',
-                                prefixIcon: const Icon(Icons.search, size: 20),
+                                prefixIcon: Icon(Icons.search, size: 20),
                                 contentPadding: const EdgeInsets.symmetric(vertical: 0),
                                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                               ),
                             ),
                           ),
                           OutlinedButton.icon(
-                            onPressed: () {},
-                            icon: const Icon(Icons.filter_list, size: 18),
-                            label: const Text('Filter'),
+                            onPressed: () {
+                              setState(() { _isLoading = true; });
+                              _fetchDashboard();
+                            },
+                            icon: Icon(Icons.refresh, size: 18),
+                            label: Text('Refresh'),
                           )
                         ],
                       )
@@ -92,16 +131,26 @@ class DashboardScreen extends StatelessWidget {
                   ),
                 ),
                 const Divider(height: 1),
-                ListView.separated(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: 5,
-                  separatorBuilder: (_, __) => const Divider(height: 1),
-                  itemBuilder: (context, index) {
-                    bool isUrgent = index == 0;
-                    return _PatientQueueRow(isUrgent: isUrgent);
-                  },
-                )
+                if (queue.isEmpty)
+                  Padding(
+                    padding: EdgeInsets.all(32.0),
+                    child: Center(child: Text("No patients in queue", style: TextStyle(color: Theme.of(context).hintColor))),
+                  )
+                else
+                  ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: queue.length,
+                    separatorBuilder: (_, __) => const Divider(height: 1),
+                    itemBuilder: (context, index) {
+                      final item = queue[index];
+                      return _PatientQueueRow(
+                        name: item['patient_name'] ?? 'Unknown',
+                        severity: item['severity'] ?? 'LOW',
+                        time: item['created_at'] ?? '',
+                      );
+                    },
+                  )
               ],
             ),
           )
@@ -145,10 +194,10 @@ class _MetricCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(value, style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: color, height: 1)),
-            const SizedBox(height: 4),
-            Text(title, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
-            const SizedBox(height: 2),
-            Text(subtitle, style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
+            SizedBox(height: 4),
+            Text(title, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+            SizedBox(height: 2),
+            Text(subtitle, style: TextStyle(color: Theme.of(context).hintColor, fontSize: 12)),
           ],
         ),
       ),
@@ -157,12 +206,24 @@ class _MetricCard extends StatelessWidget {
 }
 
 class _PatientQueueRow extends StatelessWidget {
-  final bool isUrgent;
+  final String name;
+  final String severity;
+  final String time;
   
-  const _PatientQueueRow({required this.isUrgent});
+  const _PatientQueueRow({required this.name, required this.severity, required this.time});
 
   @override
   Widget build(BuildContext context) {
+    bool isUrgent = severity == 'HIGH';
+    
+    String formattedTime = time;
+    try {
+      if (time.isNotEmpty) {
+        final dt = DateTime.parse(time);
+        formattedTime = DateFormat('h:mm a').format(dt);
+      }
+    } catch (_) {}
+
     return InkWell(
       onTap: () {},
       child: Padding(
@@ -175,22 +236,22 @@ class _PatientQueueRow extends StatelessWidget {
                 children: [
                   CircleAvatar(
                     backgroundColor: AppTheme.borderColor,
-                    child: Icon(Icons.person, color: AppTheme.textSecondary),
+                    child: Icon(Icons.person, color: Theme.of(context).hintColor),
                   ),
-                  const SizedBox(width: 16),
+                  SizedBox(width: 16),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('Sarah Jenkins', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                        const SizedBox(height: 4),
-                        const Text('Room 302 • Post-op Care', style: TextStyle(color: AppTheme.textSecondary, fontSize: 14)),
-                        const SizedBox(height: 4),
+                        Text(name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                        SizedBox(height: 4),
+                        Text('Triage Review', style: TextStyle(color: Theme.of(context).hintColor, fontSize: 14)),
+                        SizedBox(height: 4),
                         Row(
                           children: [
-                            Icon(Icons.schedule, size: 14, color: AppTheme.textSecondary),
-                            const SizedBox(width: 4),
-                            const Expanded(child: Text('Check vitals in 30 mins', style: TextStyle(color: AppTheme.textSecondary, fontSize: 12), overflow: TextOverflow.ellipsis)),
+                            Icon(Icons.schedule, size: 14, color: Theme.of(context).hintColor),
+                            SizedBox(width: 4),
+                            Expanded(child: Text('Added at $formattedTime', style: TextStyle(color: Theme.of(context).hintColor, fontSize: 12), overflow: TextOverflow.ellipsis)),
                           ],
                         )
                       ],
@@ -208,7 +269,7 @@ class _PatientQueueRow extends StatelessWidget {
                       color: const Color(0xFFFEE2E2),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Text('Urgent', style: TextStyle(color: AppTheme.colorUrgent, fontSize: 12, fontWeight: FontWeight.bold)),
+                    child: Text('Urgent', style: TextStyle(color: AppTheme.colorUrgent, fontSize: 12, fontWeight: FontWeight.bold)),
                   )
                 else
                   Container(
@@ -217,10 +278,10 @@ class _PatientQueueRow extends StatelessWidget {
                       color: const Color(0xFFFFF7ED),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Text('Follow-up', style: TextStyle(color: AppTheme.colorFollowup, fontSize: 12, fontWeight: FontWeight.bold)),
+                    child: Text(severity, style: TextStyle(color: AppTheme.colorFollowup, fontSize: 12, fontWeight: FontWeight.bold)),
                   ),
-                const SizedBox(width: 16),
-                const Icon(Icons.chevron_right, color: AppTheme.textSecondary),
+                SizedBox(width: 16),
+                Icon(Icons.chevron_right, color: Theme.of(context).hintColor),
               ],
             )
           ],

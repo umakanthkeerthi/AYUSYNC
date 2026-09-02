@@ -1,9 +1,54 @@
 import 'package:flutter/material.dart';
 import 'package:responsive_builder/responsive_builder.dart';
+import 'package:fl_chart/fl_chart.dart'; // Just in case, though not strictly used in this snippet directly
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import '../theme/app_theme.dart';
 
-class ReportsScreen extends StatelessWidget {
+class ReportsScreen extends StatefulWidget {
   const ReportsScreen({Key? key}) : super(key: key);
+
+  @override
+  State<ReportsScreen> createState() => _ReportsScreenState();
+}
+
+class _ReportsScreenState extends State<ReportsScreen> {
+  bool _isLoading = true;
+  String _error = '';
+  Map<String, dynamic> _reportData = {
+    'total_revenue': '₹0',
+    'orders_delivered': '0',
+    'avg_turnaround': '0 hrs',
+    'pending_bills': '₹0',
+    'table_data': []
+  };
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchReports();
+  }
+
+  Future<void> _fetchReports() async {
+    try {
+      final response = await http.get(Uri.parse('http://127.0.0.1:8001/api/v1/lab/reports'));
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['status'] == 'success') {
+          setState(() {
+            _reportData = data;
+            _isLoading = false;
+          });
+        } else {
+          setState(() { _error = 'Failed to load reports'; _isLoading = false; });
+        }
+      } else {
+        setState(() { _error = 'Server error'; _isLoading = false; });
+      }
+    } catch (e) {
+      setState(() { _error = 'Error connecting to server'; _isLoading = false; });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -11,6 +56,9 @@ class ReportsScreen extends StatelessWidget {
       builder: (context, sizingInformation) {
         bool isMobile = sizingInformation.deviceScreenType == DeviceScreenType.mobile;
         
+        if (_isLoading) return const Scaffold(body: Center(child: CircularProgressIndicator()));
+        if (_error.isNotEmpty) return Scaffold(body: Center(child: Text(_error, style: const TextStyle(color: Colors.red))));
+
         return Scaffold(
           body: SingleChildScrollView(
             padding: const EdgeInsets.all(24.0),
@@ -62,9 +110,12 @@ class ReportsScreen extends StatelessWidget {
           ),
           const SizedBox(width: 12),
           ElevatedButton.icon(
-            onPressed: () {},
-            icon: const Icon(Icons.download, size: 16),
-            label: const Text('Export PDF'),
+            onPressed: () {
+              setState(() { _isLoading = true; });
+              _fetchReports();
+            },
+            icon: const Icon(Icons.refresh, size: 16),
+            label: const Text('Refresh'),
             style: ElevatedButton.styleFrom(
               backgroundColor: AppTheme.brandActive,
               foregroundColor: Colors.white,
@@ -95,9 +146,9 @@ class ReportsScreen extends StatelessWidget {
               width: cardWidth,
               child: HoverReportCard(
                 title: 'Total Revenue',
-                value: '₹1,45,000',
+                value: _reportData['total_revenue'] ?? '₹0',
                 subtitle: '+12% from last month',
-                bgColor: const Color(0xFFF0FDF4), // Green tint
+                bgColor: const Color(0xFFF0FDF4), 
                 iconColor: const Color(0xFF22C55E),
                 icon: Icons.account_balance_wallet,
                 imagePath: 'assets/images/report_revenue.jpg',
@@ -107,9 +158,9 @@ class ReportsScreen extends StatelessWidget {
               width: cardWidth,
               child: HoverReportCard(
                 title: 'Orders Delivered',
-                value: '842',
+                value: _reportData['orders_delivered'] ?? '0',
                 subtitle: 'Tests completed',
-                bgColor: const Color(0xFFEFF6FF), // Blue tint
+                bgColor: const Color(0xFFEFF6FF), 
                 iconColor: const Color(0xFF3B82F6),
                 icon: Icons.check_circle_outline,
                 imagePath: 'assets/images/report_orders.jpg',
@@ -119,9 +170,9 @@ class ReportsScreen extends StatelessWidget {
               width: cardWidth,
               child: HoverReportCard(
                 title: 'Avg Turnaround',
-                value: '4.5 hrs',
+                value: _reportData['avg_turnaround'] ?? '0 hrs',
                 subtitle: 'Improved by 30m',
-                bgColor: const Color(0xFFFFF7ED), // Orange tint
+                bgColor: const Color(0xFFFFF7ED), 
                 iconColor: const Color(0xFFF97316),
                 icon: Icons.timer,
                 imagePath: 'assets/images/report_time.jpg',
@@ -131,9 +182,9 @@ class ReportsScreen extends StatelessWidget {
               width: cardWidth,
               child: HoverReportCard(
                 title: 'Pending Bills',
-                value: '₹12,400',
+                value: _reportData['pending_bills'] ?? '₹0',
                 subtitle: '15 invoices',
-                bgColor: const Color(0xFFFEF2F2), // Red tint
+                bgColor: const Color(0xFFFEF2F2), 
                 iconColor: const Color(0xFFEF4444),
                 icon: Icons.receipt_long,
                 imagePath: 'assets/images/report_bills.jpg',
@@ -146,13 +197,16 @@ class ReportsScreen extends StatelessWidget {
   }
 
   Widget _buildDataList(BuildContext context, bool isMobile) {
-    final List<Map<String, String>> data = [
-      {'date': 'Today, 10:30 AM', 'patient': 'Rahul Kumar', 'tests': 'Lipid Panel, CBC', 'status': 'Delivered', 'revenue': '₹2,500'},
-      {'date': 'Today, 09:15 AM', 'patient': 'Priya Sharma', 'tests': 'Thyroid Profile', 'status': 'Delivered', 'revenue': '₹1,200'},
-      {'date': 'Yesterday', 'patient': 'Arjun Rao', 'tests': 'HbA1C, Glucose', 'status': 'Delivered', 'revenue': '₹900'},
-      {'date': 'Yesterday', 'patient': 'Meera Iyer', 'tests': 'Liver Function Test', 'status': 'Delivered', 'revenue': '₹1,500'},
-      {'date': 'Aug 28, 2026', 'patient': 'Sanjay Gupta', 'tests': 'Complete Blood Count', 'status': 'Delivered', 'revenue': '₹600'},
-    ];
+    final List<dynamic> rawData = _reportData['table_data'] ?? [];
+    
+    // Convert to list of maps with string keys/values
+    final List<Map<String, String>> data = rawData.map((e) => {
+      'date': e['date']?.toString() ?? '',
+      'patient': e['patient']?.toString() ?? '',
+      'tests': e['tests']?.toString() ?? '',
+      'status': e['status']?.toString() ?? '',
+      'revenue': e['revenue']?.toString() ?? '',
+    }).toList();
 
     if (MediaQuery.of(context).size.width < 800) {
       return Container(
@@ -334,7 +388,6 @@ class _HoverReportCardState extends State<HoverReportCard> {
         clipBehavior: Clip.hardEdge,
         child: Stack(
           children: [
-            // Bottom Right 3D Image
             Positioned(
               right: -10,
               bottom: -20,
@@ -354,7 +407,6 @@ class _HoverReportCardState extends State<HoverReportCard> {
               ),
             ),
             
-            // Content
             Padding(
               padding: const EdgeInsets.all(20.0),
               child: Column(

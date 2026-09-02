@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'theme/app_theme.dart';
 import 'router.dart';
 
 void main() {
-  runApp(const ProviderScope(child: AyuSyncNurseApp()));
+  runApp(const AyuSyncNurseApp());
 }
 
 class AyuSyncNurseApp extends StatelessWidget {
@@ -17,6 +16,22 @@ class AyuSyncNurseApp extends StatelessWidget {
       theme: AppTheme.lightTheme,
       routerConfig: goRouter,
       debugShowCheckedModeBanner: false,
+      scrollBehavior: NoScrollbarBehavior(),
+      builder: (context, child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(
+            textScaler: const TextScaler.linear(0.85),
+          ),
+          child: child!,
+        );
+      },
     );
+  }
+}
+
+class NoScrollbarBehavior extends MaterialScrollBehavior {
+  @override
+  Widget buildScrollbar(BuildContext context, Widget child, ScrollableDetails details) {
+    return child;
   }
 }

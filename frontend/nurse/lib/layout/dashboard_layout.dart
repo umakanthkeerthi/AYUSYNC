@@ -30,9 +30,9 @@ class DashboardLayout extends StatelessWidget {
                   backgroundColor: AppTheme.bgCard,
                   title: Row(
                     children: [
-                      const Icon(Icons.favorite, color: AppTheme.brandPrimary),
-                      const SizedBox(width: 8),
-                      const Text('AyuSync Nurse', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                      Icon(Icons.favorite, color: AppTheme.brandPrimary, size: 20),
+                      SizedBox(width: 8),
+                      Text('AyuSync Nurse', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                     ],
                   ),
                   actions: [
@@ -44,11 +44,15 @@ class DashboardLayout extends StatelessWidget {
                       ),
                       onPressed: () {},
                     ),
-                    const SizedBox(width: 16),
+                    IconButton(
+                      icon: Icon(Icons.person_outline),
+                      onPressed: () => _onTap(4, context),
+                    ),
+                    SizedBox(width: 8),
                   ],
                 )
               : null,
-          drawer: isMobile ? _buildDrawer(context) : null,
+          drawer: null, // Removed mobile side drawer as per audio request
           body: Row(
             children: [
               if (!isMobile) _buildSidebar(context),
@@ -71,7 +75,16 @@ class DashboardLayout extends StatelessWidget {
   Widget _buildSidebar(BuildContext context) {
     return Container(
       width: 260,
-      color: AppTheme.brandSecondary,
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            AppTheme.brandSecondary,
+            Color(0xFF020617), // Deepest Slate
+          ],
+        ),
+      ),
       child: Column(
         children: [
           Container(
@@ -81,9 +94,9 @@ class DashboardLayout extends StatelessWidget {
             ),
             child: Row(
               children: [
-                const Icon(Icons.favorite, color: AppTheme.brandPrimary),
-                const SizedBox(width: 12),
-                const Text('AyuSync Nurse', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+                Icon(Icons.favorite, color: AppTheme.brandPrimary, size: 20),
+                SizedBox(width: 12),
+                Text('AyuSync Nurse', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
               ],
             ),
           ),
@@ -94,13 +107,9 @@ class DashboardLayout extends StatelessWidget {
                 _buildNavItem(context, 0, Icons.home_filled, 'Dashboard'),
                 _buildNavItem(context, 1, Icons.person_outline, 'Patients'),
                 _buildNavItem(context, 2, Icons.checklist, 'Tasks'),
-                _buildNavItem(context, 3, Icons.science_outlined, 'Lab Coordination'),
-                _buildNavItem(context, 4, Icons.calendar_today, 'Appointments'),
-                _buildNavItem(context, 5, Icons.notifications_none, 'Alerts'),
-                _buildNavItem(context, 6, Icons.chat_bubble_outline, 'Messages'),
-                _buildNavItem(context, 7, Icons.description_outlined, 'Reports'),
-                const SizedBox(height: 16),
-                _buildNavItem(context, 8, Icons.settings_outlined, 'Settings'),
+                _buildNavItem(context, 3, Icons.house_outlined, 'Home Visits'),
+                SizedBox(height: 16),
+                _buildNavItem(context, 4, Icons.settings_outlined, 'Settings'),
               ],
             ),
           )
@@ -118,9 +127,9 @@ class DashboardLayout extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24),
             child: Row(
               children: [
-                const Icon(Icons.favorite, color: AppTheme.brandPrimary, size: 32),
-                const SizedBox(width: 12),
-                const Text('AyuSync Nurse', style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
+                Icon(Icons.favorite, color: AppTheme.brandPrimary, size: 24),
+                SizedBox(width: 12),
+                Text('AyuSync Nurse', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
               ],
             ),
           ),
@@ -131,13 +140,9 @@ class DashboardLayout extends StatelessWidget {
                 _buildNavItem(context, 0, Icons.home_filled, 'Dashboard'),
                 _buildNavItem(context, 1, Icons.person_outline, 'Patients'),
                 _buildNavItem(context, 2, Icons.checklist, 'Tasks'),
-                _buildNavItem(context, 3, Icons.science_outlined, 'Lab Coordination'),
-                _buildNavItem(context, 4, Icons.calendar_today, 'Appointments'),
-                _buildNavItem(context, 5, Icons.notifications_none, 'Alerts'),
-                _buildNavItem(context, 6, Icons.chat_bubble_outline, 'Messages'),
-                _buildNavItem(context, 7, Icons.description_outlined, 'Reports'),
-                const SizedBox(height: 16),
-                _buildNavItem(context, 8, Icons.settings_outlined, 'Settings'),
+                _buildNavItem(context, 3, Icons.house_outlined, 'Home Visits'),
+                SizedBox(height: 16),
+                _buildNavItem(context, 4, Icons.settings_outlined, 'Settings'),
               ],
             ),
           )
@@ -156,18 +161,21 @@ class DashboardLayout extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
-            color: isActive ? const Color(0xFF273145) : Colors.transparent,
-            borderRadius: BorderRadius.circular(8),
-            border: Border(left: BorderSide(color: isActive ? AppTheme.brandPrimary : Colors.transparent, width: 3)),
+            gradient: isActive ? const LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0xFF312E81), Color(0xFF1E1B4B)]) : null,
+            color: isActive ? null : Colors.transparent,
+            borderRadius: BorderRadius.circular(12),
+            border: Border(left: BorderSide(color: isActive ? AppTheme.brandPrimary : Colors.transparent, width: 4)),
+            boxShadow: isActive ? [BoxShadow(color: AppTheme.brandPrimary.withOpacity(0.3), blurRadius: 8, offset: const Offset(0, 4))] : [],
           ),
           child: Row(
             children: [
-              Icon(icon, color: isActive ? AppTheme.brandPrimary : AppTheme.textSecondary, size: 20),
-              const SizedBox(width: 16),
+              Icon(icon, color: isActive ? AppTheme.brandPrimary : Colors.white.withOpacity(0.7), size: 20),
+              SizedBox(width: 16),
               Text(
                 label,
                 style: TextStyle(
-                  color: isActive ? Colors.white : AppTheme.textSecondary,
+                  fontSize: 13,
+                  color: isActive ? Colors.white : Colors.white.withOpacity(0.7),
                   fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
                 ),
               )
@@ -183,7 +191,7 @@ class DashboardLayout extends StatelessWidget {
       height: 80,
       padding: const EdgeInsets.symmetric(horizontal: 24),
       decoration: BoxDecoration(
-        color: AppTheme.bgMain,
+        color: Theme.of(context).scaffoldBackgroundColor,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -191,7 +199,7 @@ class DashboardLayout extends StatelessWidget {
           Expanded(
             child: Text(
               _getTitle(navigationShell.currentIndex),
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppTheme.textDark),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, ),
               overflow: TextOverflow.ellipsis,
             ),
           ),
@@ -199,27 +207,69 @@ class DashboardLayout extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               IconButton(
-                icon: const Badge(
+                icon: Badge(
                   label: Text('2'),
                   backgroundColor: AppTheme.colorUrgent,
-                  child: Icon(Icons.notifications_none, color: AppTheme.textSecondary),
+                  child: Icon(Icons.notifications_none, color: Theme.of(context).hintColor),
                 ),
                 onPressed: () {},
               ),
-              const SizedBox(width: 16),
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                  border: Border.all(color: AppTheme.borderColor),
+              SizedBox(width: 16),
+              PopupMenuButton<String>(
+                offset: const Offset(0, 50),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                onSelected: (value) {
+                  if (value == 'profile') {
+                    _onTap(4, context);
+                  } else if (value == 'logout') {
+                    context.go('/login');
+                  }
+                },
+                itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                  const PopupMenuItem<String>(
+                    value: 'profile',
+                    child: Row(
+                      children: [
+                        Icon(Icons.person_outline, size: 20),
+                        SizedBox(width: 12),
+                        Text('Profile & Settings'),
+                      ],
+                    ),
+                  ),
+                  const PopupMenuDivider(),
+                  const PopupMenuItem<String>(
+                    value: 'logout',
+                    child: Row(
+                      children: [
+                        Icon(Icons.logout, size: 20, color: Colors.red),
+                        SizedBox(width: 12),
+                        Text('Sign Out', style: TextStyle(color: Colors.red)),
+                      ],
+                    ),
+                  ),
+                ],
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 32,
+                        height: 32,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: AppTheme.borderColor),
+                        ),
+                        child: Center(child: Text('👩‍⚕️', style: TextStyle(fontSize: 16))),
+                      ),
+                      SizedBox(width: 8),
+                      Text('Nurse Clara', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+                      Icon(Icons.keyboard_arrow_down, size: 16, color: Theme.of(context).hintColor),
+                    ],
+                  ),
                 ),
-                child: const Center(child: Text('👩‍⚕️', style: TextStyle(fontSize: 20))),
               ),
-              const SizedBox(width: 8),
-              const Text('Nurse Priya', style: TextStyle(fontWeight: FontWeight.w600)),
-              const Icon(Icons.keyboard_arrow_down, size: 16, color: AppTheme.textSecondary),
             ],
           )
         ],
@@ -231,22 +281,21 @@ class DashboardLayout extends StatelessWidget {
     // In mobile, we might only show the first 5 tabs in the bottom nav to prevent overcrowding.
     // The rest can be accessed via drawer.
     int currentIndex = navigationShell.currentIndex;
-    int navIndex = currentIndex > 4 ? 0 : currentIndex; // Fallback to 0 if viewing a drawer-only screen
+    int navIndex = currentIndex >= 4 ? 0 : currentIndex; // Fallback to 0 if viewing a drawer-only screen
 
     return BottomNavigationBar(
       currentIndex: navIndex,
       onTap: (index) => _onTap(index, context),
       type: BottomNavigationBarType.fixed,
       selectedItemColor: AppTheme.brandPrimary,
-      unselectedItemColor: AppTheme.textSecondary,
-      selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
-      unselectedLabelStyle: const TextStyle(fontSize: 12),
+      unselectedItemColor: Theme.of(context).hintColor,
+      selectedLabelStyle: TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
+      unselectedLabelStyle: TextStyle(fontSize: 12),
       items: const [
         BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: 'Home'),
         BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Patients'),
         BottomNavigationBarItem(icon: Icon(Icons.checklist), label: 'Tasks'),
-        BottomNavigationBarItem(icon: Icon(Icons.science_outlined), label: 'Lab'),
-        BottomNavigationBarItem(icon: Icon(Icons.calendar_today), label: 'Schedule'),
+        BottomNavigationBarItem(icon: Icon(Icons.house_outlined), label: 'Visits'),
       ],
     );
   }
@@ -256,12 +305,8 @@ class DashboardLayout extends StatelessWidget {
       case 0: return 'Dashboard';
       case 1: return 'Patients';
       case 2: return 'Tasks';
-      case 3: return 'Lab Coordination';
-      case 4: return 'Appointments';
-      case 5: return 'System & Patient Alerts';
-      case 6: return 'Messages';
-      case 7: return 'Medical Reports';
-      case 8: return 'Settings';
+      case 3: return 'Home Visits';
+      case 4: return 'Profile & Settings';
       default: return 'Dashboard';
     }
   }

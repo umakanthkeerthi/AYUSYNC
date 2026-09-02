@@ -1,18 +1,72 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import '../theme/app_theme.dart';
 
-class ResultsScreen extends StatelessWidget {
+class ResultsScreen extends StatefulWidget {
   const ResultsScreen({Key? key}) : super(key: key);
 
   @override
+  State<ResultsScreen> createState() => _ResultsScreenState();
+}
+
+class _ResultsScreenState extends State<ResultsScreen> {
+  bool _isLoading = true;
+  String _error = '';
+  List<dynamic> _results = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchResults();
+  }
+
+  Future<void> _fetchResults() async {
+    try {
+      final response = await http.get(Uri.parse('http://127.0.0.1:8001/api/v1/lab/results'));
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['status'] == 'success') {
+          setState(() {
+            _results = data['results'] ?? [];
+            _isLoading = false;
+          });
+        } else {
+          setState(() { _error = 'Failed to load results'; _isLoading = false; });
+        }
+      } else {
+        setState(() { _error = 'Server error'; _isLoading = false; });
+      }
+    } catch (e) {
+      setState(() { _error = 'Error connecting to server'; _isLoading = false; });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (_isLoading) return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    if (_error.isNotEmpty) return Scaffold(body: Center(child: Text(_error, style: const TextStyle(color: Colors.red))));
+
     return Scaffold(
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Completed Results', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppTheme.textDark)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('Completed Results', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppTheme.textDark)),
+                ElevatedButton.icon(
+                  onPressed: () {
+                    setState(() { _isLoading = true; });
+                    _fetchResults();
+                  },
+                  icon: const Icon(Icons.refresh, size: 18),
+                  label: const Text('Refresh'),
+                )
+              ],
+            ),
             const SizedBox(height: 16),
             Container(
               width: double.infinity,
@@ -28,22 +82,30 @@ class ResultsScreen extends StatelessWidget {
                   child: DataTable(
                     columnSpacing: 24,
                     horizontalMargin: 24,
-                  headingTextStyle: const TextStyle(fontWeight: FontWeight.w600, color: AppTheme.textDark),
-                  dataTextStyle: const TextStyle(color: AppTheme.textSecondary, fontWeight: FontWeight.w500),
-                  columns: const [
-                    DataColumn(label: Text('Sample ID')),
-                    DataColumn(label: Text('Patient')),
-                    DataColumn(label: Text('Test')),
-                    DataColumn(label: Text('Result')),
-                    DataColumn(label: Text('Status')),
-                    DataColumn(label: Text('Action')),
-                  ],
-                  rows: [
-                    _createDataRow('SPL-10025', 'Robert Wilson', 'Hemoglobin A1C', '6.2%', 'Normal', Colors.green),
-                    _createDataRow('SPL-10026', 'Anna Smith', 'Vitamin D', '18 ng/mL', 'Low', AppTheme.statOrange),
-                    _createDataRow('SPL-10027', 'James Taylor', 'CBC', 'WBC: 14.5 K/uL', 'High (Critical)', AppTheme.statRed),
-                  ],
-                ),
+                    headingTextStyle: const TextStyle(fontWeight: FontWeight.w600, color: AppTheme.textDark),
+                    dataTextStyle: const TextStyle(color: AppTheme.textSecondary, fontWeight: FontWeight.w500),
+                    columns: const [
+                      DataColumn(label: Text('Sample ID')),
+                      DataColumn(label: Text('Patient')),
+                      DataColumn(label: Text('Test')),
+                      DataColumn(label: Text('Result')),
+                      DataColumn(label: Text('Status')),
+                      DataColumn(label: Text('Action')),
+                    ],
+                    rows: _results.map((r) {
+                      Color color = Colors.green;
+                      if (r['status'] == 'Low' || r['status'] == 'High') color = AppTheme.statOrange;
+                      if (r['status'] == 'High (Critical)') color = AppTheme.statRed;
+                      return _createDataRow(
+                        r['id'] ?? 'Unknown',
+                        r['patient'] ?? 'Unknown',
+                        r['test'] ?? 'Unknown',
+                        r['result'] ?? 'Unknown',
+                        r['status'] ?? 'Unknown',
+                        color
+                      );
+                    }).toList(),
+                  ),
                 ),
               ),
             )

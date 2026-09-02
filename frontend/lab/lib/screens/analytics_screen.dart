@@ -1,10 +1,50 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:responsive_builder/responsive_builder.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import '../theme/app_theme.dart';
 
-class AnalyticsScreen extends StatelessWidget {
+class AnalyticsScreen extends StatefulWidget {
   const AnalyticsScreen({Key? key}) : super(key: key);
+
+  @override
+  State<AnalyticsScreen> createState() => _AnalyticsScreenState();
+}
+
+class _AnalyticsScreenState extends State<AnalyticsScreen> {
+  bool _isLoading = true;
+  String _error = '';
+  int _bloodPct = 40;
+  int _otherPct = 60;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchAnalytics();
+  }
+
+  Future<void> _fetchAnalytics() async {
+    try {
+      final response = await http.get(Uri.parse('http://127.0.0.1:8001/api/v1/lab/analytics'));
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['status'] == 'success') {
+          setState(() {
+            _bloodPct = data['blood_percentage'] ?? 40;
+            _otherPct = data['other_percentage'] ?? 60;
+            _isLoading = false;
+          });
+        } else {
+          setState(() { _error = 'Failed to load analytics'; _isLoading = false; });
+        }
+      } else {
+        setState(() { _error = 'Server error'; _isLoading = false; });
+      }
+    } catch (e) {
+      setState(() { _error = 'Error connecting to server'; _isLoading = false; });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -12,6 +52,9 @@ class AnalyticsScreen extends StatelessWidget {
       builder: (context, sizingInformation) {
         bool isMobile = sizingInformation.deviceScreenType == DeviceScreenType.mobile;
         
+        if (_isLoading) return const Scaffold(body: Center(child: CircularProgressIndicator()));
+        if (_error.isNotEmpty) return Scaffold(body: Center(child: Text(_error, style: const TextStyle(color: Colors.red))));
+
         return Scaffold(
           body: SingleChildScrollView(
             padding: const EdgeInsets.all(24.0),
@@ -83,9 +126,12 @@ class AnalyticsScreen extends StatelessWidget {
           ),
           const SizedBox(width: 12),
           ElevatedButton.icon(
-            onPressed: () {},
-            icon: const Icon(Icons.download, size: 16),
-            label: const Text('Export Data'),
+            onPressed: () {
+              setState(() { _isLoading = true; });
+              _fetchAnalytics();
+            },
+            icon: const Icon(Icons.refresh, size: 16),
+            label: const Text('Refresh'),
             style: ElevatedButton.styleFrom(
               backgroundColor: AppTheme.brandActive,
               foregroundColor: Colors.white,
@@ -294,7 +340,7 @@ class AnalyticsScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Revenue by Category', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.textDark)),
+          const Text('Test Breakdown', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.textDark)),
           const SizedBox(height: 32),
           SizedBox(
             height: 250,
@@ -305,29 +351,15 @@ class AnalyticsScreen extends StatelessWidget {
                 sections: [
                   PieChartSectionData(
                     color: AppTheme.statBlue,
-                    value: 40,
-                    title: '40%',
-                    radius: 40,
-                    titleStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
-                  ),
-                  PieChartSectionData(
-                    color: AppTheme.statPurple,
-                    value: 30,
-                    title: '30%',
-                    radius: 40,
-                    titleStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
-                  ),
-                  PieChartSectionData(
-                    color: AppTheme.statOrange,
-                    value: 15,
-                    title: '15%',
+                    value: _bloodPct.toDouble(),
+                    title: '$_bloodPct%',
                     radius: 40,
                     titleStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
                   ),
                   PieChartSectionData(
                     color: AppTheme.brandActive,
-                    value: 15,
-                    title: '15%',
+                    value: _otherPct.toDouble(),
+                    title: '$_otherPct%',
                     radius: 40,
                     titleStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
                   ),
@@ -336,13 +368,9 @@ class AnalyticsScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 32),
-          _buildLegendItem(AppTheme.statBlue, 'Blood Tests', '₹58,000'),
+          _buildLegendItem(AppTheme.statBlue, 'Blood Tests/Panels', '$_bloodPct%'),
           const SizedBox(height: 12),
-          _buildLegendItem(AppTheme.statPurple, 'Imaging (MRI/CT)', '₹43,500'),
-          const SizedBox(height: 12),
-          _buildLegendItem(AppTheme.statOrange, 'Pathology', '₹21,750'),
-          const SizedBox(height: 12),
-          _buildLegendItem(AppTheme.brandActive, 'Other Profiles', '₹21,750'),
+          _buildLegendItem(AppTheme.brandActive, 'Other Profiles', '$_otherPct%'),
         ],
       ),
     );
@@ -364,3 +392,4 @@ class AnalyticsScreen extends StatelessWidget {
     );
   }
 }
+

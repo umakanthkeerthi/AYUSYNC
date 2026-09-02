@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'layout/dashboard_layout.dart';
+import 'screens/login_screen.dart';
 import 'screens/dashboard_screen.dart';
+import 'screens/patients_screen.dart';
 import 'screens/tasks_screen.dart';
-import 'screens/lab_screen.dart';
-import 'screens/placeholder_screen.dart';
-
+import 'screens/home_visits_screen.dart';
+import 'screens/settings_screen.dart';
 final goRouter = GoRouter(
-  initialLocation: '/dashboard',
+  initialLocation: '/login',
   routes: [
+    GoRoute(
+      path: '/login',
+      builder: (context, state) => const LoginScreen(),
+    ),
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) {
         return DashboardLayout(navigationShell: navigationShell);
@@ -26,7 +31,7 @@ final goRouter = GoRouter(
           routes: [
             GoRoute(
               path: '/patients',
-              builder: (context, state) => const PlaceholderScreen(title: 'Patients'),
+              builder: (context, state) => const PatientsScreen(),
             ),
           ],
         ),
@@ -41,40 +46,8 @@ final goRouter = GoRouter(
         StatefulShellBranch(
           routes: [
             GoRoute(
-              path: '/lab',
-              builder: (context, state) => const LabScreen(),
-            ),
-          ],
-        ),
-        StatefulShellBranch(
-          routes: [
-            GoRoute(
-              path: '/appointments',
-              builder: (context, state) => const PlaceholderScreen(title: 'Appointments'),
-            ),
-          ],
-        ),
-        StatefulShellBranch(
-          routes: [
-            GoRoute(
-              path: '/alerts',
-              builder: (context, state) => const PlaceholderScreen(title: 'Alerts'),
-            ),
-          ],
-        ),
-        StatefulShellBranch(
-          routes: [
-            GoRoute(
-              path: '/messages',
-              builder: (context, state) => const PlaceholderScreen(title: 'Messages'),
-            ),
-          ],
-        ),
-        StatefulShellBranch(
-          routes: [
-            GoRoute(
-              path: '/reports',
-              builder: (context, state) => const PlaceholderScreen(title: 'Reports'),
+              path: '/visits',
+              builder: (context, state) => const HomeVisitsScreen(),
             ),
           ],
         ),
@@ -82,7 +55,7 @@ final goRouter = GoRouter(
           routes: [
             GoRoute(
               path: '/settings',
-              builder: (context, state) => const PlaceholderScreen(title: 'Settings'),
+              builder: (context, state) => const SettingsScreen(),
             ),
           ],
         ),
