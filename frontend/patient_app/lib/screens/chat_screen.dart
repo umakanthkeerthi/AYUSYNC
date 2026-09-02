@@ -4,15 +4,19 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../theme/app_theme.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter_markdown/flutter_markdown.dart';
 
-class ChatScreen extends StatefulWidget {
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../providers/patient_providers.dart';
+
+class ChatScreen extends ConsumerStatefulWidget {
   const ChatScreen({super.key});
 
   @override
-  State<ChatScreen> createState() => _ChatScreenState();
+  ConsumerState<ChatScreen> createState() => _ChatScreenState();
 }
 
-class _ChatScreenState extends State<ChatScreen> {
+class _ChatScreenState extends ConsumerState<ChatScreen> {
   final TextEditingController _controller = TextEditingController();
   final List<Map<String, dynamic>> _messages = [
     {
@@ -32,29 +36,94 @@ class _ChatScreenState extends State<ChatScreen> {
       _isLoading = true;
     });
 
-    // TODO: Connect to FastAPI backend
-    await Future.delayed(const Duration(seconds: 2));
-    
-    if (mounted) {
-      setState(() {
-        _isLoading = false;
-        _messages.add({
-          'text': "I've noted that down. I will notify your care coordinator immediately.",
-          'isUser': false,
+    final patientId = ref.read(authProvider).patientId;
+    if (patientId == null) return;
+
+    try {
+      final repository = ref.read(patientRepositoryProvider);
+      final responseText = await repository.sendChatMessage(patientId, userText);
+      
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _messages.add({
+            'text': responseText,
+            'isUser': false,
+          });
         });
-      });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _messages.add({
+            'text': "Sorry, I am having trouble connecting to the medical network right now.",
+            'isUser': false,
+          });
+        });
+      }
+    }
+  }
+
+  bool _isSaving = false;
+
+  Future<void> _handleExit() async {
+    if (_isSaving) return;
+    setState(() => _isSaving = true);
+    
+    // Show saving UI to user
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Row(
+          children: [
+            SizedBox(width: 16, height: 16, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)),
+            SizedBox(width: 16),
+            Text('Your chat is saving in My Reports...'),
+          ],
+        ),
+        duration: Duration(seconds: 2),
+        backgroundColor: AppTheme.primaryOrange,
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+    
+    final patientId = ref.read(authProvider).patientId;
+    if (patientId != null) {
+      ref.read(patientRepositoryProvider).summarizeChat(patientId);
+      ref.read(completedTaskIdsProvider.notifier).update((state) => {...state, 'ai_checkin'});
+    }
+    
+    await Future.delayed(const Duration(seconds: 2));
+    if (mounted) {
+      Navigator.of(context).pop();
     }
   }
 
   @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        _handleExit();
+      },
+      child: Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.white.withOpacity(0.85),
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: _handleExit,
+        ),
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -125,48 +194,81 @@ class _ChatScreenState extends State<ChatScreen> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: _buildFloatingInputArea(),
-    );
+    ));
   }
 
   Widget _buildMessageBubble(String text, bool isUser) {
-    return Align(
-      alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 16),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-        constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width * 0.75,
-        ),
-        decoration: BoxDecoration(
-          gradient: isUser 
-              ? const LinearGradient(colors: [AppTheme.primaryOrange, Color(0xFFFF9B70)], begin: Alignment.topLeft, end: Alignment.bottomRight)
-              : null,
-          color: isUser ? null : Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: const Radius.circular(24),
-            topRight: const Radius.circular(24),
-            bottomLeft: Radius.circular(isUser ? 24 : 4),
-            bottomRight: Radius.circular(isUser ? 4 : 24),
+    if (isUser) {
+      // User Message - Standard Chat Bubble
+      return Align(
+        alignment: Alignment.centerRight,
+        child: Container(
+          margin: const EdgeInsets.only(bottom: 16, left: 50),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(colors: [AppTheme.primaryOrange, Color(0xFFFF9B70)], begin: Alignment.topLeft, end: Alignment.bottomRight),
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(24),
+              topRight: Radius.circular(24),
+              bottomLeft: Radius.circular(24),
+              bottomRight: Radius.circular(4),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: AppTheme.primaryOrange.withOpacity(0.25),
+                blurRadius: 15,
+                offset: const Offset(0, 5),
+              ),
+            ],
           ),
-          boxShadow: [
-            BoxShadow(
-              color: isUser ? AppTheme.primaryOrange.withOpacity(0.25) : Colors.black.withOpacity(0.04),
-              blurRadius: 15,
-              offset: const Offset(0, 5),
+          child: Text(
+            text,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 15,
+              height: 1.4,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+      );
+    } else {
+      // AI Message - ChatGPT Style (No container, just icon + markdown text)
+      return Container(
+        margin: const EdgeInsets.only(bottom: 24, right: 20),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              margin: const EdgeInsets.only(right: 12),
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.grey.shade200),
+                boxShadow: [
+                  BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4)),
+                ],
+              ),
+              child: const Icon(LucideIcons.bot, color: AppTheme.primaryOrange, size: 20),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: MarkdownBody(
+                  data: text,
+                  styleSheet: MarkdownStyleSheet(
+                    p: const TextStyle(fontSize: 15, color: AppTheme.textDark, height: 1.5),
+                    listBullet: const TextStyle(color: AppTheme.textDark, fontSize: 15),
+                    strong: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+                  ),
+                ),
+              ),
             ),
           ],
         ),
-        child: Text(
-          text,
-          style: TextStyle(
-            color: isUser ? Colors.white : AppTheme.textDark,
-            fontSize: 15,
-            height: 1.4,
-            fontWeight: isUser ? FontWeight.w500 : FontWeight.normal,
-          ),
-        ),
-      ),
-    );
+      );
+    }
   }
 
   Widget _buildTypingIndicator() {

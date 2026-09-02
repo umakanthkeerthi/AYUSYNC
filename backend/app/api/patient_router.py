@@ -1,9 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from app.core.database_session import get_db
 from app.models.database import User, Patient, Condition, Medication, VitalSign, UserRole, CarePlan, CareTask, LabTest, ClinicalNote
+from app.agents.chat_agent import ChatAgent
+
+ACTIVE_CHAT_SESSIONS: Dict[str, List[Dict]] = {}
 
 router = APIRouter(prefix="/api/v1/patients", tags=["patients"])
 
@@ -157,6 +160,7 @@ def get_recovery_plan(patient_id: str, date: str = None, db: Session = Depends(g
     random.seed(f"{patient_id}_{target_date}")
     med_completed = random.choice([True, False]) if target_date < datetime.now().date() else False
     ai_completed = random.choice([True, False]) if target_date < datetime.now().date() else False
+    vitals_completed = random.choice([True, False]) if target_date < datetime.now().date() else False
         
     # 2b. Synthesize Medication Tasks
     meds = db.query(Medication).filter(Medication.patient_id == patient_id, Medication.is_active == True).all()
@@ -180,6 +184,17 @@ def get_recovery_plan(patient_id: str, date: str = None, db: Session = Depends(g
         "icon": "messageSquare",
         "is_completed": ai_completed,
         "is_active": not ai_completed
+    })
+    
+    # 2d. Always append a Vitals Check
+    today_tasks.append({
+        "id": "check_vitals",
+        "time": "09:00 AM",
+        "title": "Check Vitals",
+        "subtitle": "Record your heart rate, BP & O2",
+        "icon": "activity",
+        "is_completed": vitals_completed,
+        "is_active": not vitals_completed
     })
     
     # Sort by actual time chronologically
@@ -228,6 +243,10 @@ def get_reports_summary(patient_id: str, db: Session = Depends(get_db)):
     radiology_count = db.query(ClinicalNote).filter(
         ClinicalNote.patient_id == patient_id, 
         ClinicalNote.note_type == "RADIOLOGY"
+    ).count()
+    chat_summaries_count = db.query(ClinicalNote).filter(
+        ClinicalNote.patient_id == patient_id, 
+        ClinicalNote.note_type == "AI_CHAT_SUMMARY"
     ).count()
     
     # Recent documents
@@ -284,7 +303,8 @@ def get_reports_summary(patient_id: str, db: Session = Depends(get_db)):
             "labs": lab_count,
             "prescriptions": rx_count,
             "discharge_summaries": discharge_count,
-            "radiology": radiology_count
+            "radiology": radiology_count,
+            "chat_summaries": chat_summaries_count
         },
         "recent_documents": recent_docs[:2] # Top 2
     }
@@ -301,3 +321,81 @@ def get_discharge_summaries(patient_id: str, db: Session = Depends(get_db)):
         "date": note.timestamp.strftime("%b %d, %Y"),
         "content_text": note.content_text
     } for note in notes]
+
+@router.get("/{patient_id}/chat-summaries")
+def get_chat_summaries(patient_id: str, db: Session = Depends(get_db)):
+    notes = db.query(ClinicalNote).filter(
+        ClinicalNote.patient_id == patient_id,
+        ClinicalNote.note_type == "AI_CHAT_SUMMARY"
+    ).order_by(ClinicalNote.timestamp.desc()).all()
+    
+    return [{
+        "id": note.id,
+        "date": note.timestamp.strftime("%b %d, %Y"),
+        "content_text": note.content_text
+    } for note in notes]
+
+class ChatMessagePayload(BaseModel):
+    text: str
+
+@router.post("/{patient_id}/chat")
+def send_chat_message(patient_id: str, payload: ChatMessagePayload, db: Session = Depends(get_db)):
+    if patient_id not in ACTIVE_CHAT_SESSIONS:
+        ACTIVE_CHAT_SESSIONS[patient_id] = []
+        
+    chat_history = ACTIVE_CHAT_SESSIONS[patient_id]
+    
+    agent = ChatAgent(db=db, patient_id=patient_id)
+    response_text = agent.process_message(user_message=payload.text, chat_history=chat_history)
+    
+    ACTIVE_CHAT_SESSIONS[patient_id].append({"sender": "user", "text": payload.text})
+    ACTIVE_CHAT_SESSIONS[patient_id].append({"sender": "ai", "text": response_text})
+    
+    return {
+        "status": "success",
+        "response": response_text
+    }
+
+@router.post("/{patient_id}/chat/summarize")
+def summarize_chat(patient_id: str, db: Session = Depends(get_db)):
+    if patient_id not in ACTIVE_CHAT_SESSIONS or not ACTIVE_CHAT_SESSIONS[patient_id]:
+        return {"status": "success", "message": "No active chat"}
+        
+    agent = ChatAgent(db=db, patient_id=patient_id)
+    summary_text = agent.summarize_chat(chat_history=ACTIVE_CHAT_SESSIONS[patient_id])
+    
+    note = ClinicalNote(
+        patient_id=patient_id,
+        note_type="AI_CHAT_SUMMARY",
+        content_text=summary_text
+    )
+    db.add(note)
+    db.commit()
+    
+    ACTIVE_CHAT_SESSIONS[patient_id] = []
+    
+    return {"status": "success", "message": "Saved"}
+
+class VitalsPayload(BaseModel):
+    heart_rate: Optional[int] = None
+    bp_systolic: Optional[int] = None
+    bp_diastolic: Optional[int] = None
+    oxygen_saturation: Optional[int] = None
+
+@router.post("/{patient_id}/vitals")
+def log_vitals(patient_id: str, payload: VitalsPayload, db: Session = Depends(get_db)):
+    patient = db.query(Patient).filter(Patient.id == patient_id).first()
+    if not patient:
+        raise HTTPException(status_code=404, detail="Patient not found")
+        
+    vital = VitalSign(
+        patient_id=patient_id,
+        heart_rate=payload.heart_rate,
+        blood_pressure_systolic=payload.bp_systolic,
+        blood_pressure_diastolic=payload.bp_diastolic,
+        oxygen_saturation=payload.oxygen_saturation
+    )
+    db.add(vital)
+    db.commit()
+    
+    return {"status": "success", "message": "Vitals logged successfully"}

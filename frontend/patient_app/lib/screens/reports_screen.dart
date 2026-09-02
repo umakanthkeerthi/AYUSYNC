@@ -6,8 +6,9 @@ import '../theme/app_theme.dart';
 import '../widgets/glass_card.dart';
 import '../providers/patient_providers.dart';
 import 'lab_tests_screen.dart';
-import 'prescription_report_screen.dart';
-import 'discharge_summary_screen.dart';
+import 'prescriptions_list_screen.dart';
+import 'discharge_summaries_list_screen.dart';
+import 'ai_chat_summaries_list_screen.dart';
 
 class ReportsScreen extends ConsumerWidget {
   const ReportsScreen({super.key});
@@ -50,7 +51,7 @@ class ReportsScreen extends ConsumerWidget {
                 icon: LucideIcons.folderHeart,
                 color: Colors.red,
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const DischargeSummaryScreen()));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const DischargeSummariesListScreen()));
                 },
               ).animate().fadeIn(delay: 100.ms).slideX(begin: 0.1),
               const SizedBox(height: 16),
@@ -61,7 +62,7 @@ class ReportsScreen extends ConsumerWidget {
                 icon: LucideIcons.fileText,
                 color: Colors.blue,
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const PrescriptionReportScreen()));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const PrescriptionsListScreen()));
                 },
               ).animate().fadeIn(delay: 200.ms).slideX(begin: 0.1),
               const SizedBox(height: 16),
@@ -73,6 +74,17 @@ class ReportsScreen extends ConsumerWidget {
                 color: Colors.purple,
                 onTap: () {},
               ).animate().fadeIn(delay: 400.ms).slideX(begin: 0.1),
+              const SizedBox(height: 16),
+              _buildReportFolder(
+                context: context,
+                title: 'AI Chat Summaries',
+                count: '${counts['chat_summaries'] ?? 0} summaries',
+                icon: LucideIcons.messageSquare,
+                color: AppTheme.primaryOrange,
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const AiChatSummariesListScreen()));
+                },
+              ).animate().fadeIn(delay: 500.ms).slideX(begin: 0.1),
               const SizedBox(height: 32),
               const Text(
                 'Recent Documents',

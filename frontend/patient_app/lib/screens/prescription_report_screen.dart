@@ -4,7 +4,11 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../providers/patient_providers.dart';
 
 class PrescriptionReportScreen extends ConsumerWidget {
-  const PrescriptionReportScreen({super.key});
+  /// If provided, shows only this single medication in the Rx document.
+  /// If null, shows all active medications (full report).
+  final dynamic singleMedication;
+
+  const PrescriptionReportScreen({super.key, this.singleMedication});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -154,40 +158,26 @@ class PrescriptionReportScreen extends ConsumerWidget {
         profileAsync.when(
           data: (profile) {
             if (profile == null) return const Text('Loading...');
-            return Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Expanded(
-                  flex: 5,
-                  child: Column(
-                    children: [
-                      _buildDetailRow(LucideIcons.user, 'Name', profile.name),
-                      const SizedBox(height: 12),
-                      _buildDetailRow(LucideIcons.calendar, 'Age', '34'),
-                      const SizedBox(height: 12),
-                      _buildDetailRow(LucideIcons.users, 'Gender', 'Female'),
-                      const SizedBox(height: 12),
-                      _buildDetailRow(LucideIcons.droplet, 'Blood Group', profile.bloodType ?? 'O+'),
-                      const SizedBox(height: 12),
-                      _buildDetailRow(LucideIcons.scale, 'Weight', '68 kg'),
-                      const SizedBox(height: 12),
-                      _buildDetailRow(LucideIcons.arrowUpDown, 'Height', '165 cm'),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  flex: 4,
-                  child: Column(
-                    children: [
-                      _buildDetailRow(LucideIcons.fileText, 'Rx No.', 'AYU-RX-8472'),
-                      const SizedBox(height: 12),
-                      _buildDetailRow(LucideIcons.calendarClock, 'Date', DateTime.now().toString().split(' ')[0]),
-                      const SizedBox(height: 12),
-                      _buildDetailRow(LucideIcons.userCheck, 'Doctor', 'Dr. Uma Kanth'),
-                    ],
-                  ),
-                ),
+                _buildDetailRow(LucideIcons.user, 'Name', profile.name),
+                const SizedBox(height: 12),
+                _buildDetailRow(LucideIcons.calendar, 'Age', '34'),
+                const SizedBox(height: 12),
+                _buildDetailRow(LucideIcons.users, 'Gender', 'Female'),
+                const SizedBox(height: 12),
+                _buildDetailRow(LucideIcons.droplet, 'Blood Group', profile.bloodType ?? 'O+'),
+                const SizedBox(height: 12),
+                _buildDetailRow(LucideIcons.scale, 'Weight', '68 kg'),
+                const SizedBox(height: 12),
+                _buildDetailRow(LucideIcons.arrowUpDown, 'Height', '165 cm'),
+                const SizedBox(height: 12),
+                _buildDetailRow(LucideIcons.fileText, 'Rx No.', 'AYU-RX-8472'),
+                const SizedBox(height: 12),
+                _buildDetailRow(LucideIcons.calendarClock, 'Date', DateTime.now().toString().split(' ')[0]),
+                const SizedBox(height: 12),
+                _buildDetailRow(LucideIcons.userCheck, 'Doctor', 'Dr. Uma Kanth'),
               ],
             );
           },
@@ -245,7 +235,9 @@ class PrescriptionReportScreen extends ConsumerWidget {
         ),
         const SizedBox(height: 24),
         medicationsAsync.when(
-          data: (meds) {
+          data: (allMeds) {
+            // If a specific med was passed, show only that one
+            final meds = singleMedication != null ? [singleMedication] : allMeds;
             if (meds == null || (meds as List).isEmpty) {
               return const Text('No active medications prescribed.', style: TextStyle(color: Colors.black54));
             }

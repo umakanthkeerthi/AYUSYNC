@@ -9,6 +9,8 @@ import '../providers/patient_providers.dart';
 import '../models/patient_models.dart';
 
 import 'profile_screen.dart';
+import 'vitals_checkin_screen.dart';
+import 'chat_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -51,7 +53,7 @@ class HomeScreen extends ConsumerWidget {
                       const SizedBox(height: 24),
                       const SosButton().animate().fadeIn(delay: 300.ms).slideY(begin: 0.2),
                       const SizedBox(height: 32),
-                      _buildTimelineSection(tasks).animate().fadeIn(delay: 400.ms).slideX(begin: 0.1),
+                      _buildTimelineSection(context, ref, tasks).animate().fadeIn(delay: 400.ms).slideX(begin: 0.1),
                     ]
                   );
                 },
@@ -222,7 +224,8 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildTimelineSection(List<dynamic> tasks) {
+  Widget _buildTimelineSection(BuildContext context, WidgetRef ref, List<dynamic> tasks) {
+    final completedTasks = ref.watch(completedTaskIdsProvider);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -256,14 +259,21 @@ class HomeScreen extends ConsumerWidget {
             IconData iconData = LucideIcons.clipboard;
             if (t['icon'] == 'pill') iconData = LucideIcons.pill;
             if (t['icon'] == 'messageSquare') iconData = LucideIcons.messageSquare;
+            if (t['icon'] == 'activity') iconData = LucideIcons.activity;
+            
+            final bool isLocallyCompleted = completedTasks.contains(t['id']);
+            final bool isCompleted = t['is_completed'] || isLocallyCompleted;
             
             return _buildTimelineItem(
+                context: context,
+                ref: ref,
+                taskId: t['id'],
                 time: t['time'],
                 title: t['title'],
                 subtitle: t['subtitle'],
                 icon: iconData,
-                isCompleted: t['is_completed'],
-                isActive: t['is_active'],
+                isCompleted: isCompleted,
+                isActive: t['is_active'] && !isCompleted,
             );
         }),
       ],
@@ -271,6 +281,9 @@ class HomeScreen extends ConsumerWidget {
   }
 
   Widget _buildTimelineItem({
+    required BuildContext context,
+    required WidgetRef ref,
+    required String taskId,
     required String time,
     required String title,
     required String subtitle,
@@ -297,7 +310,17 @@ class HomeScreen extends ConsumerWidget {
         borderRadius: BorderRadius.circular(16),
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
-          onTap: () {},
+          onTap: () {
+            if (isCompleted) return; // Do nothing if already completed
+            
+            if (title == 'Take Medication') {
+              ref.read(completedTaskIdsProvider.notifier).update((state) => {...state, taskId});
+            } else if (title == 'Check Vitals') {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const VitalsCheckinScreen()));
+            } else if (title == 'AI Check-in') {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const ChatScreen()));
+            }
+          },
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Row(

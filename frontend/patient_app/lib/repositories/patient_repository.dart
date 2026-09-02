@@ -3,11 +3,15 @@ import 'package:flutter/foundation.dart';
 import '../models/patient_models.dart';
 
 class PatientRepository {
-  // Use 10.0.2.2 ONLY for Android Emulator. Use 127.0.0.1 for everything else (Web, Windows, iOS Simulator).
-  final Dio _dio = Dio(BaseOptions(
-      baseUrl: (defaultTargetPlatform == TargetPlatform.android)
-          ? 'http://10.0.2.2:8000/api/v1/patients'
-          : 'http://127.0.0.1:8000/api/v1/patients'));
+  // Pointing to your machine's local IP so your physical phone can connect to the backend
+  final Dio _dio;
+
+  PatientRepository()
+      : _dio = Dio(BaseOptions(
+      baseUrl: 'http://10.126.180.128:8000/api/v1/patients',
+      connectTimeout: const Duration(seconds: 3),
+      receiveTimeout: const Duration(seconds: 10),
+  ));
 
   Future<String> login(String username, String password) async {
     final response = await _dio.post('/login', data: {
@@ -53,5 +57,31 @@ class PatientRepository {
   Future<Map<String, dynamic>> getReportsSummary(String patientId) async {
     final response = await _dio.get('/$patientId/reports-summary');
     return response.data as Map<String, dynamic>;
+  }
+
+  Future<List<dynamic>> getDischargeSummaries(String patientId) async {
+    final response = await _dio.get('/$patientId/discharge-summaries');
+    return response.data as List<dynamic>;
+  }
+
+  Future<List<dynamic>> getChatSummaries(String patientId) async {
+    final response = await _dio.get('/$patientId/chat-summaries');
+    return response.data as List<dynamic>;
+  }
+
+  Future<String> sendChatMessage(String patientId, String message) async {
+    final response = await _dio.post(
+      '/$patientId/chat',
+      data: {'text': message},
+    );
+    return response.data['response'];
+  }
+
+  Future<void> summarizeChat(String patientId) async {
+    await _dio.post('/$patientId/chat/summarize');
+  }
+
+  Future<void> submitVitals(String patientId, Map<String, dynamic> vitals) async {
+    await _dio.post('/$patientId/vitals', data: vitals);
   }
 }

@@ -76,20 +76,24 @@ class LabReportScreen extends StatelessWidget {
   }
 
   Widget _buildHeader() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Wrap(
+      alignment: WrapAlignment.spaceBetween,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: 16,
+      runSpacing: 16,
       children: [
         Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(LucideIcons.heartPulse, color: Color(0xFFE85A2A), size: 48),
-            const SizedBox(width: 16),
+            const Icon(LucideIcons.heartPulse, color: Color(0xFFE85A2A), size: 40),
+            const SizedBox(width: 12),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: const [
                 Text(
                   'AyuSync LAB',
                   style: TextStyle(
-                    fontSize: 28,
+                    fontSize: 24,
                     fontWeight: FontWeight.w800,
                     color: Color(0xFFE85A2A),
                     letterSpacing: -0.5,
@@ -98,9 +102,9 @@ class LabReportScreen extends StatelessWidget {
                 Text(
                   'CONNECTING EVERY STEP OF CARE',
                   style: TextStyle(
-                    fontSize: 10,
+                    fontSize: 8,
                     fontWeight: FontWeight.w600,
-                    letterSpacing: 2,
+                    letterSpacing: 1.0,
                     color: Color(0xFFD49B86),
                   ),
                 ),
@@ -109,10 +113,11 @@ class LabReportScreen extends StatelessWidget {
           ],
         ),
         Row(
+          mainAxisSize: MainAxisSize.min,
           children: const [
-            Icon(LucideIcons.activity, color: Color(0xFFE85A2A), size: 32),
+            Icon(LucideIcons.activity, color: Color(0xFFE85A2A), size: 28),
             SizedBox(width: 8),
-            Icon(LucideIcons.microscope, color: Color(0xFFE85A2A), size: 32),
+            Icon(LucideIcons.microscope, color: Color(0xFFE85A2A), size: 28),
           ],
         ),
       ],
@@ -159,38 +164,24 @@ class LabReportScreen extends StatelessWidget {
           topRight: Radius.circular(8), // Since the header is small
         ),
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildDetailRow(LucideIcons.user, 'Name', 'Swathi Reddy'),
-                const SizedBox(height: 8),
-                _buildDetailRow(LucideIcons.calendar, 'Age', '34'),
-                const SizedBox(height: 8),
-                _buildDetailRow(LucideIcons.droplet, 'Blood Group', 'O+'),
-                const SizedBox(height: 8),
-                _buildDetailRow(LucideIcons.arrowUpDown, 'Height', '165 cm'),
-              ],
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildDetailRow(LucideIcons.testTube2, 'Lab No.', 'AYU-L-8821'),
-                const SizedBox(height: 8),
-                _buildDetailRow(LucideIcons.calendarClock, 'Date', date.split(' - ')[0]),
-                const SizedBox(height: 8),
-                _buildDetailRow(LucideIcons.users, 'Gender', 'Female'),
-                const SizedBox(height: 8),
-                _buildDetailRow(LucideIcons.userCheck, 'Ref. By', 'Dr. Uma Kanth'),
-              ],
-            ),
-          ),
+          _buildDetailRow(LucideIcons.user, 'Name', 'Swathi Reddy'),
+          const SizedBox(height: 8),
+          _buildDetailRow(LucideIcons.calendar, 'Age', '34'),
+          const SizedBox(height: 8),
+          _buildDetailRow(LucideIcons.droplet, 'Blood Group', 'O+'),
+          const SizedBox(height: 8),
+          _buildDetailRow(LucideIcons.arrowUpDown, 'Height', '165 cm'),
+          const SizedBox(height: 8),
+          _buildDetailRow(LucideIcons.testTube2, 'Lab No.', 'AYU-L-8821'),
+          const SizedBox(height: 8),
+          _buildDetailRow(LucideIcons.calendarClock, 'Date', date.split(' - ')[0]),
+          const SizedBox(height: 8),
+          _buildDetailRow(LucideIcons.users, 'Gender', 'Female'),
+          const SizedBox(height: 8),
+          _buildDetailRow(LucideIcons.userCheck, 'Ref. By', 'Dr. Uma Kanth'),
         ],
       ),
     );
@@ -205,17 +196,17 @@ class LabReportScreen extends StatelessWidget {
           Icon(icon, size: 14, color: const Color(0xFFE85A2A)),
           const SizedBox(width: 6),
           SizedBox(
-            width: 75,
+            width: 85,
             child: Text(
               label,
-              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Colors.black87),
+              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.black87),
             ),
           ),
-          const Text(' : ', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600)),
+          const Text(' : ', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
           Expanded(
             child: Text(
               value,
-              style: const TextStyle(fontSize: 11, color: Colors.black87),
+              style: const TextStyle(fontSize: 12, color: Colors.black87),
             ),
           ),
         ],

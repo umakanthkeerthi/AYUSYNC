@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../theme/app_theme.dart';
 import '../widgets/glass_card.dart';
+import 'prescriptions_list_screen.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/patient_providers.dart';
@@ -26,21 +27,40 @@ class MedicationsScreen extends ConsumerWidget {
             return const Center(child: Text('No active medications.'));
           }
           return ListView(
-            padding: const EdgeInsets.all(24.0),
+            padding: const EdgeInsets.all(16.0),
             children: [
+              // Next Dose Card
               _buildNextDoseCard(meds.first.name, meds.first.dosage)
                   .animate()
                   .fadeIn(duration: 400.ms)
                   .slideY(begin: 0.1),
               const SizedBox(height: 32),
+
+              // ── Prescription Section ──────────────────────────────────
               const Text(
-                'Current Prescriptions',
+                'Prescription',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 16,
                   fontWeight: FontWeight.w800,
                   color: AppTheme.textDark,
                 ),
-              ).animate().fadeIn(delay: 200.ms),
+              ).animate().fadeIn(delay: 150.ms),
+              const SizedBox(height: 12),
+              _buildPrescriptionCard(context)
+                  .animate()
+                  .fadeIn(delay: 200.ms)
+                  .slideY(begin: 0.1),
+              const SizedBox(height: 32),
+
+              // ── Current Prescriptions List ────────────────────────────
+              const Text(
+                'Current Prescriptions',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800,
+                  color: AppTheme.textDark,
+                ),
+              ).animate().fadeIn(delay: 300.ms),
               const SizedBox(height: 16),
               ...meds.asMap().entries.map((entry) {
                 final index = entry.key;
@@ -53,7 +73,7 @@ class MedicationsScreen extends ConsumerWidget {
                     remaining: med.frequency,
                     icon: LucideIcons.pill,
                     color: index % 2 == 0 ? Colors.blue : Colors.orange,
-                  ).animate().fadeIn(delay: Duration(milliseconds: 300 + (index * 100))).slideX(begin: 0.1),
+                  ).animate().fadeIn(delay: Duration(milliseconds: 400 + (index * 100))).slideX(begin: 0.1),
                 );
               }),
             ],
@@ -65,9 +85,79 @@ class MedicationsScreen extends ConsumerWidget {
     );
   }
 
+  /// Prescription banner card — tapping opens the full prescription report
+  Widget _buildPrescriptionCard(BuildContext context) {
+    return GestureDetector(
+      onTap: () => Navigator.push(
+        context,
+        PageRouteBuilder(
+          pageBuilder: (_, __, ___) => const PrescriptionsListScreen(),
+          transitionsBuilder: (_, animation, __, child) =>
+              FadeTransition(opacity: animation, child: child),
+          transitionDuration: const Duration(milliseconds: 400),
+        ),
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFFE85A2A), Color(0xFFFF8C5A)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFFE85A2A).withOpacity(0.35),
+              blurRadius: 16,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.2),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(LucideIcons.fileText, color: Colors.white, size: 28),
+            ),
+            const SizedBox(width: 18),
+            const Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'AyuSync Prescription',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    'Tap to view your official Rx document',
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(LucideIcons.chevronRight, color: Colors.white, size: 22),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildNextDoseCard(String name, String dosage) {
     return GlassCard(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(16),
       child: Row(
         children: [
           Container(
@@ -86,7 +176,7 @@ class MedicationsScreen extends ConsumerWidget {
                 const Text(
                   'Next Dose in 2h 15m',
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: 15,
                     fontWeight: FontWeight.w800,
                     color: AppTheme.textDark,
                   ),
@@ -95,7 +185,7 @@ class MedicationsScreen extends ConsumerWidget {
                 Text(
                   '$name ($dosage)',
                   style: const TextStyle(
-                    fontSize: 14,
+                    fontSize: 13,
                     color: AppTheme.textMuted,
                   ),
                 ),
@@ -116,7 +206,7 @@ class MedicationsScreen extends ConsumerWidget {
     bool needsRefill = false,
   }) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -148,12 +238,12 @@ class MedicationsScreen extends ConsumerWidget {
                   children: [
                     Text(
                       name,
-                      style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16, color: AppTheme.textDark),
+                      style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15, color: AppTheme.textDark),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       dosage,
-                      style: const TextStyle(color: AppTheme.textMuted, fontSize: 13),
+                      style: const TextStyle(color: AppTheme.textMuted, fontSize: 12),
                     ),
                   ],
                 ),

@@ -4,7 +4,11 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../providers/patient_providers.dart';
 
 class DischargeSummaryScreen extends ConsumerWidget {
-  const DischargeSummaryScreen({super.key});
+  /// If provided, displays this specific summary's content.
+  /// If null, shows a default/static discharge summary.
+  final Map<String, dynamic>? singleSummary;
+
+  const DischargeSummaryScreen({super.key, this.singleSummary});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -76,7 +80,7 @@ class DischargeSummaryScreen extends ConsumerWidget {
                       const SizedBox(height: 24),
                       _buildPatientDetails(profileAsync),
                       const SizedBox(height: 32),
-                      _buildContentSection(),
+                      _buildContentSection(singleSummary),
                       const SizedBox(height: 120), // Spacer before footer
                       _buildFooter(),
                     ],
@@ -100,15 +104,15 @@ class DischargeSummaryScreen extends ConsumerWidget {
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(LucideIcons.heartPulse, color: Color(0xFFE85A2A), size: 48),
-            const SizedBox(width: 12),
+            const Icon(LucideIcons.heartPulse, color: Color(0xFFE85A2A), size: 40),
+            const SizedBox(width: 8),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: const [
                 Text(
                   'AyuSync',
                   style: TextStyle(
-                    fontSize: 28,
+                    fontSize: 24,
                     fontWeight: FontWeight.w800,
                     color: Color(0xFFE85A2A),
                     letterSpacing: -0.5,
@@ -117,9 +121,9 @@ class DischargeSummaryScreen extends ConsumerWidget {
                 Text(
                   'CONNECTING EVERY STEP OF CARE',
                   style: TextStyle(
-                    fontSize: 9,
+                    fontSize: 8,
                     fontWeight: FontWeight.w600,
-                    letterSpacing: 1.5,
+                    letterSpacing: 1.0,
                     color: Color(0xFFD49B86),
                   ),
                 ),
@@ -130,10 +134,10 @@ class DischargeSummaryScreen extends ConsumerWidget {
         const Text(
           'DISCHARGE SUMMARY',
           style: TextStyle(
-            fontSize: 18,
+            fontSize: 16,
             fontWeight: FontWeight.w700,
             color: Color(0xFFE85A2A),
-            letterSpacing: 1,
+            letterSpacing: 0.5,
           ),
         ),
       ],
@@ -153,34 +157,20 @@ class DischargeSummaryScreen extends ConsumerWidget {
         profileAsync.when(
           data: (profile) {
             if (profile == null) return const Text('Loading...');
-            return Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Expanded(
-                  flex: 5,
-                  child: Column(
-                    children: [
-                      _buildDetailRow(LucideIcons.user, 'Name', profile.name),
-                      const SizedBox(height: 12),
-                      _buildDetailRow(LucideIcons.calendar, 'Age', '34'),
-                      const SizedBox(height: 12),
-                      _buildDetailRow(LucideIcons.users, 'Gender', 'Female'),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  flex: 4,
-                  child: Column(
-                    children: [
-                      _buildDetailRow(LucideIcons.fileText, 'Admit No.', 'AYU-ADM-112'),
-                      const SizedBox(height: 12),
-                      _buildDetailRow(LucideIcons.calendarClock, 'Date', DateTime.now().toString().split(' ')[0]),
-                      const SizedBox(height: 12),
-                      _buildDetailRow(LucideIcons.userCheck, 'Attending', 'Dr. Uma Kanth'),
-                    ],
-                  ),
-                ),
+                _buildDetailRow(LucideIcons.user, 'Name', profile.name),
+                const SizedBox(height: 12),
+                _buildDetailRow(LucideIcons.calendar, 'Age', '34'),
+                const SizedBox(height: 12),
+                _buildDetailRow(LucideIcons.users, 'Gender', 'Female'),
+                const SizedBox(height: 12),
+                _buildDetailRow(LucideIcons.fileText, 'Admit No.', 'AYU-ADM-112'),
+                const SizedBox(height: 12),
+                _buildDetailRow(LucideIcons.calendarClock, 'Date', DateTime.now().toString().split(' ')[0]),
+                const SizedBox(height: 12),
+                _buildDetailRow(LucideIcons.userCheck, 'Attending', 'Dr. Uma Kanth'),
               ],
             );
           },
@@ -197,13 +187,13 @@ class DischargeSummaryScreen extends ConsumerWidget {
         Icon(icon, size: 14, color: const Color(0xFFE85A2A)),
         const SizedBox(width: 8),
         SizedBox(
-          width: 75,
+          width: 80,
           child: Text(
             label,
-            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Colors.black87),
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.black87),
           ),
         ),
-        const Text(' : ', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600)),
+        const Text(' : ', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
         Expanded(
           child: Container(
             decoration: const BoxDecoration(
@@ -213,7 +203,7 @@ class DischargeSummaryScreen extends ConsumerWidget {
               padding: const EdgeInsets.only(bottom: 2.0),
               child: Text(
                 value,
-                style: const TextStyle(fontSize: 11, color: Colors.black87, fontWeight: FontWeight.w500),
+                style: const TextStyle(fontSize: 12, color: Colors.black87, fontWeight: FontWeight.w500),
               ),
             ),
           ),
@@ -222,7 +212,12 @@ class DischargeSummaryScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildContentSection() {
+  Widget _buildContentSection([Map<String, dynamic>? summary]) {
+    final date = summary?['date'] ?? DateTime.now().toString().split(' ')[0];
+    final content = summary?['content_text'] ??
+        'The patient was admitted with complaints of severe migraine unresponsive to outpatient management. '
+        'Intravenous fluids and acute migraine protocols were initiated immediately upon admission. '
+        'Over the course of 48 hours, the patient showed significant improvement.';
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -235,9 +230,9 @@ class DischargeSummaryScreen extends ConsumerWidget {
           ),
         ),
         const SizedBox(height: 16),
-        const Text(
-          'The patient was admitted with complaints of severe migraine unresponsive to outpatient management. Intravenous fluids and acute migraine protocols were initiated immediately upon admission. Over the course of 48 hours, the patient showed significant improvement.',
-          style: TextStyle(fontSize: 14, color: Colors.black87, height: 1.5),
+        Text(
+          content,
+          style: const TextStyle(fontSize: 14, color: Colors.black87, height: 1.5),
         ),
         const SizedBox(height: 24),
         const Text(

@@ -4,7 +4,10 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../theme/app_theme.dart';
 import '../widgets/glass_card.dart';
+import '../widgets/glass_card.dart';
 import '../providers/patient_providers.dart';
+import 'vitals_checkin_screen.dart';
+import 'chat_screen.dart';
 
 class PlanScreen extends ConsumerStatefulWidget {
   const PlanScreen({super.key});
@@ -24,24 +27,7 @@ class _PlanScreenState extends ConsumerState<PlanScreen> {
       backgroundColor: AppTheme.backgroundLight,
       appBar: AppBar(
         title: const Text('Recovery Plan'),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: TextButton.icon(
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('AI Check-in feature coming soon!')),
-                );
-              },
-              icon: const Icon(LucideIcons.plus, size: 16, color: AppTheme.primaryOrange),
-              label: const Text('Check-in', style: TextStyle(color: AppTheme.primaryOrange)),
-              style: TextButton.styleFrom(
-                backgroundColor: AppTheme.primaryOrange.withOpacity(0.1),
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-              ),
-            ),
-          )
-        ],
+        actions: [],
       ),
       body: planAsync.when(
         loading: () => const Center(child: CircularProgressIndicator(color: AppTheme.primaryOrange)),
@@ -53,6 +39,8 @@ class _PlanScreenState extends ConsumerState<PlanScreen> {
 
           final carePlan = planData['care_plan'];
           final tasks = planData['today_tasks'] as List<dynamic>;
+
+          final completedTasks = ref.watch(completedTaskIdsProvider);
 
           return ListView(
             padding: const EdgeInsets.all(24.0),
@@ -82,14 +70,19 @@ class _PlanScreenState extends ConsumerState<PlanScreen> {
                 IconData iconData = LucideIcons.clipboard;
                 if (t['icon'] == 'pill') iconData = LucideIcons.pill;
                 if (t['icon'] == 'messageSquare') iconData = LucideIcons.messageSquare;
+                if (t['icon'] == 'activity') iconData = LucideIcons.activity;
+                
+                final bool isLocallyCompleted = completedTasks.contains(t['id']);
+                final bool isCompleted = t['is_completed'] || isLocallyCompleted;
                 
                 return _buildTaskItem(
+                  taskId: t['id'],
                   time: t['time'],
                   title: t['title'],
                   subtitle: t['subtitle'],
                   icon: iconData,
-                  isCompleted: t['is_completed'],
-                  isActive: t['is_active'],
+                  isCompleted: isCompleted,
+                  isActive: t['is_active'] && !isCompleted,
                 ).animate().fadeIn(delay: (500 + (idx * 100)).ms).slideX(begin: 0.1);
               }),
               
@@ -237,6 +230,7 @@ class _PlanScreenState extends ConsumerState<PlanScreen> {
   }
 
   Widget _buildTaskItem({
+    required String taskId,
     required String time,
     required String title,
     required String subtitle,
@@ -246,16 +240,15 @@ class _PlanScreenState extends ConsumerState<PlanScreen> {
   }) {
     return GestureDetector(
       onTap: () {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(isCompleted ? 'Task "$title" is already completed.' : 'Marking "$title" as complete...'),
-            duration: const Duration(seconds: 2),
-            action: SnackBarAction(
-              label: 'Undo',
-              onPressed: () {},
-            ),
-          ),
-        );
+        if (isCompleted) return; // Do nothing if already completed
+        
+        if (title == 'Take Medication') {
+          ref.read(completedTaskIdsProvider.notifier).update((state) => {...state, taskId});
+        } else if (title == 'Check Vitals') {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => const VitalsCheckinScreen()));
+        } else if (title == 'AI Check-in') {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => const ChatScreen()));
+        }
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 10),

@@ -7,6 +7,9 @@ final patientRepositoryProvider = Provider<PatientRepository>((ref) {
   return PatientRepository();
 });
 
+// Local state for tracking tasks completed in the current session
+final completedTaskIdsProvider = StateProvider<Set<String>>((ref) => {});
+
 // 2. Auth Provider (Mocking Ramesh Gupta's Login Session)
 class AuthState {
   final String? patientId;
@@ -19,8 +22,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
   final Ref ref;
   
   AuthNotifier(this.ref) : super(AuthState(
-    patientId: null,
-    isAuthenticated: false,
+    patientId: '0dfa2eea-13a6-449b-8ed5-32e68359d7b3', // Hardcoded Swathi Reddy to bypass login
+    isAuthenticated: true,
   ));
 
   Future<void> login(String username, String password) async {
@@ -78,7 +81,7 @@ final vitalsProvider = FutureProvider<List<VitalSign>>((ref) async {
 final recoveryPlanProvider = FutureProvider.family<Map<String, dynamic>?, DateTime>((ref, date) async {
   final authState = ref.watch(authProvider);
   if (authState.patientId == null) return null;
-  final repo = ref.read(patientRepositoryProvider);
+  final repo = ref.watch(patientRepositoryProvider);
   final dateStr = "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
   return repo.getRecoveryPlan(authState.patientId!, date: dateStr);
 });
@@ -87,7 +90,7 @@ final labTestsProvider = FutureProvider<List<dynamic>?>((ref) async {
   final authState = ref.watch(authProvider);
   if (authState.patientId == null) return null;
   
-  final repo = ref.read(patientRepositoryProvider);
+  final repo = ref.watch(patientRepositoryProvider);
   return repo.getLabTests(authState.patientId!);
 });
 
@@ -95,6 +98,22 @@ final reportsSummaryProvider = FutureProvider<Map<String, dynamic>?>((ref) async
   final authState = ref.watch(authProvider);
   if (authState.patientId == null) return null;
   
-  final repo = ref.read(patientRepositoryProvider);
+  final repo = ref.watch(patientRepositoryProvider);
   return repo.getReportsSummary(authState.patientId!);
+});
+
+final dischargeSummariesProvider = FutureProvider<List<dynamic>>((ref) async {
+  final authState = ref.watch(authProvider);
+  if (authState.patientId == null) return [];
+  
+  final repo = ref.read(patientRepositoryProvider);
+  return repo.getDischargeSummaries(authState.patientId!);
+});
+
+final chatSummariesProvider = FutureProvider<List<dynamic>>((ref) async {
+  final authState = ref.watch(authProvider);
+  if (authState.patientId == null) return [];
+  
+  final repo = ref.read(patientRepositoryProvider);
+  return repo.getChatSummaries(authState.patientId!);
 });

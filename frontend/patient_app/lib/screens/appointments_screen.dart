@@ -17,7 +17,7 @@ class AppointmentsScreen extends StatelessWidget {
         elevation: 0,
       ),
       body: ListView(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.all(16.0),
         children: [
           _buildUpcomingSection().animate().fadeIn(duration: 400.ms).slideY(begin: 0.1),
           const SizedBox(height: 32),
@@ -37,7 +37,7 @@ class AppointmentsScreen extends StatelessWidget {
             const Text(
               'Upcoming',
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 16,
                 fontWeight: FontWeight.w800,
                 color: AppTheme.textDark,
               ),
@@ -71,7 +71,7 @@ class AppointmentsScreen extends StatelessWidget {
         const Text(
           'Past Appointments',
           style: TextStyle(
-            fontSize: 18,
+            fontSize: 16,
             fontWeight: FontWeight.w800,
             color: AppTheme.textDark,
           ),
@@ -107,7 +107,7 @@ class AppointmentsScreen extends StatelessWidget {
     required Color iconColor,
   }) {
     return GlassCard(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(14),
       child: Column(
         children: [
           Row(
@@ -127,12 +127,12 @@ class AppointmentsScreen extends StatelessWidget {
                   children: [
                     Text(
                       doctor,
-                      style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16, color: AppTheme.textDark),
+                      style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15, color: AppTheme.textDark),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       specialty,
-                      style: const TextStyle(color: AppTheme.textMuted, fontSize: 13),
+                      style: const TextStyle(color: AppTheme.textMuted, fontSize: 12),
                     ),
                   ],
                 ),
