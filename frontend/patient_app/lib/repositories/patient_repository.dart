@@ -8,7 +8,7 @@ class PatientRepository {
 
   PatientRepository()
       : _dio = Dio(BaseOptions(
-      baseUrl: 'http://10.126.180.128:8000/api/v1/patients',
+      baseUrl: 'http://16.171.226.51/api/v1/patients',
       connectTimeout: const Duration(seconds: 3),
       receiveTimeout: const Duration(seconds: 10),
   ));
