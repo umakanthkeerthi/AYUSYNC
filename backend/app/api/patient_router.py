@@ -17,6 +17,46 @@ class LoginPayload(BaseModel):
     username: str
     password: str
 
+class SignupPayload(BaseModel):
+    full_name: str
+    phone_number: str
+    username: str
+    password: str
+
+@router.post("/signup")
+def signup_patient(payload: SignupPayload, db: Session = Depends(get_db)):
+    # Check if username exists
+    existing = db.query(User).filter(User.username == payload.username).first()
+    if existing:
+        raise HTTPException(status_code=400, detail="Username already taken")
+        
+    import uuid
+    # Create User
+    new_user = User(
+        username=payload.username,
+        hashed_password=payload.password, # In a real app, hash this!
+        full_name=payload.full_name,
+        phone_number=payload.phone_number,
+        role=UserRole.PATIENT,
+        is_active=True
+    )
+    db.add(new_user)
+    db.commit()
+    
+    # Create empty Patient profile
+    new_patient = Patient(
+        id=str(uuid.uuid4()),
+        user_id=new_user.id
+    )
+    db.add(new_patient)
+    db.commit()
+    
+    return {
+        "status": "success",
+        "patient_id": new_patient.id,
+        "name": new_user.full_name
+    }
+
 @router.post("/login")
 def login_patient(payload: LoginPayload, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.username == payload.username, User.role == UserRole.PATIENT).first()

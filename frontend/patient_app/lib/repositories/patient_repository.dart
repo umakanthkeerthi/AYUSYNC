@@ -21,6 +21,16 @@ class PatientRepository {
     return response.data['patient_id'];
   }
 
+  Future<String> signup(String fullName, String phone, String username, String password) async {
+    final response = await _dio.post('/signup', data: {
+      'full_name': fullName,
+      'phone_number': phone,
+      'username': username,
+      'password': password,
+    });
+    return response.data['patient_id'];
+  }
+
   Future<PatientProfile> getProfile(String patientId) async {
     final response = await _dio.get('/$patientId/profile');
     return PatientProfile.fromJson(response.data);

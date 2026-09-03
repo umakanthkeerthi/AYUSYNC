@@ -22,8 +22,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
   final Ref ref;
   
   AuthNotifier(this.ref) : super(AuthState(
-    patientId: '0dfa2eea-13a6-449b-8ed5-32e68359d7b3', // Hardcoded Swathi Reddy to bypass login
-    isAuthenticated: true,
+    patientId: null,
+    isAuthenticated: false,
   ));
 
   Future<void> login(String username, String password) async {
@@ -33,6 +33,16 @@ class AuthNotifier extends StateNotifier<AuthState> {
       state = AuthState(patientId: patientId, isAuthenticated: true);
     } catch (e) {
       throw Exception('Invalid credentials or network error');
+    }
+  }
+
+  Future<void> signup(String fullName, String phone, String username, String password) async {
+    try {
+      final repository = ref.read(patientRepositoryProvider);
+      final patientId = await repository.signup(fullName, phone, username, password);
+      state = AuthState(patientId: patientId, isAuthenticated: true);
+    } catch (e) {
+      throw Exception('Signup failed: ${e.toString()}');
     }
   }
 
