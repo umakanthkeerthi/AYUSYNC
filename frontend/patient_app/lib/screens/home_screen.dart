@@ -11,6 +11,7 @@ import '../models/patient_models.dart';
 import 'profile_screen.dart';
 import 'vitals_checkin_screen.dart';
 import 'chat_screen.dart';
+import 'upload_record_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -23,6 +24,14 @@ class HomeScreen extends ConsumerWidget {
     final planAsync = ref.watch(recoveryPlanProvider(today));
 
     return Scaffold(
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => const UploadRecordScreen()));
+        },
+        backgroundColor: AppTheme.primaryOrange,
+        icon: const Icon(LucideIcons.camera, color: Colors.white),
+        label: const Text('Scan Record', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+      ),
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(

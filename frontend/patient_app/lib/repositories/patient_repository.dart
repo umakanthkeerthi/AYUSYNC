@@ -84,4 +84,19 @@ class PatientRepository {
   Future<void> submitVitals(String patientId, Map<String, dynamic> vitals) async {
     await _dio.post('/$patientId/vitals', data: vitals);
   }
+
+  Future<void> uploadMedicalRecord(String patientId, String filePath) async {
+    final formData = FormData.fromMap({
+      'file': await MultipartFile.fromFile(filePath),
+    });
+    
+    // Using a longer timeout for file uploads
+    final uploadDio = Dio(BaseOptions(
+      baseUrl: _dio.options.baseUrl,
+      connectTimeout: const Duration(seconds: 10),
+      receiveTimeout: const Duration(seconds: 60),
+    ));
+    
+    await uploadDio.post('/$patientId/upload-document', data: formData);
+  }
 }
