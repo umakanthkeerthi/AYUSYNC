@@ -59,9 +59,17 @@ class ProfileScreen extends ConsumerWidget {
                 ),
               ],
             ),
-            child: const CircleAvatar(
+            child: CircleAvatar(
               radius: 50,
-              backgroundImage: AssetImage('assets/images/patient_avatar.jpg'),
+              backgroundColor: AppTheme.primaryOrange.withOpacity(0.1),
+              child: Text(
+                name.isNotEmpty ? name[0].toUpperCase() : 'U',
+                style: const TextStyle(
+                  fontSize: 40,
+                  fontWeight: FontWeight.bold,
+                  color: AppTheme.primaryOrange,
+                ),
+              ),
             ),
           ),
           const SizedBox(height: 16),

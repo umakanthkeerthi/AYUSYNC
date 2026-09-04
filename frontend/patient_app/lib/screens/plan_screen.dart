@@ -41,6 +41,18 @@ class _PlanScreenState extends ConsumerState<PlanScreen> {
           final tasks = planData['today_tasks'] as List<dynamic>;
 
           final completedTasks = ref.watch(completedTaskIdsProvider);
+          
+          final baseProgress = carePlan['progress_percent'] ?? 0;
+          int completedCount = 0;
+          for (var t in tasks) {
+            if (t['is_completed'] == true || completedTasks.contains(t['id'])) {
+              completedCount++;
+            }
+          }
+          
+          final todayFraction = tasks.isEmpty ? 0.0 : (completedCount / tasks.length);
+          int progressPercent = (baseProgress + (todayFraction * 7.0)).round();
+          if (progressPercent > 100) progressPercent = 100;
 
           return ListView(
             padding: const EdgeInsets.all(24.0),
@@ -50,7 +62,7 @@ class _PlanScreenState extends ConsumerState<PlanScreen> {
               _buildRehabCard(
                 title: carePlan['title'] ?? 'Recovery Plan',
                 description: carePlan['description'] ?? '',
-                progressPercent: carePlan['progress_percent'] ?? 0,
+                progressPercent: progressPercent,
               ).animate().fadeIn(delay: 200.ms).scale(begin: const Offset(0.95, 0.95)),
               const SizedBox(height: 24),
               const Text(

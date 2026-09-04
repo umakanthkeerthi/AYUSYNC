@@ -24,14 +24,7 @@ class HomeScreen extends ConsumerWidget {
     final planAsync = ref.watch(recoveryPlanProvider(today));
 
     return Scaffold(
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => const UploadRecordScreen()));
-        },
-        backgroundColor: AppTheme.primaryOrange,
-        icon: Icon(LucideIcons.camera, color: Colors.white),
-        label: const Text('Scan Record', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-      ),
+
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -156,10 +149,19 @@ class HomeScreen extends ConsumerWidget {
                 ),
               ],
             ),
-            child: const CircleAvatar(
+            child: CircleAvatar(
               radius: 28,
-              backgroundImage: NetworkImage(
-                  'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80'),
+              backgroundColor: AppTheme.primaryOrange.withOpacity(0.1),
+              child: Text(
+                (patientProfileAsync.value?.name ?? 'U').isNotEmpty
+                    ? (patientProfileAsync.value?.name ?? 'U')[0].toUpperCase()
+                    : 'U',
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: AppTheme.primaryOrange,
+                ),
+              ),
             ),
           ),
         ),
