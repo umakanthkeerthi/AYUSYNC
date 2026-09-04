@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../theme/app_theme.dart';
 import '../widgets/glass_card.dart';
@@ -27,7 +27,7 @@ class HealthHubScreen extends ConsumerWidget {
         title: const Text('Health Hub'),
         actions: [
           IconButton(
-            icon: const Icon(LucideIcons.bell),
+            icon: Icon(LucideIcons.bell),
             onPressed: () {},
           ),
         ],

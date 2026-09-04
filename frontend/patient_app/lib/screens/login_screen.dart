@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'main_layout.dart';
 import '../theme/app_theme.dart';
 import '../widgets/glass_card.dart';
@@ -165,7 +165,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             decoration: InputDecoration(
                               labelText: 'Patient ID (Username)',
                               hintText: 'e.g. AYU-1234',
-                              prefixIcon: const Icon(LucideIcons.user, color: AppTheme.textMuted),
+                              prefixIcon: Icon(LucideIcons.user, color: AppTheme.textMuted),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(16),
                                 borderSide: BorderSide.none,
@@ -182,7 +182,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             obscureText: true,
                             decoration: InputDecoration(
                               labelText: 'Password',
-                              prefixIcon: const Icon(LucideIcons.lock, color: AppTheme.textMuted),
+                              prefixIcon: Icon(LucideIcons.lock, color: AppTheme.textMuted),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(16),
                                 borderSide: BorderSide.none,

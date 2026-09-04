@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../theme/app_theme.dart';
 import '../widgets/glass_card.dart';
 
@@ -154,7 +154,7 @@ class AppointmentsScreen extends StatelessWidget {
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(LucideIcons.calendarClock, size: 16, color: AppTheme.textDark),
+                    Icon(LucideIcons.calendarClock, size: 16, color: AppTheme.textDark),
                     const SizedBox(width: 8),
                     Text(date, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
                   ],

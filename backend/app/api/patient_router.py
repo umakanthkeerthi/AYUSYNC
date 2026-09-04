@@ -6,7 +6,7 @@ from app.core.database_session import get_db
 from app.models.database import User, Patient, Condition, Medication, VitalSign, UserRole, CarePlan, CareTask, LabTest, ClinicalNote
 from app.agents.chat_agent import ChatAgent
 from app.agents.document_parser import process_medical_record
-from fastapi import File, UploadFile
+from fastapi import File, UploadFile, Form
 import base64
 
 ACTIVE_CHAT_SESSIONS: Dict[str, List[Dict]] = {}
@@ -31,14 +31,15 @@ def signup_patient(payload: SignupPayload, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="Username already taken")
         
     import uuid
+    from app.models.database import current_utc_time
+
     # Create User
     new_user = User(
         username=payload.username,
         hashed_password=payload.password, # In a real app, hash this!
         full_name=payload.full_name,
         phone_number=payload.phone_number,
-        role=UserRole.PATIENT,
-        is_active=True
+        role=UserRole.PATIENT
     )
     db.add(new_user)
     db.commit()
@@ -46,7 +47,8 @@ def signup_patient(payload: SignupPayload, db: Session = Depends(get_db)):
     # Create empty Patient profile
     new_patient = Patient(
         id=str(uuid.uuid4()),
-        user_id=new_user.id
+        user_id=new_user.id,
+        date_of_birth=current_utc_time()
     )
     db.add(new_patient)
     db.commit()
@@ -444,16 +446,18 @@ def log_vitals(patient_id: str, payload: VitalsPayload, db: Session = Depends(ge
     return {"status": "success", "message": "Vitals logged successfully"}
 
 @router.post("/{patient_id}/upload-document")
-async def upload_document(patient_id: str, file: UploadFile = File(...), db: Session = Depends(get_db)):
+async def upload_document(patient_id: str, category: str = Form(...), file: UploadFile = File(...), db: Session = Depends(get_db)):
     """
-    Receives an image of a prescription or lab report.
-    Passes it to the Vision AI agent to extract medications and tasks.
+    Receives an image or pdf of a medical document.
+    Passes it to the OCR API to extract data.
     """
     try:
         contents = await file.read()
-        base64_encoded = base64.b64encode(contents).decode('utf-8')
+        filename = file.filename
         
-        result = process_medical_record(patient_id, base64_encoded, db)
+        result = process_medical_record(patient_id, contents, filename, category, db)
         return result
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))

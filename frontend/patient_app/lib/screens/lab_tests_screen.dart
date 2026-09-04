@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../theme/app_theme.dart';
 import '../providers/patient_providers.dart';
 import 'lab_report_screen.dart'; 
@@ -20,7 +20,7 @@ class LabTestsScreen extends ConsumerWidget {
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(LucideIcons.arrowLeft, color: AppTheme.textDark),
+          icon: Icon(LucideIcons.arrowLeft, color: AppTheme.textDark),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -97,7 +97,7 @@ class LabTestsScreen extends ConsumerWidget {
                     const SizedBox(height: 4),
                     Row(
                       children: [
-                        const Icon(LucideIcons.calendar, size: 12, color: AppTheme.textMuted),
+                        Icon(LucideIcons.calendar, size: 12, color: AppTheme.textMuted),
                         const SizedBox(width: 4),
                         Text(
                           lab['scheduled_time'],
@@ -139,7 +139,7 @@ class LabTestsScreen extends ConsumerWidget {
                       ),
                     );
                   },
-                  icon: const Icon(LucideIcons.download, size: 16, color: AppTheme.primaryOrange),
+                  icon: Icon(LucideIcons.download, size: 16, color: AppTheme.primaryOrange),
                   label: const Text('View Report', style: TextStyle(color: AppTheme.primaryOrange, fontWeight: FontWeight.w600)),
                 )
             ],

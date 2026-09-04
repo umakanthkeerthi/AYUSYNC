@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../providers/patient_providers.dart';
 import '../theme/app_theme.dart';
 
@@ -57,7 +57,7 @@ class _VitalsCheckinScreenState extends ConsumerState<VitalsCheckinScreen> {
           SnackBar(
             content: Row(
               children: [
-                const Icon(LucideIcons.checkCircle2, color: Colors.white),
+                Icon(LucideIcons.checkCircle2, color: Colors.white),
                 const SizedBox(width: 12),
                 const Text('Vitals logged successfully!'),
               ],
@@ -103,7 +103,7 @@ class _VitalsCheckinScreenState extends ConsumerState<VitalsCheckinScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(LucideIcons.arrowLeft, color: AppTheme.textDark),
+          icon: Icon(LucideIcons.arrowLeft, color: AppTheme.textDark),
           onPressed: () => Navigator.pop(context),
         ),
       ),

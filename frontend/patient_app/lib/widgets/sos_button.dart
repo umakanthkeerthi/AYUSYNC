@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'dart:async';
 import '../theme/app_theme.dart';
@@ -43,7 +43,7 @@ class _SosButtonState extends State<SosButton> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(LucideIcons.alertTriangle, color: Colors.white, size: 18)
+            Icon(LucideIcons.alertTriangle, color: Colors.white, size: 18)
                 .animate(onPlay: (controller) => controller.repeat(reverse: true))
                 .fadeIn()
                 .scale(begin: const Offset(1.0, 1.0), end: const Offset(1.05, 1.05), duration: 1000.ms),
@@ -138,7 +138,7 @@ class _SosCountdownDialogState extends State<_SosCountdownDialog> {
             color: Colors.red.withOpacity(0.1),
             shape: BoxShape.circle,
           ),
-          child: const Icon(LucideIcons.siren, color: Colors.red, size: 40)
+          child: Icon(LucideIcons.siren, color: Colors.red, size: 40)
               .animate(onPlay: (controller) => controller.repeat(reverse: true))
               .scale(begin: const Offset(1, 1), end: const Offset(1.2, 1.2), duration: 500.ms),
         ),
@@ -213,7 +213,7 @@ class _SosCountdownDialogState extends State<_SosCountdownDialog> {
             color: Colors.green.withOpacity(0.1),
             shape: BoxShape.circle,
           ),
-          child: const Icon(LucideIcons.checkCircle2, color: Colors.green, size: 40)
+          child: Icon(LucideIcons.checkCircle2, color: Colors.green, size: 40)
               .animate()
               .scale(curve: Curves.elasticOut, duration: 600.ms),
         ),

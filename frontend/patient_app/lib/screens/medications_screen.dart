@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../theme/app_theme.dart';
 import '../widgets/glass_card.dart';
 import 'prescriptions_list_screen.dart';
@@ -122,7 +122,7 @@ class MedicationsScreen extends ConsumerWidget {
                 color: Colors.white.withOpacity(0.2),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(LucideIcons.fileText, color: Colors.white, size: 28),
+              child: Icon(LucideIcons.fileText, color: Colors.white, size: 28),
             ),
             const SizedBox(width: 18),
             const Expanded(
@@ -148,7 +148,7 @@ class MedicationsScreen extends ConsumerWidget {
                 ],
               ),
             ),
-            const Icon(LucideIcons.chevronRight, color: Colors.white, size: 22),
+            Icon(LucideIcons.chevronRight, color: Colors.white, size: 22),
           ],
         ),
       ),
@@ -166,7 +166,7 @@ class MedicationsScreen extends ConsumerWidget {
               color: AppTheme.primaryOrange.withOpacity(0.1),
               shape: BoxShape.circle,
             ),
-            child: const Icon(LucideIcons.clock, color: AppTheme.primaryOrange, size: 32),
+            child: Icon(LucideIcons.clock, color: AppTheme.primaryOrange, size: 32),
           ),
           const SizedBox(width: 20),
           Expanded(

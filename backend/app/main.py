@@ -26,14 +26,26 @@ app = FastAPI(
     version="0.1.0"
 )
 
-# Enable CORS for Flutter Web
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=False,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# Use a completely permissive custom CORS middleware to bypass all Chrome strictness
+@app.middleware("http")
+async def permissive_cors(request, call_next):
+    if request.method == "OPTIONS":
+        from fastapi.responses import Response
+        response = Response()
+    else:
+        try:
+            response = await call_next(request)
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            from fastapi.responses import JSONResponse
+            response = JSONResponse(status_code=500, content={"detail": str(e)})
+            
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "*"
+    response.headers["Access-Control-Allow-Headers"] = "*"
+    response.headers["Access-Control-Allow-Private-Network"] = "true"
+    return response
 
 # Register API Routers
 app.include_router(patient_router)

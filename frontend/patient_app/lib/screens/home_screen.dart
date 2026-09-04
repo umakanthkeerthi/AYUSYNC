@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../theme/app_theme.dart';
 import '../widgets/glass_card.dart';
 import '../widgets/sos_button.dart';
@@ -29,7 +29,7 @@ class HomeScreen extends ConsumerWidget {
           Navigator.push(context, MaterialPageRoute(builder: (context) => const UploadRecordScreen()));
         },
         backgroundColor: AppTheme.primaryOrange,
-        icon: const Icon(LucideIcons.camera, color: Colors.white),
+        icon: Icon(LucideIcons.camera, color: Colors.white),
         label: const Text('Scan Record', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
       ),
       body: Container(
@@ -52,8 +52,23 @@ class HomeScreen extends ConsumerWidget {
                 data: (planData) {
                   if (planData == null) return const SizedBox.shrink();
                   final carePlan = planData['care_plan'];
-                  final progressPercent = carePlan['progress_percent'] ?? 0;
+                  final baseProgress = carePlan['progress_percent'] ?? 0;
                   final tasks = planData['today_tasks'] as List<dynamic>;
+                  
+                  final completedTaskIds = ref.watch(completedTaskIdsProvider);
+                  int completedCount = 0;
+                  for (var t in tasks) {
+                    if (t['is_completed'] == true || completedTaskIds.contains(t['id'])) {
+                      completedCount++;
+                    }
+                  }
+                  
+                  // Today's progress fraction (0.0 to 1.0)
+                  final todayFraction = tasks.isEmpty ? 0.0 : (completedCount / tasks.length);
+                  
+                  // Add a 7% bump to the overall recovery when today's plan is completed
+                  int progressPercent = (baseProgress + (todayFraction * 7.0)).round();
+                  if (progressPercent > 100) progressPercent = 100;
                   
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,

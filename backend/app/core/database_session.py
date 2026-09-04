@@ -3,7 +3,8 @@ from sqlalchemy.orm import sessionmaker
 from .config import settings
 
 # If no DB URL is provided, we fall back to a local SQLite database for development testing
-SQLALCHEMY_DATABASE_URL = settings.DATABASE_URL or "sqlite:///./ayusync_local.db"
+_db_url = settings.DATABASE_URL or "sqlite:///./ayusync_local.db"
+SQLALCHEMY_DATABASE_URL = _db_url.replace("postgresql://", "postgresql+psycopg2://")
 
 # Create the SQLAlchemy Engine
 if SQLALCHEMY_DATABASE_URL.startswith("sqlite"):

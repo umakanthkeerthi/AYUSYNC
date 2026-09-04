@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../providers/patient_providers.dart';
 import '../theme/app_theme.dart';
 import 'discharge_summary_screen.dart';
@@ -33,7 +33,7 @@ class DischargeSummariesListScreen extends ConsumerWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(LucideIcons.arrowLeft, color: AppTheme.textDark),
+          icon: Icon(LucideIcons.arrowLeft, color: AppTheme.textDark),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -130,7 +130,7 @@ class DischargeSummariesListScreen extends ConsumerWidget {
               color: Colors.white.withOpacity(0.2),
               shape: BoxShape.circle,
             ),
-            child: const Icon(LucideIcons.folderHeart, color: Colors.white, size: 26),
+            child: Icon(LucideIcons.folderHeart, color: Colors.white, size: 26),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -153,7 +153,7 @@ class DischargeSummariesListScreen extends ConsumerWidget {
               ],
             ),
           ),
-          const Icon(LucideIcons.shieldCheck, color: Colors.white70, size: 28),
+          Icon(LucideIcons.shieldCheck, color: Colors.white70, size: 28),
         ],
       ),
     );

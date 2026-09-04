@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../theme/app_theme.dart';
 import 'package:http/http.dart' as http;
@@ -133,7 +133,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 color: AppTheme.primaryOrange.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(LucideIcons.bot, color: AppTheme.primaryOrange, size: 20),
+              child: Icon(LucideIcons.bot, color: AppTheme.primaryOrange, size: 20),
             ),
             const SizedBox(width: 12),
             Column(
@@ -250,7 +250,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4)),
                 ],
               ),
-              child: const Icon(LucideIcons.bot, color: AppTheme.primaryOrange, size: 20),
+              child: Icon(LucideIcons.bot, color: AppTheme.primaryOrange, size: 20),
             ),
             Expanded(
               child: Padding(
@@ -298,7 +298,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           children: [
             const Text('AI is thinking', style: TextStyle(color: AppTheme.textMuted, fontSize: 13, fontWeight: FontWeight.w500)),
             const SizedBox(width: 8),
-            const Icon(LucideIcons.loader, size: 14, color: AppTheme.primaryOrange)
+            Icon(LucideIcons.loader, size: 14, color: AppTheme.primaryOrange)
                 .animate(onPlay: (controller) => controller.repeat())
                 .rotate(duration: 1.seconds),
           ],
@@ -326,7 +326,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           children: [
             const SizedBox(width: 8),
             IconButton(
-              icon: const Icon(LucideIcons.plus, color: AppTheme.textMuted),
+              icon: Icon(LucideIcons.plus, color: AppTheme.textMuted),
               onPressed: () {},
             ),
             Expanded(
@@ -350,7 +350,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     color: AppTheme.primaryOrange,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(LucideIcons.send, color: Colors.white, size: 18),
+                  child: Icon(LucideIcons.send, color: Colors.white, size: 18),
                 ),
               ),
             ),

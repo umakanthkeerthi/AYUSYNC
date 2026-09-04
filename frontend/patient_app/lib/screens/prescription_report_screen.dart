@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../providers/patient_providers.dart';
 
 class PrescriptionReportScreen extends ConsumerWidget {
@@ -22,16 +22,16 @@ class PrescriptionReportScreen extends ConsumerWidget {
         title: const Text('Prescription', style: TextStyle(color: Colors.black87, fontSize: 16)),
         elevation: 1,
         leading: IconButton(
-          icon: const Icon(LucideIcons.arrowLeft, color: Colors.black87),
+          icon: Icon(LucideIcons.arrowLeft, color: Colors.black87),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
           IconButton(
-            icon: const Icon(LucideIcons.printer, color: Colors.black87),
+            icon: Icon(LucideIcons.printer, color: Colors.black87),
             onPressed: () {},
           ),
           IconButton(
-            icon: const Icon(LucideIcons.share2, color: Colors.black87),
+            icon: Icon(LucideIcons.share2, color: Colors.black87),
             onPressed: () {},
           ),
         ],
@@ -105,7 +105,7 @@ class PrescriptionReportScreen extends ConsumerWidget {
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(LucideIcons.heartPulse, color: Color(0xFFE85A2A), size: 48),
+            Icon(LucideIcons.heartPulse, color: Color(0xFFE85A2A), size: 48),
             const SizedBox(width: 12),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -293,7 +293,7 @@ class PrescriptionReportScreen extends ConsumerWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Icon(LucideIcons.fileText, color: Color(0xFFE85A2A), size: 24),
+              Icon(LucideIcons.fileText, color: Color(0xFFE85A2A), size: 24),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(

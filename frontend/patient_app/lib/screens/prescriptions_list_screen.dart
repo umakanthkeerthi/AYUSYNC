@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../providers/patient_providers.dart';
 import '../models/patient_models.dart';
 import '../theme/app_theme.dart';
@@ -34,7 +34,7 @@ class PrescriptionsListScreen extends ConsumerWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(LucideIcons.arrowLeft, color: AppTheme.textDark),
+          icon: Icon(LucideIcons.arrowLeft, color: AppTheme.textDark),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
@@ -49,7 +49,7 @@ class PrescriptionsListScreen extends ConsumerWidget {
                 transitionDuration: const Duration(milliseconds: 400),
               ),
             ),
-            icon: const Icon(LucideIcons.fileText, size: 16, color: AppTheme.primaryOrange),
+            icon: Icon(LucideIcons.fileText, size: 16, color: AppTheme.primaryOrange),
             label: const Text(
               'Full Report',
               style: TextStyle(color: AppTheme.primaryOrange, fontWeight: FontWeight.w600),
@@ -149,7 +149,7 @@ class PrescriptionsListScreen extends ConsumerWidget {
               color: Colors.white.withOpacity(0.2),
               shape: BoxShape.circle,
             ),
-            child: const Icon(LucideIcons.clipboardList, color: Colors.white, size: 26),
+            child: Icon(LucideIcons.clipboardList, color: Colors.white, size: 26),
           ),
           const SizedBox(width: 16),
           Expanded(

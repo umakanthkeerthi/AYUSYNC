@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../theme/app_theme.dart';
 
 class LabReportScreen extends StatelessWidget {
@@ -23,16 +23,16 @@ class LabReportScreen extends StatelessWidget {
         title: const Text('Lab Report', style: TextStyle(color: Colors.black87, fontSize: 16)),
         elevation: 1,
         leading: IconButton(
-          icon: const Icon(LucideIcons.arrowLeft, color: Colors.black87),
+          icon: Icon(LucideIcons.arrowLeft, color: Colors.black87),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
           IconButton(
-            icon: const Icon(LucideIcons.printer, color: Colors.black87),
+            icon: Icon(LucideIcons.printer, color: Colors.black87),
             onPressed: () {},
           ),
           IconButton(
-            icon: const Icon(LucideIcons.share2, color: Colors.black87),
+            icon: Icon(LucideIcons.share2, color: Colors.black87),
             onPressed: () {},
           ),
         ],
@@ -85,7 +85,7 @@ class LabReportScreen extends StatelessWidget {
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(LucideIcons.heartPulse, color: Color(0xFFE85A2A), size: 40),
+            Icon(LucideIcons.heartPulse, color: Color(0xFFE85A2A), size: 40),
             const SizedBox(width: 12),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -294,7 +294,7 @@ class LabReportScreen extends StatelessWidget {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Icon(LucideIcons.messageSquare, color: Color(0xFFE85A2A), size: 18),
+            Icon(LucideIcons.messageSquare, color: Color(0xFFE85A2A), size: 18),
             const SizedBox(width: 8),
             const Text('Remarks : ', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
             Expanded(
@@ -315,7 +315,7 @@ class LabReportScreen extends StatelessWidget {
             Expanded(
               child: Row(
                 children: [
-                  const Icon(LucideIcons.qrCode, size: 48),
+                  Icon(LucideIcons.qrCode, size: 48),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Container(
@@ -327,7 +327,7 @@ class LabReportScreen extends StatelessWidget {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Icon(LucideIcons.info, color: Color(0xFFE85A2A), size: 20),
+                          Icon(LucideIcons.info, color: Color(0xFFE85A2A), size: 20),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Column(
@@ -349,7 +349,7 @@ class LabReportScreen extends StatelessWidget {
             const SizedBox(width: 16),
             Column(
               children: [
-                const Icon(LucideIcons.penTool, color: Color(0xFFE85A2A), size: 24),
+                Icon(LucideIcons.penTool, color: Color(0xFFE85A2A), size: 24),
                 const SizedBox(height: 8),
                 Container(width: 100, height: 1, color: Colors.black54),
                 const SizedBox(height: 4),

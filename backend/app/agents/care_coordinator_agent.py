@@ -78,7 +78,7 @@ Valid target agents: 'doctor_agent', 'patient_agent', 'nurse_agent', 'pharmacy_a
                 )
             )
             event_bus.publish(cmd_event)
-            print(f"🚀 [Care Coordinator Agent] Scheduled command: {cmd_data.get('action')} -> {cmd_data.get('target_agent')} ({cmd_data.get('urgency')})")
+            print(f"[Care Coordinator Agent] Scheduled command: {cmd_data.get('action')} -> {cmd_data.get('target_agent')} ({cmd_data.get('urgency')})")
             
     except Exception as llm_err:
         print(f"⚠️ [Care Coordinator Agent] Groq LLM parsing failed. Falling back to default hardcoded logic. Error: {str(llm_err)}")
@@ -97,7 +97,7 @@ Valid target agents: 'doctor_agent', 'patient_agent', 'nurse_agent', 'pharmacy_a
                     )
                 )
                 event_bus.publish(cmd)
-                print(f"🚀 [Care Coordinator Agent] Scheduled command: {action} -> doctor_agent")
+                print(f"[Care Coordinator Agent] Scheduled command: {action} -> doctor_agent")
             
             elif action == "request_new_vitals_in_1_hour":
                 cmd = AgentCommandEvent(
@@ -111,4 +111,4 @@ Valid target agents: 'doctor_agent', 'patient_agent', 'nurse_agent', 'pharmacy_a
                     )
                 )
                 event_bus.publish(cmd)
-                print(f"🚀 [Care Coordinator Agent] Scheduled command: {action} -> patient_agent")
+                print(f"[Care Coordinator Agent] Scheduled command: {action} -> patient_agent")

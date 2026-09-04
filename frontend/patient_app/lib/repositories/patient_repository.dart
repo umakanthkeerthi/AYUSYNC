@@ -9,8 +9,8 @@ class PatientRepository {
   PatientRepository()
       : _dio = Dio(BaseOptions(
       baseUrl: 'http://16.171.226.51/api/v1/patients',
-      connectTimeout: const Duration(seconds: 3),
-      receiveTimeout: const Duration(seconds: 10),
+      connectTimeout: const Duration(seconds: 15),
+      receiveTimeout: const Duration(seconds: 30),
   ));
 
   Future<String> login(String username, String password) async {
@@ -95,9 +95,10 @@ class PatientRepository {
     await _dio.post('/$patientId/vitals', data: vitals);
   }
 
-  Future<void> uploadMedicalRecord(String patientId, String filePath) async {
+  Future<void> uploadMedicalRecord(String patientId, Uint8List fileBytes, String fileName, String category) async {
     final formData = FormData.fromMap({
-      'file': await MultipartFile.fromFile(filePath),
+      'category': category,
+      'file': MultipartFile.fromBytes(fileBytes, filename: fileName),
     });
     
     // Using a longer timeout for file uploads

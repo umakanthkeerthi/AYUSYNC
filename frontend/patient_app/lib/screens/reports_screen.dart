@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../theme/app_theme.dart';
 import '../widgets/glass_card.dart';
 import '../providers/patient_providers.dart';
@@ -154,7 +154,7 @@ class ReportsScreen extends ConsumerWidget {
                 ],
               ),
             ),
-            const Icon(LucideIcons.chevronRight, color: AppTheme.textMuted),
+            Icon(LucideIcons.chevronRight, color: AppTheme.textMuted),
           ],
         ),
       ),
@@ -171,7 +171,7 @@ class ReportsScreen extends ConsumerWidget {
       ),
       child: Row(
         children: [
-          const Icon(LucideIcons.fileText, color: AppTheme.primaryOrange, size: 20),
+          Icon(LucideIcons.fileText, color: AppTheme.primaryOrange, size: 20),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -184,7 +184,7 @@ class ReportsScreen extends ConsumerWidget {
             ),
           ),
           IconButton(
-            icon: const Icon(LucideIcons.download, size: 18, color: AppTheme.textMuted),
+            icon: Icon(LucideIcons.download, size: 18, color: AppTheme.textMuted),
             onPressed: () {},
           ),
         ],
