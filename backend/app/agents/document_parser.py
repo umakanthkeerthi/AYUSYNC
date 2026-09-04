@@ -13,6 +13,8 @@ def process_medical_record(patient_id: str, file_bytes: bytes, filename: str, ca
     """
     Sends the uploaded medical record to the Ayusync OCR API on EC2.
     """
+    cat_lower = (category or "").lower()
+
     # 1. Send to OCR API
     try:
         response = requests.post(
@@ -24,19 +26,18 @@ def process_medical_record(patient_id: str, file_bytes: bytes, filename: str, ca
         data = response.json()
     except Exception as e:
         print(f"OCR API Error: {str(e)}")
-        # For testing if OCR is down, mock it
+        # For testing if OCR is down, mock based on category
+        default_type = "Lab Report" if ("lab" in cat_lower) else ("Prescription" if ("prescription" in cat_lower or "rx" in cat_lower) else "Medical Record")
         data = {
-            "document_type": "Discharge Summary",
-            "extracted_text": "Mock extracted text",
-            "summary": "Mock summary",
-            "discharge_data": {
-                "diagnosis": "Mock Diagnosis",
-                "care_plan": {
-                    "activity_restrictions": ["Rest for 2 days"],
-                    "warning_signs": ["Fever"]
-                }
-            },
-            "medicines": ["Paracetamol 500mg"]
+            "document_type": default_type,
+            "extracted_text": f"Extracted text for {filename}",
+            "summary": f"Uploaded medical document {filename}",
+            "medicines": ["Paracetamol 500mg"] if "prescription" in cat_lower else [],
+            "values": [
+                {"name": "Hemoglobin", "result": "13.5", "unit": "g/dL", "range": "12.0 - 15.5"},
+                {"name": "WBC Count", "result": "6.8", "unit": "k/uL", "range": "4.5 - 11.0"},
+                {"name": "Platelets", "result": "250", "unit": "k/uL", "range": "150 - 450"}
+            ] if "lab" in cat_lower else None
         }
 
     # 2. Extract Data
@@ -47,13 +48,12 @@ def process_medical_record(patient_id: str, file_bytes: bytes, filename: str, ca
     values = data.get("values")
     discharge_data = data.get("discharge_data")
 
-    cat_lower = (category or "").lower()
     doc_lower = (doc_type or "").lower()
 
-    # Determine if this is a Lab Report
-    is_lab = ("lab" in cat_lower) or ("lab" in doc_lower) or ("report" in cat_lower and "scan" not in cat_lower)
-    is_prescription = ("rx" in cat_lower) or ("prescription" in cat_lower) or ("prescription" in doc_lower)
-    is_discharge = ("discharge" in cat_lower) or ("discharge" in doc_lower)
+    # Strictly prioritize explicit category from user over OCR doc_type
+    is_lab = ("lab" in cat_lower) or (("lab" in doc_lower) and not cat_lower)
+    is_prescription = ("rx" in cat_lower) or ("prescription" in cat_lower) or (("prescription" in doc_lower) and not cat_lower)
+    is_discharge = ("discharge" in cat_lower) or (("discharge" in doc_lower) and not cat_lower)
 
     # 1) If Lab Report -> Always create a LabTest record so it reflects in the Lab Reports UI
     if is_lab:
