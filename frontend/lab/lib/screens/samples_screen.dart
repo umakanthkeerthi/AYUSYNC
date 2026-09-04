@@ -42,6 +42,98 @@ class _SamplesScreenState extends State<SamplesScreen> {
     }
   }
 
+  void _showSampleDetailsDialog(BuildContext context, Map<String, dynamic> sample) {
+    final sampleId = sample['id'] ?? 'N/A';
+    final patient = sample['patient'] ?? 'Unknown Patient';
+    final testName = sample['test'] ?? 'Lab Test';
+    final type = sample['type'] ?? 'Blood';
+    final status = sample['status'] ?? 'Collected';
+
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          child: Container(
+            width: 500,
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: AppTheme.statPurple.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: const Icon(Icons.science_outlined, color: AppTheme.statPurple, size: 24),
+                        ),
+                        const SizedBox(width: 12),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(testName, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppTheme.textDark)),
+                            Text('Sample ID: $sampleId', style: const TextStyle(fontSize: 13, color: AppTheme.textSecondary)),
+                          ],
+                        ),
+                      ],
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.close, color: AppTheme.textSecondary),
+                      onPressed: () => Navigator.of(ctx).pop(),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                const Divider(),
+                const SizedBox(height: 16),
+                _buildDetailRow('Patient Name', patient),
+                const SizedBox(height: 12),
+                _buildDetailRow('Sample Type', type),
+                const SizedBox(height: 12),
+                _buildDetailRow('Collection Status', status),
+                const SizedBox(height: 12),
+                _buildDetailRow('Storage Location', 'Cold Storage - Rack B4'),
+                const SizedBox(height: 12),
+                _buildDetailRow('Handling Protocol', 'Standard Blood Specimen (2-8°C)'),
+                const SizedBox(height: 24),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () => Navigator.of(ctx).pop(),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.brandActive,
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                      ),
+                      child: const Text('Close'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildDetailRow(String label, String value) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(label, style: const TextStyle(fontSize: 13, color: AppTheme.textSecondary)),
+        Text(value, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: AppTheme.textDark)),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_isLoading) return const Scaffold(body: Center(child: CircularProgressIndicator()));
@@ -96,14 +188,9 @@ class _SamplesScreenState extends State<SamplesScreen> {
                       Color color = AppTheme.statPurple;
                       if (s['status'] == 'Completed' || s['status'] == 'Results Ready') color = Colors.green;
                       if (s['status'] == 'Collected') color = AppTheme.statBlue;
-                      return _createDataRow(
-                        s['id'] ?? 'Unknown',
-                        s['patient'] ?? 'Unknown',
-                        s['test'] ?? 'Unknown',
-                        s['type'] ?? 'Blood',
-                        s['status'] ?? 'Unknown',
-                        color
-                      );
+                      
+                      final mapItem = Map<String, dynamic>.from(s as Map);
+                      return _createDataRow(mapItem, color);
                     }).toList(),
                   ),
                 ),
@@ -115,7 +202,13 @@ class _SamplesScreenState extends State<SamplesScreen> {
     );
   }
 
-  DataRow _createDataRow(String id, String patient, String test, String type, String status, Color statusColor) {
+  DataRow _createDataRow(Map<String, dynamic> sample, Color statusColor) {
+    final id = sample['id'] ?? 'Unknown';
+    final patient = sample['patient'] ?? 'Unknown';
+    final test = sample['test'] ?? 'Unknown';
+    final type = sample['type'] ?? 'Blood';
+    final status = sample['status'] ?? 'Unknown';
+
     return DataRow(
       cells: [
         DataCell(Text(id, style: const TextStyle(fontWeight: FontWeight.w600))),
@@ -133,13 +226,14 @@ class _SamplesScreenState extends State<SamplesScreen> {
           ),
         ),
         DataCell(
-          OutlinedButton(
-            onPressed: () {},
+          OutlinedButton.icon(
+            onPressed: () => _showSampleDetailsDialog(context, sample),
             style: OutlinedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               minimumSize: Size.zero,
             ),
-            child: const Text('View Details', style: TextStyle(fontSize: 12)),
+            icon: const Icon(Icons.info_outline, size: 14),
+            label: const Text('View Details', style: TextStyle(fontSize: 12)),
           ),
         ),
       ],

@@ -148,6 +148,12 @@ class _UploadRecordScreenState extends ConsumerState<UploadRecordScreen> {
       final repo = ref.read(patientRepositoryProvider);
       await repo.uploadMedicalRecord(patientId, _imageBytes!, _fileName ?? 'document.pdf', _selectedCategory!);
       
+      // Invalidate providers so Lab Reports, Prescriptions & Reports list immediately reflect in UI
+      ref.invalidate(labTestsProvider);
+      ref.invalidate(reportsSummaryProvider);
+      ref.invalidate(dischargeSummariesProvider);
+      ref.invalidate(medicationsProvider);
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

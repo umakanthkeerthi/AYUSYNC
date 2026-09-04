@@ -102,10 +102,15 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         }
       }
       
+      // Trigger Profile Setup Welcome Call once onboarding profile setup completes
+      await repo.completeProfile(patientId);
+
       if (mounted) {
         // Refresh providers before going to home screen
         ref.invalidate(medicationsProvider);
         ref.invalidate(recoveryPlanProvider);
+        ref.invalidate(labTestsProvider);
+        ref.invalidate(reportsSummaryProvider);
         
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (_) => const MainLayout()),

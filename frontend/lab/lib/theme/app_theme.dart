@@ -32,7 +32,7 @@ class AppTheme {
         bodyColor: textDark,
         displayColor: textDark,
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: bgCard,
         elevation: 0,
         shadowColor: Colors.black.withOpacity(0.05),

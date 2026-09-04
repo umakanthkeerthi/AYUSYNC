@@ -102,7 +102,7 @@ class PharmacyTheme {
         focusedBorder: OutlineInputBorder(borderRadius: inputRadius, borderSide: const BorderSide(color: primary, width: 2)),
         hintStyle: GoogleFonts.inter(color: const Color(0xFF94A3B8), fontSize: 14),
       ),
-      dialogTheme: DialogTheme(
+      dialogTheme: DialogThemeData(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         elevation: 0,
         backgroundColor: Colors.white,

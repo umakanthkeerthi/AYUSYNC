@@ -3,7 +3,6 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../utils/theme.dart';
 import '../widgets/glass_card.dart';
-import '../widgets/modals.dart';
 import 'profile_tab.dart';
 import '../services/api_service.dart';
 
@@ -268,6 +267,8 @@ class _HomeTabState extends State<HomeTab> {
 
   Widget _buildMinimalAlertCard(BuildContext context, Map<String, dynamic> alert) {
     Color color = alert['color'] == 'amber' ? AyuTheme.amber : AyuTheme.primary;
+    String btnLabel = alert['action_type'] == 'ARRANGE_TRANSPORT' ? 'Arrange Transport' : 'Review Details';
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: GlassCard(
@@ -305,14 +306,25 @@ class _HomeTabState extends State<HomeTab> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () async {
+                  if (alert['action_type'] == 'ARRANGE_TRANSPORT') {
+                    final patient = _dashboardData?['patient'];
+                    if (patient != null) {
+                      await ApiService().arrangeTransport(widget.caregiverId, patient['id'], alert['id'] ?? '');
+                      if (!mounted) return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Transport request submitted successfully!')),
+                      );
+                    }
+                  }
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: color,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   padding: const EdgeInsets.symmetric(vertical: 14),
                 ),
-                child: Text('Review Details', style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12)),
+                child: Text(btnLabel, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12)),
               ),
             ),
           ],
@@ -336,6 +348,10 @@ class _HomeTabState extends State<HomeTab> {
           
           IconData icon = LucideIcons.checkCircle2;
           if (item['icon'] == 'activity') icon = LucideIcons.activity;
+          if (item['icon'] == 'pill') icon = LucideIcons.pill;
+          if (item['icon'] == 'fileText') icon = LucideIcons.fileText;
+          if (item['icon'] == 'calendar') icon = LucideIcons.calendar;
+          if (item['icon'] == 'messageSquare') icon = LucideIcons.messageSquare;
           
           Color color = AyuTheme.primary;
           if (item['color'] == 'green') color = AyuTheme.green;
@@ -378,6 +394,7 @@ class _HomeTabState extends State<HomeTab> {
       ],
     );
   }
+
 }
 
 

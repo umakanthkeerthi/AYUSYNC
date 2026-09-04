@@ -36,6 +36,10 @@ class PatientRepository {
     return PatientProfile.fromJson(response.data);
   }
 
+  Future<void> completeProfile(String patientId) async {
+    await _dio.post('/$patientId/complete-profile');
+  }
+
   Future<List<Condition>> getConditions(String patientId) async {
     final response = await _dio.get('/$patientId/conditions');
     return (response.data as List).map((c) => Condition.fromJson(c)).toList();

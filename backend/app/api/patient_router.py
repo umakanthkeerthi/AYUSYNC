@@ -3,7 +3,10 @@ from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from typing import List, Dict, Any, Optional
 from app.core.database_session import get_db
-from app.models.database import User, Patient, Condition, Medication, VitalSign, UserRole, CarePlan, CareTask, LabTest, ClinicalNote
+from app.models.database import (
+    User, Patient, Condition, Medication, VitalSign, UserRole, CarePlan, CareTask,
+    LabTest, ClinicalNote, AdherenceLog, AdherenceStatus, ChatThread, ChatMessage
+)
 from app.agents.chat_agent import ChatAgent
 from app.agents.document_parser import process_medical_record
 from fastapi import File, UploadFile, Form
@@ -58,6 +61,46 @@ def signup_patient(payload: SignupPayload, db: Session = Depends(get_db)):
         "patient_id": new_patient.id,
         "name": new_user.full_name
     }
+
+
+@router.post("/{patient_id}/complete-profile")
+def complete_patient_profile(patient_id: str, db: Session = Depends(get_db)):
+    """
+    Called when patient completes their profile setup / onboarding.
+    Triggers the Profile Setup AI Voice Call.
+    """
+    patient = db.query(Patient).filter(Patient.id == patient_id).first()
+    if not patient:
+        raise HTTPException(status_code=404, detail="Patient not found")
+
+    user = db.query(User).filter(User.id == patient.user_id).first()
+    phone = user.phone_number if user else "+910000000000"
+    name = user.full_name if user else "Patient"
+    if not phone.startswith("+"):
+        phone = "+91" + phone
+
+    from app.core.event_bus import event_bus
+    from app.models.events import AgentCommandEvent, EventSource, CommandPayload
+
+    welcome_cmd = AgentCommandEvent(
+        patient_id=patient_id,
+        source=EventSource.POLICY_ENGINE,
+        command=CommandPayload(
+            target_agent="patient_agent",
+            action="call_patient",
+            parameters={
+                "phone": phone,
+                "name": name,
+                "agent_instruction": f"Hello {name}! Welcome to AyuSync. Your patient profile setup has been successfully completed. AyuSync is now actively managing your care plan."
+            },
+            urgency="high"
+        )
+    )
+    event_bus.publish(welcome_cmd)
+    print(f"📱 [Patient Router] Triggered Profile Setup Welcome Call for {name} to {phone}")
+
+    return {"status": "success", "message": "Profile setup marked completed and welcome call initiated."}
+
 
 @router.post("/login")
 def login_patient(payload: LoginPayload, db: Session = Depends(get_db)):
@@ -461,3 +504,62 @@ async def upload_document(patient_id: str, category: str = Form(...), file: Uplo
         import traceback
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
+
+
+class MedicationAdherencePayload(BaseModel):
+    status: str = "TAKEN" # TAKEN or MISSED
+
+
+@router.post("/{patient_id}/medications/{medication_id}/log")
+def log_medication_adherence(patient_id: str, medication_id: str, payload: MedicationAdherencePayload, db: Session = Depends(get_db)):
+    try:
+        patient = db.query(Patient).filter(Patient.id == patient_id).first()
+        if not patient:
+            raise HTTPException(status_code=404, detail="Patient not found")
+
+        status_enum = AdherenceStatus.TAKEN if payload.status.upper() == "TAKEN" else AdherenceStatus.MISSED
+        
+        log_entry = AdherenceLog(
+            patient_id=patient_id,
+            medication_id=medication_id,
+            status=status_enum
+        )
+        db.add(log_entry)
+        db.flush()
+
+        # If caregiver exists, send system alert message to chat thread
+        if patient.caregiver_id:
+            thread = db.query(ChatThread).filter(
+                ((ChatThread.participant_1_id == patient.caregiver_id) & (ChatThread.participant_2_id == patient.user_id)) |
+                ((ChatThread.participant_1_id == patient.user_id) & (ChatThread.participant_2_id == patient.caregiver_id))
+            ).first()
+
+            if not thread:
+                thread = ChatThread(
+                    participant_1_id=patient.user_id,
+                    participant_2_id=patient.caregiver_id
+                )
+                db.add(thread)
+                db.flush()
+
+            sys_msg = ChatMessage(
+                thread_id=thread.id,
+                sender_id=patient.user_id,
+                message_text="System Alert: Patient logged medication intake."
+            )
+            db.add(sys_msg)
+
+        db.commit()
+
+        return {
+            "status": "success",
+            "message": "Medication adherence recorded.",
+            "log_id": log_entry.id
+        }
+    except HTTPException as he:
+        db.rollback()
+        raise he
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+

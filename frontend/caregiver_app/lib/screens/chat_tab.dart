@@ -3,7 +3,6 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../utils/theme.dart';
 import 'dart:ui';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../widgets/glass_card.dart';
 
 class ChatTab extends StatelessWidget {
   const ChatTab({super.key});
