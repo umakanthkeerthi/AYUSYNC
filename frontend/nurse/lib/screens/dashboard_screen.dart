@@ -16,11 +16,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
   bool _isLoading = true;
   String _error = '';
   Map<String, dynamic> _dashboardData = {
-    'urgent_count': 0,
-    'followup_count': 0,
-    'ontrack_count': 0,
-    'total_patients': 0,
-    'queue': []
+    'metrics': {
+      'urgent_count': 0,
+      'follow_up_count': 0,
+      'on_track_count': 0,
+      'total_patients': 0
+    },
+    'patient_queue': []
   };
 
   @override
@@ -34,7 +36,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       final response = await http.get(Uri.parse('http://127.0.0.1:8001/api/v1/nurse/dashboard'));
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        if (data['status'] == 'success') {
+        if (data.containsKey('metrics')) {
           setState(() {
             _dashboardData = data;
             _isLoading = false;
@@ -55,11 +57,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
     if (_isLoading) return const Scaffold(body: Center(child: CircularProgressIndicator()));
     if (_error.isNotEmpty) return Scaffold(body: Center(child: Text(_error, style: TextStyle(color: Colors.red))));
 
-    final urgent = _dashboardData['urgent_count']?.toString() ?? '0';
-    final followup = _dashboardData['followup_count']?.toString() ?? '0';
-    final ontrack = _dashboardData['ontrack_count']?.toString() ?? '0';
-    final total = _dashboardData['total_patients']?.toString() ?? '0';
-    final queue = _dashboardData['queue'] as List<dynamic>? ?? [];
+    final metrics = _dashboardData['metrics'] as Map<String, dynamic>? ?? {};
+    final urgent = metrics['urgent_count']?.toString() ?? '0';
+    final followup = metrics['follow_up_count']?.toString() ?? '0';
+    final ontrack = metrics['on_track_count']?.toString() ?? '0';
+    final total = metrics['total_patients']?.toString() ?? '0';
+    final queue = _dashboardData['patient_queue'] as List<dynamic>? ?? [];
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24.0),
@@ -147,7 +150,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       return _PatientQueueRow(
                         name: item['patient_name'] ?? 'Unknown',
                         severity: item['severity'] ?? 'LOW',
-                        time: item['created_at'] ?? '',
+                        time: item['added_time'] ?? '',
+                        reason: item['reason'] ?? 'Triage Review',
                       );
                     },
                   )
@@ -209,20 +213,15 @@ class _PatientQueueRow extends StatelessWidget {
   final String name;
   final String severity;
   final String time;
+  final String reason;
   
-  const _PatientQueueRow({required this.name, required this.severity, required this.time});
+  const _PatientQueueRow({required this.name, required this.severity, required this.time, this.reason = 'Triage Review'});
 
   @override
   Widget build(BuildContext context) {
     bool isUrgent = severity == 'HIGH';
     
     String formattedTime = time;
-    try {
-      if (time.isNotEmpty) {
-        final dt = DateTime.parse(time);
-        formattedTime = DateFormat('h:mm a').format(dt);
-      }
-    } catch (_) {}
 
     return InkWell(
       onTap: () {},
@@ -245,7 +244,7 @@ class _PatientQueueRow extends StatelessWidget {
                       children: [
                         Text(name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                         SizedBox(height: 4),
-                        Text('Triage Review', style: TextStyle(color: Theme.of(context).hintColor, fontSize: 14)),
+                        Text(reason, style: TextStyle(color: Theme.of(context).hintColor, fontSize: 14)),
                         SizedBox(height: 4),
                         Row(
                           children: [

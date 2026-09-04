@@ -15,7 +15,11 @@ class TasksScreen extends StatefulWidget {
 class _TasksScreenState extends State<TasksScreen> {
   bool _isLoading = true;
   String _error = '';
-  List<dynamic> _tasks = [];
+  Map<String, dynamic> _tasks = {
+    'pending': [],
+    'in_progress': [],
+    'completed': []
+  };
 
   @override
   void initState() {
@@ -28,9 +32,9 @@ class _TasksScreenState extends State<TasksScreen> {
       final response = await http.get(Uri.parse('http://127.0.0.1:8001/api/v1/nurse/tasks'));
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        if (data['status'] == 'success') {
+        if (data.containsKey('pending')) {
           setState(() {
-            _tasks = data['tasks'] ?? [];
+            _tasks = data;
             _isLoading = false;
           });
         } else {
@@ -49,9 +53,9 @@ class _TasksScreenState extends State<TasksScreen> {
     if (_isLoading) return const Scaffold(body: Center(child: CircularProgressIndicator()));
     if (_error.isNotEmpty) return Scaffold(body: Center(child: Text(_error, style: TextStyle(color: Colors.red))));
 
-    final pending = _tasks.where((t) => t['status'] == 'Pending').toList();
-    final inProgress = _tasks.where((t) => t['status'] == 'In Progress').toList();
-    final completed = _tasks.where((t) => t['status'] == 'Completed').toList();
+    final pending = _tasks['pending'] as List<dynamic>? ?? [];
+    final inProgress = _tasks['in_progress'] as List<dynamic>? ?? [];
+    final completed = _tasks['completed'] as List<dynamic>? ?? [];
 
     return ResponsiveBuilder(
       builder: (context, sizingInformation) {
@@ -161,8 +165,8 @@ class _TasksScreenState extends State<TasksScreen> {
                 return _TaskCard(
                   description: task['description'] ?? 'No Description',
                   patientName: task['patient_name'] ?? 'Unknown',
-                  time: task['due_time'] ?? '',
-                  type: task['type'] ?? 'CARE_TASK',
+                  time: task['time'] ?? '',
+                  type: task['tag'] ?? 'CARE_TASK',
                 );
               },
             )
@@ -188,12 +192,6 @@ class _TaskCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String formattedTime = time;
-    try {
-      if (time.isNotEmpty) {
-        final dt = DateTime.parse(time);
-        formattedTime = DateFormat('h:mm a').format(dt);
-      }
-    } catch (_) {}
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -209,11 +207,17 @@ class _TaskCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(child: Text(description, style: TextStyle(fontWeight: FontWeight.w600))),
-              if (type == 'TRIAGE')
+              if (type == 'Triage')
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(color: const Color(0xFFFEE2E2), borderRadius: BorderRadius.circular(4)),
                   child: Text('Triage', style: TextStyle(color: AppTheme.colorUrgent, fontSize: 10, fontWeight: FontWeight.bold)),
+                )
+              else if (type != 'CARE_TASK' && type != null)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(color: AppTheme.colorTotal.withOpacity(0.1), borderRadius: BorderRadius.circular(4)),
+                  child: Text(type, style: TextStyle(color: AppTheme.colorTotal, fontSize: 10, fontWeight: FontWeight.bold)),
                 )
             ],
           ),

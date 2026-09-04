@@ -102,7 +102,7 @@ class _PatientsScreenState extends State<PatientsScreen> {
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
                                       Expanded(child: Text(patient['name'], style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14), maxLines: 1, overflow: TextOverflow.ellipsis)),
-                                      _buildSeverityBadge(patient['severity'] ?? 'STABLE'),
+                                      _buildSeverityBadge(patient['status'] ?? 'STABLE'),
                                     ],
                                   ),
                                   Text('${patient['age']} yrs • Blood: ${patient['blood_type']}', style: TextStyle(color: Theme.of(context).hintColor, fontSize: 11)),
@@ -117,8 +117,8 @@ class _PatientsScreenState extends State<PatientsScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            _buildVital('Heart Rate', '${patient['heart_rate']} bpm', Icons.favorite, Colors.red),
-                            _buildVital('BP', patient['blood_pressure'], Icons.bloodtype, Colors.blue),
+                            _buildVital('Heart Rate', '${patient['vitals']?['heart_rate'] ?? '--'} bpm', Icons.favorite, Colors.red),
+                            _buildVital('BP', patient['vitals']?['blood_pressure'] ?? '--/--', Icons.bloodtype, Colors.blue),
                           ],
                         )
                       ],

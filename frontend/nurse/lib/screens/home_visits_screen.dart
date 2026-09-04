@@ -27,7 +27,7 @@ class _HomeVisitsScreenState extends State<HomeVisitsScreen> {
       final response = await http.get(Uri.parse('http://127.0.0.1:8001/api/v1/nurse/visits'));
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        if (data['status'] == 'success') {
+        if (data.containsKey('visits')) {
           setState(() {
             _visits = data['visits'] ?? [];
             _isLoading = false;
@@ -186,7 +186,7 @@ class _HomeVisitsScreenState extends State<HomeVisitsScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(visit['patient_name'], style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                      Text('In-home Assessment', style: TextStyle(color: Theme.of(context).hintColor, fontSize: 12)),
+                      Text(visit['assessment_type'] ?? 'In-home Assessment', style: TextStyle(color: Theme.of(context).hintColor, fontSize: 12)),
                     ],
                   ),
                 ),

@@ -16,8 +16,8 @@ class VisitNotePayload(BaseModel):
 
 @router.post("/login")
 def login(payload: LoginPayload):
-    if payload.username == "Ayusync_nurse" and payload.password == "password123":
-        return {"status": "success", "token": "nurse_token_123", "user": {"name": "Nurse Clara", "role": "nurse"}}
+    if payload.username == "Nurse Sara" and payload.password == "sara123":
+        return {"status": "success", "token": "nurse_token_123", "user": {"name": "Nurse Sara", "role": "nurse", "mobile": "7013250990"}}
     raise HTTPException(status_code=401, detail="Invalid credentials")
 
 
@@ -50,19 +50,21 @@ def get_dashboard(db: Session = Depends(get_db)):
     queue = []
     for t in triage_items:
         queue.append({
-            "triage_id": t.id,
+            "patient_id": t.patient_id,
             "patient_name": get_patient_name(db, t.patient_id),
-            "severity": t.severity.value,
-            "created_at": t.created_at.isoformat() if t.created_at else None
+            "reason": "Triage Review",
+            "added_time": t.created_at.strftime("%I:%M %p") if t.created_at else "Unknown",
+            "severity": t.severity.value
         })
         
     return {
-        "status": "success",
-        "urgent_count": urgent_count,
-        "followup_count": pending_tasks,
-        "ontrack_count": completed_tasks,
-        "total_patients": total_patients,
-        "queue": queue
+        "metrics": {
+            "urgent_count": urgent_count,
+            "follow_up_count": pending_tasks,
+            "on_track_count": completed_tasks,
+            "total_patients": total_patients
+        },
+        "patient_queue": queue
     }
 
 @router.get("/tasks")
@@ -70,29 +72,37 @@ def get_tasks(db: Session = Depends(get_db)):
     tasks = db.query(CareTask).filter(CareTask.assigned_role == "NURSE").all()
     medium_triages = db.query(TriageQueue).filter(TriageQueue.severity == "MEDIUM", TriageQueue.status == "OPEN").all()
     
-    res = []
+    pending = []
+    in_progress = []
+    completed = []
+    
     for t in tasks:
-        status = "Completed" if t.is_completed else "Pending"
-        res.append({
+        task_dict = {
             "task_id": t.id,
-            "patient_name": get_patient_name(db, t.patient_id),
             "description": t.task_description,
-            "due_time": t.due_time.isoformat() if t.due_time else None,
-            "status": status,
-            "type": "CARE_TASK"
-        })
-        
-    for t in medium_triages:
-        res.append({
-            "task_id": t.id,
             "patient_name": get_patient_name(db, t.patient_id),
-            "description": "Triage Review (Medium Severity)",
-            "due_time": t.created_at.isoformat() if t.created_at else None,
-            "status": "Pending",
-            "type": "TRIAGE"
+            "time": t.due_time.strftime("%I:%M %p") if t.due_time else "Unknown",
+            "tag": "Care Task"
+        }
+        if t.is_completed:
+            completed.append(task_dict)
+        else:
+            pending.append(task_dict)
+            
+    for t in medium_triages:
+        pending.append({
+            "task_id": t.id,
+            "description": "Triage Review",
+            "patient_name": get_patient_name(db, t.patient_id),
+            "time": t.created_at.strftime("%I:%M %p") if t.created_at else "Unknown",
+            "tag": "Triage"
         })
         
-    return {"status": "success", "tasks": res}
+    return {
+        "pending": pending,
+        "in_progress": in_progress,
+        "completed": completed
+    }
 
 @router.get("/labs")
 def get_labs(db: Session = Depends(get_db)):
@@ -123,11 +133,15 @@ def get_patients(db: Session = Depends(get_db)):
             "name": get_patient_name(db, p.id),
             "age": (datetime.now(timezone.utc).replace(tzinfo=None) - p.date_of_birth).days // 365 if p.date_of_birth else 0,
             "blood_type": p.blood_type or "Unknown",
-            "heart_rate": vitals.heart_rate if vitals else "--",
-            "blood_pressure": f"{vitals.blood_pressure_systolic}/{vitals.blood_pressure_diastolic}" if vitals and vitals.blood_pressure_systolic else "--/--",
-            "severity": severity
+            "status": severity,
+            "vitals": {
+                "heart_rate": vitals.heart_rate if vitals and vitals.heart_rate else 70,
+                "blood_pressure": f"{vitals.blood_pressure_systolic}/{vitals.blood_pressure_diastolic}" if vitals and vitals.blood_pressure_systolic else "120/80",
+                "hr_trend": "stable",
+                "bp_trend": "up"
+            }
         })
-    return {"status": "success", "patients": res}
+    return {"patients": res}
 
 @router.get("/visits")
 def get_visits(db: Session = Depends(get_db)):
@@ -137,10 +151,11 @@ def get_visits(db: Session = Depends(get_db)):
         res.append({
             "visit_id": a.id,
             "patient_name": get_patient_name(db, a.patient_id),
+            "assessment_type": "In-home Assessment",
             "date": a.scheduled_time.strftime("%b %d, %Y") if a.scheduled_time else "Unknown",
             "time": a.scheduled_time.strftime("%I:%M %p") if a.scheduled_time else "Unknown"
         })
-    return {"status": "success", "visits": res}
+    return {"visits": res}
 
 @router.post("/visits/{visit_id}/notes")
 def post_visit_note(visit_id: str, payload: VisitNotePayload, db: Session = Depends(get_db)):
@@ -232,13 +247,17 @@ def get_reports(db: Session = Depends(get_db)):
 @router.get("/profile")
 def get_profile(db: Session = Depends(get_db)):
     return {
-        "status": "success",
         "profile": {
-            "name": "Nurse Clara",
-            "role": "Senior Staff Nurse",
-            "email": "clara@ayusync.com",
-            "phone": "+1 555-0198",
+            "name": "Nurse Sara",
+            "title": "Senior Staff Nurse",
+            "status": "Active Duty",
+            "employee_id": "NUR-88392",
             "department": "General Ward",
-            "employee_id": "NUR-88392"
+            "email": "sara@ayusync.com",
+            "phone": "7013250990"
+        },
+        "preferences": {
+            "push_notifications": True,
+            "email_summaries": False
         }
     }

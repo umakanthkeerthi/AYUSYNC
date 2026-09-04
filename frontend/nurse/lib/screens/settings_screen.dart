@@ -14,6 +14,7 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   Map<String, dynamic> _profile = {};
+  Map<String, dynamic> _preferences = {};
   bool _isLoading = true;
   String _errorMessage = '';
 
@@ -30,6 +31,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         final data = json.decode(response.body);
         setState(() {
           _profile = data['profile'] ?? {};
+          _preferences = data['preferences'] ?? {};
           _isLoading = false;
         });
       } else {
@@ -87,7 +89,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(_profile['name'] ?? 'Unknown', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                                  Text(_profile['role'] ?? 'Nurse', style: TextStyle(fontSize: 16, color: Theme.of(context).hintColor)),
+                                  Text(_profile['title'] ?? 'Nurse', style: TextStyle(fontSize: 16, color: Theme.of(context).hintColor)),
                                   SizedBox(height: 8),
                                   Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
@@ -95,7 +97,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                       color: AppTheme.colorOnTrack.withOpacity(0.1),
                                       borderRadius: BorderRadius.circular(16),
                                     ),
-                                    child: Text('Active Duty', style: TextStyle(color: AppTheme.colorOnTrack, fontWeight: FontWeight.bold, fontSize: 12)),
+                                    child: Text(_profile['status'] ?? 'Active Duty', style: TextStyle(color: AppTheme.colorOnTrack, fontWeight: FontWeight.bold, fontSize: 12)),
                                   ),
                                 ],
                               ),
@@ -126,13 +128,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             SizedBox(height: 24),
                             SwitchListTile(
                               title: Text('Push Notifications'),
-                              value: true,
+                              value: _preferences['push_notifications'] ?? true,
                               onChanged: (val) {},
                               activeColor: AppTheme.brandPrimary,
                             ),
                             SwitchListTile(
                               title: Text('Email Summaries'),
-                              value: false,
+                              value: _preferences['email_summaries'] ?? false,
                               onChanged: (val) {},
                               activeColor: AppTheme.brandPrimary,
                             ),
