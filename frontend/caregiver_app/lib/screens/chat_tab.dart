@@ -194,7 +194,11 @@ class ChatTab extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         if (!isMe && avatarUrl != null) ...[
-          CircleAvatar(radius: 16, backgroundImage: NetworkImage(avatarUrl)),
+          CircleAvatar(
+            radius: 16,
+            backgroundColor: AyuTheme.primary.withOpacity(0.1),
+            child: const Icon(LucideIcons.user, size: 16, color: AyuTheme.primary),
+          ),
           const SizedBox(width: 8),
         ],
         if (!isMe && avatarUrl == null) const SizedBox(width: 40),

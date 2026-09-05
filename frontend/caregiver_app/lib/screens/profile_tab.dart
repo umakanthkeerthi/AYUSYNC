@@ -92,15 +92,16 @@ class ProfileTab extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(4),
               decoration: const BoxDecoration(color: AyuTheme.bgApp, shape: BoxShape.circle),
-              child: const CircleAvatar(
+              child: CircleAvatar(
                 radius: 48,
-                backgroundImage: NetworkImage('https://images.unsplash.com/photo-1590611936760-eeb9bc5031ce?auto=format&fit=crop&w=300&q=80'),
+                backgroundColor: AyuTheme.primary.withOpacity(0.1),
+                child: const Icon(LucideIcons.user, size: 48, color: AyuTheme.primary),
               ),
             ),
           ),
           const SizedBox(height: 16),
           const Text(
-            'Priya Kumar',
+            'Giri',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: AyuTheme.textMain),
           ),
           const SizedBox(height: 4),
@@ -112,7 +113,7 @@ class ProfileTab extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
             decoration: BoxDecoration(color: AyuTheme.border.withOpacity(0.5), borderRadius: BorderRadius.circular(20)),
-            child: const Text('Relationship: Daughter', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AyuTheme.textMuted)),
+            child: const Text('Relationship: Son', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AyuTheme.textMuted)),
           ),
         ],
       ),

@@ -76,7 +76,7 @@ class _HomeTabState extends State<HomeTab> {
           const SizedBox(height: 12),
           _buildHeroHeader(context, patient),
           const SizedBox(height: 32),
-          _buildSectionTitle('At a Glance'),
+          _buildSectionTitle('Overview'),
           const SizedBox(height: 16),
           _buildGlanceGrid(glance),
           const SizedBox(height: 32),
@@ -100,106 +100,109 @@ class _HomeTabState extends State<HomeTab> {
   Widget _buildHeroHeader(BuildContext context, Map<String, dynamic> patient) {
     Color vitalsColor = patient['vitals_color'] == 'green' ? AyuTheme.green : AyuTheme.amber;
     
-    return GlassCard(
-      padding: const EdgeInsets.all(24),
-      color: AyuTheme.primary.withValues(alpha: 0.15),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Caring for',
-                    style: TextStyle(
-                      color: AyuTheme.primary,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 0.5,
-                    ),
-                  ).animate().fadeIn().slideX(begin: -0.2),
-                  const SizedBox(height: 4),
-                  Text(
-                    patient['name'],
-                    style: const TextStyle(
-                      color: AyuTheme.textMain,
-                      fontSize: 28,
-                      fontWeight: FontWeight.w800,
-                      fontFamily: 'Outfit',
-                    ),
-                  ),
-                ],
-              ),
-              GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const ProfileTab()),
-                  );
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: AyuTheme.primary, width: 2),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AyuTheme.primary.withOpacity(0.3),
-                        blurRadius: 12,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: CircleAvatar(
-                    radius: 26,
-                    backgroundImage: NetworkImage(patient['photo_url']),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              color: AyuTheme.surface.withOpacity(0.8),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AyuTheme.border),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  width: 8,
-                  height: 8,
-                  decoration: BoxDecoration(
-                    color: vitalsColor,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  patient['vitals_status'],
+                const Text(
+                  'Caring For',
                   style: TextStyle(
-                    color: vitalsColor,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 12,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Text(
-                  'Updated ${patient['last_updated']}',
-                  style: const TextStyle(
                     color: AyuTheme.textMuted,
-                    fontSize: 11,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ).animate().fadeIn().slideX(begin: -0.2),
+                const SizedBox(height: 4),
+                Text(
+                  patient['name'],
+                  style: const TextStyle(
+                    color: AyuTheme.textMain,
+                    fontSize: 28,
+                    fontWeight: FontWeight.w800,
+                    fontFamily: 'Outfit',
                   ),
                 ),
               ],
             ),
-          )
-        ],
-      ),
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ProfileTab()),
+                );
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: AyuTheme.primary.withOpacity(0.4),
+                      blurRadius: 15,
+                      spreadRadius: -2,
+                    ),
+                  ],
+                ),
+                child: CircleAvatar(
+                  radius: 32,
+                  backgroundColor: AyuTheme.primary.withOpacity(0.1),
+                  child: const Icon(LucideIcons.user, size: 32, color: AyuTheme.primary),
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: AyuTheme.border.withOpacity(0.3)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.02),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 8,
+                height: 8,
+                decoration: BoxDecoration(
+                  color: vitalsColor,
+                  shape: BoxShape.circle,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                patient['vitals_status'],
+                style: TextStyle(
+                  color: vitalsColor,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 13,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                'Updated ${patient['last_updated']}',
+                style: const TextStyle(
+                  color: AyuTheme.textMuted,
+                  fontSize: 12,
+                ),
+              ),
+            ],
+          ),
+        )
+      ],
     );
   }
 
@@ -236,28 +239,39 @@ class _HomeTabState extends State<HomeTab> {
   }
 
   Widget _buildMinimalGlanceCard(IconData icon, String title, String status, Color color) {
-    return GlassCard(
-      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 10),
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withOpacity(0.12),
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: color, size: 24),
+            child: Icon(icon, color: color, size: 28),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
           Text(
             title,
-            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: AyuTheme.textMain),
+            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: AyuTheme.textMain),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 6),
           Text(
             status,
-            style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: color),
+            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: color),
             textAlign: TextAlign.center,
           ),
         ],
@@ -271,38 +285,41 @@ class _HomeTabState extends State<HomeTab> {
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
-      child: GlassCard(
-        padding: const EdgeInsets.all(16),
-        color: color.withOpacity(0.12),
-        borderColor: color.withOpacity(0.3),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: AyuTheme.primary.withOpacity(0.12),
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: AyuTheme.primary.withOpacity(0.3)),
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: color.withOpacity(0.2),
+                  padding: const EdgeInsets.all(10),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(LucideIcons.alertTriangle, color: color, size: 20),
+                  child: Icon(LucideIcons.alertTriangle, color: AyuTheme.amber, size: 24),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 16),
                 Expanded(
                   child: Text(
                     alert['text'],
                     style: const TextStyle(
                       color: AyuTheme.textMain,
                       fontWeight: FontWeight.w700,
-                      fontSize: 12,
+                      fontSize: 14,
                       height: 1.4,
                     ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -319,12 +336,13 @@ class _HomeTabState extends State<HomeTab> {
                   }
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: color,
+                  backgroundColor: AyuTheme.primary,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  elevation: 0,
                 ),
-                child: Text(btnLabel, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12)),
+                child: Text(btnLabel, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
               ),
             ),
           ],
@@ -339,8 +357,19 @@ class _HomeTabState extends State<HomeTab> {
       return const Text("No recent activity.", style: TextStyle(color: AyuTheme.textMuted));
     }
     
-    return GlassCard(
-      padding: const EdgeInsets.all(16),
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
       child: Column(
         children: validItems.asMap().entries.map((entry) {
           int idx = entry.key;
@@ -363,7 +392,7 @@ class _HomeTabState extends State<HomeTab> {
               if (idx < validItems.length - 1)
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16),
-                  child: Divider(color: AyuTheme.border.withOpacity(0.5), height: 1),
+                  child: Divider(color: AyuTheme.border.withOpacity(0.3), height: 1),
                 ),
             ],
           );
@@ -376,21 +405,21 @@ class _HomeTabState extends State<HomeTab> {
     return Row(
       children: [
         Container(
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: iconColor.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(10),
+            color: iconColor.withOpacity(0.12),
+            borderRadius: BorderRadius.circular(12),
           ),
-          child: Icon(icon, color: iconColor, size: 20),
+          child: Icon(icon, color: iconColor, size: 22),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: 16),
         Expanded(
           child: Text(
             title,
-            style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12, color: AyuTheme.textMain),
+            style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: AyuTheme.textMain),
           ),
         ),
-        Text(time, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AyuTheme.textMuted)),
+        Text(time, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AyuTheme.textMuted)),
       ],
     );
   }

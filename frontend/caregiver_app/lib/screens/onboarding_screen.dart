@@ -16,25 +16,21 @@ class OnboardingScreen extends StatefulWidget {
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
   final _formKey = GlobalKey<FormState>();
-  String _name = '';
-  String _phone = '';
+  String _username = '';
   String _password = '';
-  String _patientId = '';
   bool _isLoading = false;
 
-  Future<void> _registerCaregiver() async {
+  Future<void> _loginCaregiver() async {
     if (!_formKey.currentState!.validate()) return;
     _formKey.currentState!.save();
     setState(() => _isLoading = true);
 
     try {
       final response = await http.post(
-        Uri.parse('http://127.0.0.1:8000/api/v1/caregivers/register'),
+        Uri.parse('http://127.0.0.1:8000/api/v1/caregivers/login'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
-          'patient_id': _patientId,
-          'full_name': _name,
-          'phone_number': _phone,
+          'username': _username,
           'password': _password
         }),
       );
@@ -48,7 +44,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           MaterialPageRoute(builder: (context) => MainLayout(caregiverId: data['caregiver_id'])),
         );
       } else {
-        _showError(data['detail'] ?? 'Registration failed.');
+        _showError(data['detail'] ?? 'Login failed.');
       }
     } catch (e) {
       _showError('Network error connecting to AyuSync Backend.');
@@ -123,19 +119,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           ).animate().fadeIn(delay: 100.ms),
                           const SizedBox(height: 32),
                           
-                          _buildTextField(LucideIcons.user, "Full Name", (val) => _name = val!),
-                          const SizedBox(height: 16),
-                          _buildTextField(LucideIcons.phone, "Phone Number", (val) => _phone = val!),
+                          _buildTextField(LucideIcons.user, "Username", (val) => _username = val!),
                           const SizedBox(height: 16),
                           _buildTextField(LucideIcons.lock, "Password", (val) => _password = val!, isObscure: true),
-                          const SizedBox(height: 16),
-                          _buildTextField(LucideIcons.fingerprint, "Unique Patient ID", (val) => _patientId = val!),
                           
                           const SizedBox(height: 32),
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
-                              onPressed: _isLoading ? null : _registerCaregiver,
+                              onPressed: _isLoading ? null : _loginCaregiver,
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AyuTheme.primary,
                                 padding: const EdgeInsets.symmetric(vertical: 16),
@@ -146,7 +138,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               ),
                               child: _isLoading 
                                 ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                                : const Text("Link Account", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+                                : const Text("Login", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
                             ),
                           ).animate().slideY(begin: 0.5, delay: 300.ms),
                         ],

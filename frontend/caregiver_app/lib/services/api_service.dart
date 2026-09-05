@@ -3,8 +3,8 @@ import 'package:http/http.dart' as http;
 
 class ApiService {
   // AWS EC2 Backend IP: http://16.171.226.51/api/v1
-  // Local Development: http://localhost:8000/api/v1
-  static const String baseUrl = 'http://16.171.226.51/api/v1';
+  // Local Development: http://127.0.0.1:8000/api/v1
+  static const String baseUrl = 'http://127.0.0.1:8000/api/v1';
   
   Future<Map<String, dynamic>> getDashboardData(String caregiverId) async {
     try {

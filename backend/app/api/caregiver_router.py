@@ -19,6 +19,10 @@ class CaregiverRegistration(BaseModel):
     phone_number: str
     password: str
 
+class CaregiverLogin(BaseModel):
+    username: str
+    password: str
+
 class TransportRequest(BaseModel):
     patient_id: str
     alert_id: Optional[str] = None
@@ -37,6 +41,24 @@ class MessageSendPayload(BaseModel):
 class ProfileUpdatePayload(BaseModel):
     language: Optional[str] = "English (US)"
     notifications: Optional[str] = "All enabled"
+
+
+@router.post("/login")
+def login_caregiver(payload: CaregiverLogin, db: Session = Depends(get_db)):
+    try:
+        user = db.query(User).filter(User.username == payload.username, User.role == UserRole.CAREGIVER).first()
+        if not user or user.hashed_password != payload.password:
+            raise HTTPException(status_code=401, detail="Invalid username or password.")
+            
+        return {
+            "status": "success",
+            "message": "Caregiver authenticated successfully.",
+            "caregiver_id": user.id
+        }
+    except HTTPException as he:
+        raise he
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.post("/register")
