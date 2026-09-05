@@ -37,7 +37,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://127.0.0.1:8000/api/v1/doctor/login'),
+        Uri.parse('http://16.171.226.51/api/v1/doctor/login'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
           'username': username,
@@ -65,7 +65,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       }
     } catch (e) {
       setState(() {
-        _errorMessage = 'Network error. Please try again.';
+        _errorMessage = 'Error: $e';
       });
     } finally {
       if (mounted) {

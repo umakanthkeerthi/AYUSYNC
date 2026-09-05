@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../theme/app_theme.dart';
 import '../providers/auth_provider.dart';
+import '../widgets/patient_details_dialog.dart';
 
 class PatientsScreen extends ConsumerStatefulWidget {
   const PatientsScreen({Key? key}) : super(key: key);
@@ -35,7 +36,7 @@ class _PatientsScreenState extends ConsumerState<PatientsScreen> {
 
     try {
       final response = await http.get(
-        Uri.parse('http://127.0.0.1:8000/api/v1/doctor/roster?doctor_id=$doctorId'),
+        Uri.parse('http://16.171.226.51/api/v1/doctor/roster?doctor_id=$doctorId'),
       );
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -135,6 +136,7 @@ class _PatientsScreenState extends ConsumerState<PatientsScreen> {
                             DataColumn(label: Text('Action')),
                           ],
                           rows: _patients.map((p) => _buildRow(
+                            p['patient_id']?.toString() ?? '',
                             p['name']?.toString() ?? 'Unknown',
                             p['age']?.toString() ?? 'Unknown',
                             p['status']?.toString() ?? 'Unknown',
@@ -149,7 +151,7 @@ class _PatientsScreenState extends ConsumerState<PatientsScreen> {
     );
   }
 
-  DataRow _buildRow(String name, String age, String status, int score, bool isHighRisk) {
+  DataRow _buildRow(String patientId, String name, String age, String status, int score, bool isHighRisk) {
     Color statusColor;
     if (status == 'Stable') statusColor = AppTheme.colorSuccess;
     else if (status == 'Monitoring') statusColor = AppTheme.colorWarning;
@@ -190,7 +192,15 @@ class _PatientsScreenState extends ConsumerState<PatientsScreen> {
         ),
         DataCell(
           TextButton(
-            onPressed: () {},
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) => PatientDetailsDialog(
+                  patientId: patientId,
+                  patientName: name,
+                ),
+              );
+            },
             child: const Text('View Profile'),
           )
         ),

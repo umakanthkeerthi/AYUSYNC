@@ -39,24 +39,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       'icon': LucideIcons.fileText,
       'color': Colors.blue,
     },
-    {
-      'id': 'prescription',
-      'title': 'Prescription',
-      'icon': LucideIcons.pill,
-      'color': AppTheme.primaryOrange,
-    },
-    {
-      'id': 'lab_report',
-      'title': 'Lab Report',
-      'icon': LucideIcons.testTube,
-      'color': Colors.purple,
-    },
-    {
-      'id': 'scans',
-      'title': 'Medical Scans',
-      'icon': LucideIcons.scan,
-      'color': Colors.teal,
-    },
   ];
 
   Future<void> _pickFile(String categoryId) async {

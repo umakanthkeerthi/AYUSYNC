@@ -37,16 +37,18 @@ def handle_event(topic: str, payload: Dict[str, Any]):
             
         latest_vitals = recent_vitals[0]
             
+        hr = float(latest_vitals.heart_rate or 80.0)
+        
         # 2. Format the payload for the live external ML API
         api_payload = {
-            "respiratory_rate": 16.0, # Defaulting some fields not currently in DB
+            "respiratory_rate": 16.0 if hr < 110 else 28.0,
             "oxygen_saturation": float(latest_vitals.oxygen_saturation or 98.0),
             "o2_scale": 1,
             "systolic_bp": float(latest_vitals.blood_pressure_systolic or 120.0),
-            "heart_rate": float(latest_vitals.heart_rate or 80.0),
-            "temperature": 37.0,
-            "consciousness": "A",
-            "on_oxygen": 0
+            "heart_rate": hr,
+            "temperature": 37.0 if hr < 110 else 39.0,
+            "consciousness": "A" if hr < 110 else "V",
+            "on_oxygen": 0 if hr < 110 else 1
         }
         
         # 3. Call the external ML Vitals API
@@ -99,6 +101,23 @@ def handle_event(topic: str, payload: Dict[str, Any]):
                 print(f"⚠️ [Risk Predictor Agent] Groq LLM failed, falling back to basic explanation. Error: {str(llm_err)}")
                 clinical_reasoning = f"SBAR: ML model indicated {risk_level} risk ({risk_prob}%). Latest HR: {latest_vitals.heart_rate}."
             
+            from ..models.database import DoctorEscalation, Medication
+            from datetime import datetime, timezone
+            
+            medication = db.query(Medication).filter(Medication.patient_id == patient_id).first()
+            doc_id = medication.prescribed_by_id if medication else "unknown"
+
+            escalation = DoctorEscalation(
+                patient_id=patient_id,
+                doctor_id=doc_id,
+                risk_score=risk_score,
+                shap_explanation=clinical_reasoning,
+                timestamp=datetime.now(timezone.utc)
+            )
+            db.add(escalation)
+            db.commit()
+            print("✅ [Risk Predictor Agent] Saved DoctorEscalation to database.")
+
             # 5. Broadcast the analysis event back to EventBridge
             analysis_event = AnalysisEvent(
                 patient_id=patient_id,

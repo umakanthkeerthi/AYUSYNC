@@ -29,7 +29,7 @@ class _CaseReviewScreenState extends State<CaseReviewScreen> {
   Future<void> _fetchCaseDetails() async {
     try {
       final response = await http.get(
-        Uri.parse('http://127.0.0.1:8000/api/v1/doctor/patient/${widget.patientId}/review'),
+        Uri.parse('http://16.171.226.51/api/v1/doctor/patient/${widget.patientId}/review'),
       );
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -60,7 +60,7 @@ class _CaseReviewScreenState extends State<CaseReviewScreen> {
     
     try {
       final response = await http.post(
-        Uri.parse('http://127.0.0.1:8000/api/v1/doctor/patient/${widget.patientId}/note'),
+        Uri.parse('http://16.171.226.51/api/v1/doctor/patient/${widget.patientId}/note'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({'content': _noteController.text.trim()}),
       );

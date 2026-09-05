@@ -39,17 +39,17 @@ def handle_event(topic: str, payload: Dict[str, Any]):
             except:
                 pass
                 
-        if needs_risk_assessment:
-            print(f"⚠️ [Monitoring Agent] Detected anomaly: {reason} -> Triggering Risk Assessment!")
-            trigger_event = TriggerEvent(
-                patient_id=patient_id,
-                source=EventSource.MONITORING_AGENT,
-                topic="trigger.risk_assessment",
-                trigger=TriggerPayload(
-                    trigger_type="risk_assessment",
-                    reason=reason.strip()
-                )
+        if not reason:
+            reason = "Vitals check"
+            
+        print(f"⚠️ [Monitoring Agent] Triggering Risk Assessment. Reason: {reason}")
+        trigger_event = TriggerEvent(
+            patient_id=patient_id,
+            source=EventSource.MONITORING_AGENT,
+            topic="trigger.risk_assessment",
+            trigger=TriggerPayload(
+                trigger_type="risk_assessment",
+                reason=reason.strip()
             )
-            event_bus.publish(trigger_event)
-        else:
-            print("✅ [Monitoring Agent] Vitals are normal. No AI models needed.")
+        )
+        event_bus.publish(trigger_event)

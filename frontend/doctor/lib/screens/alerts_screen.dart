@@ -37,7 +37,7 @@ class _AlertsScreenState extends ConsumerState<AlertsScreen> {
 
     try {
       final response = await http.get(
-        Uri.parse('http://127.0.0.1:8000/api/v1/doctor/roster?doctor_id=$doctorId'),
+        Uri.parse('http://16.171.226.51/api/v1/doctor/roster?doctor_id=$doctorId'),
       );
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
